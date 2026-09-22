@@ -4,6 +4,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
 
 import { business } from "../src/config/business.ts";
+import { defaultPricingSettings } from "../src/config/pricing-defaults.ts";
 import { services } from "../src/config/services.ts";
 
 const adapter = new PrismaPg({
@@ -13,20 +14,6 @@ const db = new PrismaClient({ adapter });
 
 const BUSINESS_SETTINGS_ID = "business_settings_singleton";
 const PRICING_SETTINGS_ID = "pricing_settings_singleton";
-
-/**
- * Base hour ranges by property size, keyed to match QuoteDraft's size picker
- * values. See CLAUDE.md section 6 and the pricing plan worked examples.
- */
-const baseHoursBySize = {
-  studio: [1.5, 2],
-  "1bed": [2, 3],
-  "2bed": [3, 4.5],
-  "3bed": [4, 6],
-  "4plus": [5.5, 8],
-  office: [2, 3],
-  singleItem: [0.5, 1.5],
-};
 
 async function seedBusinessSettings() {
   await db.businessSettings.upsert({
@@ -67,17 +54,7 @@ async function seedPricingSettings() {
     update: {},
     create: {
       id: PRICING_SETTINGS_ID,
-      hourlyRateCents: 12000,
-      extraMoverHourlyRateCents: 3500,
-      minimumHours: 2,
-      calloutMinutes: 45,
-      gstInclusive: false,
-      baseHoursBySize,
-      accessPenaltyPerFlightHours: 0.25,
-      accessPenaltyLongCarryHours: 0.25,
-      packingHourPerBedroom: 1,
-      unpackingHourPerBedroom: 0.5,
-      disassemblyHourPerItem: 0.5,
+      ...defaultPricingSettings,
     },
   });
   console.log("Seeded PricingSettings");
