@@ -90,7 +90,7 @@ export function PricingTeaser() {
           </p>
 
           <Button render={<Link href="/quote" />} nativeButton={false} className="w-full">
-            Get my exact estimate
+            Get my exact quote
           </Button>
         </div>
       </div>

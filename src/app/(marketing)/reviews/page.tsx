@@ -4,6 +4,7 @@ import { MapPin, MessageCircle, Star, Truck, Wallet } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { business } from "@/config/business";
+import { ctaCopy } from "@/config/copy";
 import { db } from "@/lib/db";
 
 export const metadata: Metadata = {
@@ -62,7 +63,7 @@ export default async function ReviewsPage() {
               can&apos;t. Once your move is done, we&apos;d genuinely appreciate your review.
             </p>
             <Button className="mt-6" render={<Link href="/quote" />} nativeButton={false}>
-              Get your free estimate
+              {ctaCopy.primary}
             </Button>
           </div>
 

@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/seo/json-ld";
 import { business } from "@/config/business";
+import { ctaCopy } from "@/config/copy";
 import { serviceContent } from "@/config/service-content";
 import { getEnabledServices, getServiceBySlug } from "@/config/services";
 
@@ -91,7 +92,7 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
 
       <div className="mt-12 text-center">
         <Button size="lg" render={<Link href="/quote" />} nativeButton={false}>
-          Get your free estimate
+          {ctaCopy.primary}
         </Button>
       </div>
 

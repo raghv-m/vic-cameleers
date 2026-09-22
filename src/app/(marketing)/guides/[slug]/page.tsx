@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/seo/json-ld";
 import { business } from "@/config/business";
+import { ctaCopy } from "@/config/copy";
 import { getGuideBySlug, guides } from "@/content/guides";
 
 export function generateStaticParams() {
@@ -54,7 +55,7 @@ export default async function GuidePage({ params }: PageProps<"/guides/[slug]">)
 
       <div className="mt-12 border-t pt-8 text-center">
         <Button size="lg" render={<Link href="/quote" />} nativeButton={false}>
-          Get your free estimate
+          {ctaCopy.primary}
         </Button>
       </div>
     </div>

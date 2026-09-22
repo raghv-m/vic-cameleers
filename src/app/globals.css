@@ -39,6 +39,8 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-navy: var(--brand-navy);
+  --color-navy-foreground: var(--brand-navy-foreground);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -88,6 +90,11 @@
   --sidebar-accent-foreground: #faf7f0;
   --sidebar-border: rgb(250 247 240 / 12%);
   --sidebar-ring: #c1502e;
+  /* Deep navy band, used for a small number of deliberately dark sections
+     to break up the page rhythm (CLAUDE.md section 2's "deep navy" primary
+     structural colour), independent of the light/dark theme toggle. */
+  --brand-navy: #0e2a47;
+  --brand-navy-foreground: #faf7f0;
 }
 
 .dark {
@@ -122,6 +129,8 @@
   --sidebar-accent-foreground: #f5efdd;
   --sidebar-border: rgb(245 239 221 / 10%);
   --sidebar-ring: #d5673f;
+  --brand-navy: #0e2138;
+  --brand-navy-foreground: #f5efdd;
 }
 
 @layer base {

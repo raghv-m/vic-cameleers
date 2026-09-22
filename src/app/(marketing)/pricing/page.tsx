@@ -131,7 +131,7 @@ export default async function PricingPage() {
 
       <div className="mt-12 text-center">
         <Button size="lg" render={<Link href="/quote" />} nativeButton={false}>
-          Get your exact estimate
+          Get my exact quote
         </Button>
       </div>
     </div>

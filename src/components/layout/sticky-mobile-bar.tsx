@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { business } from "@/config/business";
+import { ctaCopy } from "@/config/copy";
 
 export function StickyMobileBar() {
   return (
@@ -20,7 +21,7 @@ export function StickyMobileBar() {
         Call
       </Button>
       <Button className="flex-1" render={<Link href="/quote" />} nativeButton={false}>
-        Get estimate
+        {ctaCopy.primaryShort}
       </Button>
     </div>
   );

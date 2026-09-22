@@ -4,6 +4,7 @@ import { Calendar, ClipboardList, MapPin, Truck } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { business } from "@/config/business";
+import { ctaCopy } from "@/config/copy";
 
 export const metadata: Metadata = {
   title: "How it works",
@@ -68,7 +69,7 @@ export default function HowItWorksPage() {
 
       <div className="mt-12 text-center">
         <Button size="lg" render={<Link href="/quote" />} nativeButton={false}>
-          Get your free estimate
+          {ctaCopy.primary}
         </Button>
       </div>
     </div>

@@ -98,7 +98,7 @@ export default async function SuburbPage({ params }: PageProps<"/removalists/[su
 
       <div className="mt-12 text-center">
         <Button size="lg" render={<Link href="/quote" />} nativeButton={false}>
-          Get your free {suburb.name} estimate
+          Get your free {suburb.name} quote
         </Button>
       </div>
 

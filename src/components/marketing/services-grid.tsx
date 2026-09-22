@@ -20,7 +20,7 @@ export function ServicesGrid() {
           <Link
             key={service.slug}
             href={`/services/${service.slug}`}
-            className="group border-border bg-card hover:border-primary/40 flex flex-col gap-2 rounded-lg border p-5 transition-colors"
+            className="group border-border bg-card hover:border-primary/40 flex flex-col gap-2 rounded-lg border p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-md"
           >
             <h3 className="font-heading text-lg font-medium">{service.name}</h3>
             <p className="text-muted-foreground text-sm">{service.shortDescription}</p>

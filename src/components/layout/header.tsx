@@ -5,6 +5,7 @@ import { CamelMark } from "@/components/brand/camel-mark";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { business } from "@/config/business";
+import { ctaCopy } from "@/config/copy";
 import { primaryNav, secondaryNav } from "@/config/nav";
 
 export function Header() {
@@ -40,7 +41,7 @@ export function Header() {
             {business.phoneDisplay}
           </a>
           <Button render={<Link href="/quote" />} nativeButton={false}>
-            Get an instant estimate
+            {ctaCopy.primary}
           </Button>
         </div>
 
@@ -89,7 +90,7 @@ export function Header() {
                 {business.phoneDisplay}
               </a>
               <Button render={<Link href="/quote" />} nativeButton={false}>
-                Get an instant estimate
+                {ctaCopy.primary}
               </Button>
             </div>
           </SheetContent>

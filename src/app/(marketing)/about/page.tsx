@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { business } from "@/config/business";
+import { ctaCopy } from "@/config/copy";
 
 export const metadata: Metadata = {
   title: "About us",
@@ -56,7 +57,7 @@ export default function AboutPage() {
 
       <div className="mt-12 text-center">
         <Button size="lg" render={<Link href="/quote" />} nativeButton={false}>
-          Get your free estimate
+          {ctaCopy.primary}
         </Button>
       </div>
     </div>
