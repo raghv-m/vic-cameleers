@@ -88,14 +88,14 @@ Store in `src/config/business.ts` and the `BusinessSettings` table. Never hardco
 
 ### Checklist
 
-- [ ] Design tokens (colours, type scale, spacing, radius, shadows) in Tailwind theme
-- [ ] Light and dark mode
-- [ ] Logo SVG placeholder + favicon + app icons + manifest
-- [ ] Core UI components: Button, Input, Select, Checkbox, Radio cards, Stepper, Card, Badge, Accordion, Modal, Toast
-- [ ] Header with nav + phone + CTA, mobile menu
-- [ ] Footer with ABN, ACN, service areas, legal links, contact
-- [ ] Sticky mobile bar: "Call" and "Get estimate"
-- [ ] Copy audit: no em dashes, Australian spelling, no unverified claims
+- [x] Design tokens (colours, type scale, spacing, radius, shadows) in Tailwind theme
+- [x] Light and dark mode (palettes defined in `globals.css`; no theme toggle UI yet, not required by this item)
+- [x] Logo SVG placeholder + favicon + app icons + manifest
+- [~] Core UI components: Button, Input, Select, Checkbox, Radio cards, Stepper, Card, Badge, Accordion, Modal, Toast (all added via shadcn/ui except Stepper, which doesn't exist as a registry component and will be hand-built in the quote flow milestone where it's actually used)
+- [x] Header with nav + phone + CTA, mobile menu
+- [x] Footer with ABN, ACN, service areas, legal links, contact
+- [x] Sticky mobile bar: "Call" and "Get estimate"
+- [ ] Copy audit: no em dashes, Australian spelling, no unverified claims (ongoing — most page copy doesn't exist yet)
 
 ---
 
@@ -173,10 +173,10 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=  # Phase 2
 
 ### Setup checklist
 
-- [~] Next.js + TypeScript strict + Tailwind + shadcn/ui scaffold (Next.js 16 + TS strict + Tailwind done; shadcn/ui not yet added)
-- [~] ESLint, Prettier, lint-staged, Husky pre-commit (ESLint + Prettier with Tailwind class sorting done and clean; lint-staged/Husky not yet)
-- [~] Prisma connected to Neon, migrations working (full schema written and validated against the pg driver adapter and Neon's pooled/direct URL split; no real Neon project provisioned yet, so no migration has actually run against a live database) **OWNER for Neon provisioning**
-- [ ] Seed script: business settings, pricing settings, services, trucks, first super admin (via CLI prompt, never hardcoded password)
+- [x] Next.js + TypeScript strict + Tailwind + shadcn/ui scaffold
+- [x] ESLint, Prettier, lint-staged, Husky pre-commit
+- [~] Prisma connected to Neon, migrations working (full schema written and validated against the pg driver adapter and Neon's pooled/direct URL split; `prisma/seed.ts` confirmed to parse, resolve, and reach the DB layer correctly; no real Neon project provisioned yet, so no migration has actually run against a live database) **OWNER for Neon provisioning**
+- [x] Seed script: business settings, pricing settings, services, trucks (`prisma/seed.ts`) and first super admin via interactive CLI with masked password entry, never hardcoded (`scripts/seed-admin.ts`) — logic verified, full run pending a live database
 - [x] `.env.example` complete
 - [x] Env validation at startup with Zod (split into `src/env.server.ts`, guarded by `server-only`, and `src/env.client.ts`, guarded by `client-only`, so secrets can't leak into the client bundle even by accident)
 - [!] GitHub repo connected to Vercel, preview deployments per branch **OWNER**
@@ -438,7 +438,7 @@ This is also a cybersecurity portfolio piece, so treat it seriously and document
 
 ### Checklist
 
-- [ ] HTTPS everywhere (Vercel default) + HSTS
+- [~] HTTPS everywhere (Vercel default) + HSTS (HSTS header set in middleware; HTTPS itself depends on the Vercel deployment, not live yet) **OWNER for deployment**
 - [ ] Secure authentication, argon2id password hashing
 - [ ] MFA (TOTP) mandatory for all staff
 - [ ] Role-based access control enforced server-side
@@ -447,8 +447,8 @@ This is also a cybersecurity portfolio piece, so treat it seriously and document
 - [ ] CSRF protection on all state-changing requests
 - [ ] Input validation (Zod) on every endpoint
 - [ ] Output encoding, no `dangerouslySetInnerHTML` with user content
-- [ ] Security headers in middleware: CSP (nonce-based), X-Frame-Options DENY, X-Content-Type-Options, Referrer-Policy, Permissions-Policy
-- [ ] Admin: `noindex, nofollow`, `X-Robots-Tag`, excluded from sitemap and robots
+- [x] Security headers in middleware: CSP (nonce-based), X-Frame-Options DENY, X-Content-Type-Options, Referrer-Policy, Permissions-Policy
+- [~] Admin: `noindex, nofollow`, `X-Robots-Tag`, excluded from sitemap and robots (middleware sets `X-Robots-Tag` for the `ADMIN_PATH` prefix once that env var is set; sitemap/robots exclusion lands with the admin console itself in Milestone 1C)
 - [ ] Rate limiting on all public APIs (Upstash) + Vercel Firewall rules
 - [ ] Bot protection: Turnstile + honeypot + Vercel bot protection
 - [ ] File upload safety: MIME and magic-byte check, size limit, randomised names, no execution
@@ -578,10 +578,10 @@ This is also a cybersecurity portfolio piece, so treat it seriously and document
 
 **Milestone 1A: Foundations**
 
-- [ ] Section 4 setup checklist
-- [ ] Section 2 design system
-- [ ] Layout, header, footer, sticky mobile bar
-- [ ] Security headers middleware + env validation
+- [~] Section 4 setup checklist (only Neon provisioning and Vercel/GitHub connection remain, both **OWNER**)
+- [~] Section 2 design system (Stepper and the copy audit remain, both deferred to the milestones that actually need them)
+- [x] Layout, header, footer, sticky mobile bar
+- [x] Security headers middleware + env validation
 
 **Milestone 1B: Lead capture live (deploy this as soon as it works)**
 
