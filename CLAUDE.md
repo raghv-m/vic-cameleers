@@ -403,7 +403,11 @@ Crew only see their own assigned jobs.
 
 ### Phase 1 admin checklist
 
-- [ ] Staff login, TOTP 2FA enforced, recovery codes
+- [~] Staff login, TOTP 2FA enforced, recovery codes (Better Auth wired to Prisma with argon2id
+  password hashing, disabled public sign-up, mandatory TOTP enrollment with QR + backup codes,
+  app-level 2FA enforcement and role hierarchy in `src/lib/rbac.ts`, login rate limiting; role
+  hierarchy unit tested; no live login has actually run, blocked on Neon provisioning)
+  **OWNER for Neon provisioning**
 - [ ] Dashboard: new leads today/week, conversion rates, upcoming moves, revenue estimate
 - [ ] Leads list: filters, search, sort, status pipeline (list + kanban)
 - [ ] Lead detail: all quote data, photos, notes, activity timeline, call/SMS/email buttons, convert to booking
@@ -439,12 +443,20 @@ This is also a cybersecurity portfolio piece, so treat it seriously and document
 ### Checklist
 
 - [~] HTTPS everywhere (Vercel default) + HSTS (HSTS header set in middleware; HTTPS itself depends on the Vercel deployment, not live yet) **OWNER for deployment**
-- [ ] Secure authentication, argon2id password hashing
-- [ ] MFA (TOTP) mandatory for all staff
-- [ ] Role-based access control enforced server-side
-- [ ] Session management: HttpOnly, Secure, SameSite=Strict, idle and absolute timeouts, revoke on password change
-- [ ] Login rate limiting + progressive lockout
-- [ ] CSRF protection on all state-changing requests
+- [~] Secure authentication, argon2id password hashing (`src/lib/auth.ts` overrides Better Auth's
+  default hasher with argon2id, matching `scripts/seed-admin.ts`; unverified against a live login)
+- [~] MFA (TOTP) mandatory for all staff (Better Auth's twoFactor plugin + app-level enforcement
+  in `src/lib/rbac.ts` that redirects any session without it to `/setup-2fa`; unverified live)
+- [~] Role-based access control enforced server-side (role hierarchy + `requireRole`/`requireAnyRole`
+  in `src/lib/rbac.ts`, unit tested; only the admin dashboard stub uses it so far, no lead/booking
+  actions exist yet to gate)
+- [~] Session management: HttpOnly, Secure, SameSite=Strict, idle and absolute timeouts (all set in
+  `src/lib/auth.ts` session/advanced config); revoke on password change not independently verified
+- [~] Login rate limiting + progressive lockout (flat 5-attempts/15-minute window per IP+email via
+  Upstash, plus Better Auth's own account-level lockout on repeated failed 2FA codes; not
+  progressive/exponential backoff)
+- [~] CSRF protection on all state-changing requests (Better Auth's built-in origin checking covers
+  `/api/auth/*`; no other state-changing admin endpoints exist yet to cover)
 - [ ] Input validation (Zod) on every endpoint
 - [ ] Output encoding, no `dangerouslySetInnerHTML` with user content
 - [x] Security headers in middleware: CSP (nonce-based), X-Frame-Options DENY, X-Content-Type-Options, Referrer-Policy, Permissions-Policy
@@ -596,7 +608,8 @@ This is also a cybersecurity portfolio piece, so treat it seriously and document
 
 **Milestone 1C: Admin and CRM**
 
-- [ ] Auth with mandatory 2FA + RBAC
+- [~] Auth with mandatory 2FA + RBAC (see Section 10 and 11 checklists; code complete and unit
+  tested, live login flow blocked on Neon provisioning) **OWNER for Neon provisioning**
 - [ ] Leads, drafts, customers, lead detail, pipeline
 - [ ] Bookings, trucks, crew, today's moves
 - [ ] Reviews moderation, settings, email log, audit log, CSV export
