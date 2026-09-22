@@ -258,7 +258,7 @@ Services are config-driven so they can be switched on or off without code change
 - [ ] Reviews
 - [ ] FAQ
 - [ ] Guides index + MDX article template + 5 starter articles (cost guide, moving checklist, apartment moving tips, packing guide, hourly vs fixed price)
-- [ ] Contact (phone, email, form, hours, service area)
+- [~] Contact (phone, email, form, service area) — hours not shown, unconfirmed (see TODO-OWNER.md)
 - [ ] Privacy, Terms, Cancellation policy
 - [ ] Custom 404 and error pages with quote CTA
 - [ ] Cookie / analytics consent notice if any non-essential tracking is added
@@ -349,17 +349,17 @@ Phase 2+: `Payment, Invoice, Document, Message, SupportTicket, Route`
 
 ### Checklist
 
-- [ ] Prisma schema + migrations + indexes on status, dates, phone, email
-- [ ] Zod schemas shared across client and server
-- [ ] Quote API with Turnstile, rate limit, honeypot, size limits
-- [ ] Contact API with same protections
+- [~] Prisma schema + migrations + indexes on status, dates, phone, email (schema complete with indexes; no migration has run against a live database yet) **OWNER for Neon provisioning**
+- [x] Zod schemas shared across client and server (`src/lib/validation/*.ts`, used by both the React Hook Form instances and the API routes' `safeParse`)
+- [x] Quote API with Turnstile, rate limit, honeypot, size limits
+- [x] Contact API with same protections
 - [ ] Review submission API with signed tokens
 - [ ] Upload API with type/size checks
-- [ ] Transactional lead creation, email after commit
+- [~] Transactional lead creation, email after commit (transaction done; email dispatch lands in the next milestone)
 - [ ] Email retry queue via Vercel Cron
 - [ ] Request ID on every request, structured logging
-- [ ] Lead source capture (UTM params, referrer, landing page) stored on lead
-- [ ] Every quote automatically becomes a structured lead in the CRM (Section 10)
+- [ ] Lead source capture (UTM params, referrer, landing page) stored on lead (QuoteDraft has the columns; not populated yet)
+- [x] Every quote automatically becomes a structured lead in the CRM (Section 10)
 - [ ] Database backups verified (Neon point-in-time restore) **OWNER to confirm plan**
 
 ---
