@@ -408,7 +408,9 @@ Crew only see their own assigned jobs.
   app-level 2FA enforcement and role hierarchy in `src/lib/rbac.ts`, login rate limiting; role
   hierarchy unit tested; no live login has actually run, blocked on Neon provisioning)
   **OWNER for Neon provisioning**
-- [ ] Dashboard: new leads today/week, conversion rates, upcoming moves, revenue estimate
+- [~] Dashboard: new leads today/week, conversion rates, upcoming moves, revenue estimate (leads
+  today/week, status breakdown, and booked-lead conversion rate are live; upcoming moves and
+  revenue estimate need Bookings to exist first)
 - [~] Leads list: filters, search, sort, status pipeline (list + kanban) (search + status filter +
   newest-first list at `/admin/leads`; no kanban board yet)
 - [~] Lead detail: all quote data, photos, notes, activity timeline, call/SMS/email buttons, convert
