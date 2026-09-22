@@ -103,7 +103,7 @@ Store in `src/config/business.ts` and the `BusinessSettings` table. Never hardco
 
 ## 3. Honesty and Compliance Rules (non-negotiable)
 
-- No fake reviews, ratings, review counts, or testimonials. Empty state: "We're new. Be one of our first reviews."
+- No fake reviews, ratings, review counts, or testimonials. Empty state: real trust signals from config (local crew, transparent pricing, professional fleet, direct communication) instead of an apologetic "we're new" message — see `reviews-section.tsx` / `reviews/page.tsx`.
 - No invented stats. Stats come from config and stay hidden while empty.
 - Never claim "fully insured", "licensed", "accredited", "police checked", or memberships unless the matching config flag is true with supporting detail.
 - Price estimates always labelled as estimates, with assumptions shown.
