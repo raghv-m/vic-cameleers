@@ -291,19 +291,19 @@ Full flow at `/quote`, compact version embeddable on home, service and suburb pa
 
 ### Checklist
 
-- [ ] Multi-step form with progress indicator, back/next, validation per step
-- [ ] State persisted in URL or local state so refresh doesn't lose progress
-- [ ] Places autocomplete AU-only for all addresses
-- [ ] Travel time lookup server-side (key never exposed), cached
+- [x] Multi-step form with progress indicator, back/next, validation per step
+- [ ] State persisted in URL or local state so refresh doesn't lose progress (currently in-memory only, lost on refresh)
+- [!] Places autocomplete AU-only for all addresses (plain text inputs for now) **OWNER for Google Maps API key**
+- [!] Travel time lookup server-side (key never exposed), cached (every estimate assumes a fixed 20 minute trip until this exists) **OWNER for Google Maps API key**
 - [ ] Service-area check with friendly message if outside Melbourne
-- [ ] Inventory picker with counts
-- [ ] Photo upload to Vercel Blob with validation
-- [ ] Pricing engine with unit tests (min charge, call-out, access, extras, rounding, truck choice)
-- [ ] Draft saved server-side after Step 1 (abandoned quote tracking)
-- [ ] Final submit creates Lead + Quote records
-- [ ] Reference number generator (unique, readable)
-- [ ] Result screen with estimate, recommended truck/crew, next steps
-- [ ] .ics calendar download
+- [ ] Inventory picker with counts (special items checkboxes exist; itemised bed/fridge/washer-style counts do not yet)
+- [!] Photo upload to Vercel Blob with validation **OWNER for Vercel Blob store**
+- [x] Pricing engine with unit tests (min charge, call-out, access, extras, rounding, truck choice)
+- [ ] Draft saved server-side after Step 1 (abandoned quote tracking) — currently only submitted, completed quotes reach the database
+- [x] Final submit creates Lead + Quote records (Customer and QuoteDraft too), verified up to the DB transaction; blocked on a live Neon database to run for real
+- [x] Reference number generator (unique, readable)
+- [x] Result screen with estimate, recommended truck/crew, next steps
+- [x] .ics calendar download
 - [ ] Compact embeddable quote widget
 - [ ] Analytics events on every step (Section 12)
 - [ ] Playwright test covering full happy path + validation errors
