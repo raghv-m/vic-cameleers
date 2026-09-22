@@ -95,7 +95,9 @@ Store in `src/config/business.ts` and the `BusinessSettings` table. Never hardco
 - [x] Header with nav + phone + CTA, mobile menu
 - [x] Footer with ABN, ACN, service areas, legal links, contact
 - [x] Sticky mobile bar: "Call" and "Get estimate"
-- [ ] Copy audit: no em dashes, Australian spelling, no unverified claims (ongoing — most page copy doesn't exist yet)
+- [x] Copy audit: no em dashes, Australian spelling, no unverified claims (all page copy now exists;
+      one consistent primary CTA label everywhere via `src/config/copy.ts`, replacing 6 different
+      variants that had accumulated across pages built in different milestones)
 
 ---
 
