@@ -502,27 +502,42 @@ This is also a cybersecurity portfolio piece, so treat it seriously and document
 - [~] Login rate limiting + progressive lockout (flat 5-attempts/15-minute window per IP+email via
   Upstash, plus Better Auth's own account-level lockout on repeated failed 2FA codes; not
   progressive/exponential backoff)
-- [~] CSRF protection on all state-changing requests (Better Auth's built-in origin checking covers
-  `/api/auth/*`; no other state-changing admin endpoints exist yet to cover)
-- [ ] Input validation (Zod) on every endpoint
-- [ ] Output encoding, no `dangerouslySetInnerHTML` with user content
+- [~] CSRF protection on all state-changing requests (every admin mutation is a Next.js Server
+  Action, which gets the framework's own origin check; Better Auth checks origin on `/api/auth/*`;
+  not independently verified end to end against a live deployment yet)
+- [x] Input validation (Zod) on every endpoint (every API route and every server action parses its
+      input with a Zod schema before touching the database, see `src/lib/validation/*`)
+- [x] Output encoding, no `dangerouslySetInnerHTML` with user content (only 2 uses in the codebase,
+      both JSON-LD built from `JSON.stringify()` with `<` escaped, see `src/components/seo/json-ld.tsx`)
 - [x] Security headers in middleware: CSP (nonce-based), X-Frame-Options DENY, X-Content-Type-Options, Referrer-Policy, Permissions-Policy
-- [~] Admin: `noindex, nofollow`, `X-Robots-Tag`, excluded from sitemap and robots (middleware sets `X-Robots-Tag` for the `ADMIN_PATH` prefix once that env var is set; sitemap/robots exclusion lands with the admin console itself in Milestone 1C)
-- [ ] Rate limiting on all public APIs (Upstash) + Vercel Firewall rules
-- [ ] Bot protection: Turnstile + honeypot + Vercel bot protection
+- [x] Admin: `noindex, nofollow`, `X-Robots-Tag`, excluded from sitemap and robots (middleware sets
+      `X-Robots-Tag`; `robots.ts` excludes the `ADMIN_PATH` prefix; the admin console isn't in
+      `sitemap.ts` at all)
+- [~] Rate limiting on all public APIs (Upstash) + Vercel Firewall rules (quote, contact, and staff
+  login are all rate limited; Vercel Firewall rules are dashboard config, need the project deployed
+  first) **OWNER**
+- [~] Bot protection: Turnstile + honeypot + Vercel bot protection (Turnstile + honeypot done on
+  every public form; Vercel's own bot protection is a dashboard feature, needs deployment) **OWNER**
 - [ ] File upload safety: MIME and magic-byte check, size limit, randomised names, no execution
-- [ ] Secrets only in Vercel env vars, never in code or logs
-- [ ] PII minimisation, no card data ever stored (Stripe handles it in Phase 2)
-- [~] Audit logs for all admin actions (who, what, when, IP, before/after) (`src/lib/audit-log.ts`,
-  wired into every mutating admin action built so far: leads, bookings, trucks, crew, reviews,
-  settings, and staff management; will need the same treatment on any future admin action)
-- [ ] Database encryption at rest (Neon default) + TLS connections
-- [ ] Regular backups and a tested restore
-- [ ] Dependency scanning (Dependabot / `pnpm audit`) in CI
-- [ ] Static analysis / vulnerability scanning in CI (e.g. CodeQL)
-- [ ] Error monitoring and logging (Vercel logs, optional Sentry), alerts on spikes in errors or failed logins
-- [ ] `SECURITY.md` documenting architecture, threat model, and controls
-- [ ] `security.txt` at `/.well-known/security.txt`
+      (the upload feature itself isn't built yet)
+- [x] Secrets only in Vercel env vars, never in code or logs (audited: no secret values logged
+      anywhere, `LEAD_NOTIFY_EMAIL` never reaches the client, `env.client.ts` is `client-only`-guarded)
+- [x] PII minimisation, no card data ever stored (Stripe handles it in Phase 2)
+- [x] Audit logs for all admin actions (who, what, when, IP, before/after) (`src/lib/audit-log.ts`,
+      wired into every mutating admin action built so far: leads, bookings, trucks, crew, reviews,
+      settings, and staff management; will need the same treatment on any future admin action)
+- [ ] Database encryption at rest (Neon default) + TLS connections **OWNER for Neon provisioning**
+- [ ] Regular backups and a tested restore **OWNER for Neon provisioning**
+- [x] Dependency scanning (Dependabot / `pnpm audit`) in CI (`.github/dependabot.yml`;
+      `.github/workflows/ci.yml` runs `pnpm audit --audit-level=high`; 2 known high-severity advisories
+      in transitive `prisma`/`better-auth` build tooling not reachable from this app's runtime, see
+      TODO-OWNER.md)
+- [x] Static analysis / vulnerability scanning in CI (e.g. CodeQL) (`.github/workflows/codeql.yml`)
+- [ ] Error monitoring and logging (Vercel logs, optional Sentry), alerts on spikes in errors or
+      failed logins **OWNER, needs a Sentry account or Vercel's own logging once deployed**
+- [x] `SECURITY.md` documenting architecture, threat model, and controls
+- [x] `security.txt` at `/.well-known/security.txt` (generated, not static, so it can't go stale
+      against `business.ts`)
 
 ---
 
@@ -579,14 +594,21 @@ This is also a cybersecurity portfolio piece, so treat it seriously and document
 
 ### Checklist
 
-- [ ] Lighthouse mobile 95+ on all marketing pages
-- [ ] LCP < 2.5s, CLS < 0.1, INP < 200ms (verify in Speed Insights)
-- [ ] Static generation / ISR for marketing, suburb and guide pages
-- [ ] Minimal client JS on marketing pages
-- [ ] Font subsetting and preloading via `next/font`
-- [ ] Caching for travel-time lookups and settings
-- [ ] DB indexes on hot queries
-- [ ] Compression and CDN (Vercel default)
+- [ ] Lighthouse mobile 95+ on all marketing pages **needs a live deployment to measure**
+- [ ] LCP < 2.5s, CLS < 0.1, INP < 200ms (verify in Speed Insights) **needs a live deployment**
+- [x] Static generation / ISR for marketing, suburb and guide pages (`generateStaticParams` on
+      services, suburbs, and guides; everything else is a plain server component)
+- [x] Minimal client JS on marketing pages (server components by default; `"use client"` only on
+      actually-interactive pieces: forms, the quote flow, the FAQ accordion trigger)
+- [x] Font subsetting and preloading via `next/font` (Inter + Oswald, `src/app/layout.tsx`)
+- [ ] Caching for travel-time lookups and settings (travel time isn't a real API call yet, still
+      the `FALLBACK_TRAVEL_MINUTES` constant; settings aren't cached, read fresh each request)
+- [x] DB indexes on hot queries (`Lead.status`/`createdAt`, `Booking.moveDate`,
+      `Customer.phone`/`email`, `Review.status`, `EmailLog[status, createdAt]`,
+      `AuditLog[entityType, entityId]`, `AnalyticsEvent[eventName, createdAt]`, plus Prisma's implicit
+      indexes on every foreign key)
+- [~] Compression and CDN (Vercel default) (inherent to Vercel hosting once actually deployed,
+  not independently verified against a live deployment)
 
 ---
 
@@ -594,12 +616,25 @@ This is also a cybersecurity portfolio piece, so treat it seriously and document
 
 ### Checklist
 
-- [ ] WCAG 2.2 AA target
-- [ ] Full keyboard navigation, visible focus states
-- [ ] Labels on every input, errors linked with `aria-describedby`
-- [ ] Colour contrast checked in light and dark mode
-- [ ] Skip-to-content link
-- [ ] Automated axe checks in Playwright
+- [~] WCAG 2.2 AA target (partially verified, see the items below; the automated axe suite
+  couldn't actually run in this environment, see the note on that item)
+- [~] Full keyboard navigation, visible focus states (every shadcn/base-ui primitive ships
+  `focus-visible` styles and keyboard interaction out of the box; not manually walked through
+  every page with a keyboard)
+- [ ] Labels on every input, errors linked with `aria-describedby` (every field has a real
+      associated `<label>` via `FieldLabel`'s `htmlFor`, but nothing sets `aria-invalid` or
+      `aria-describedby` pointing at the error text - a real gap, found while writing the axe tests,
+      not yet fixed. Fixing it properly means adding ARIA wiring to the shared `Field`/`FieldError`
+      components in `src/components/ui/field.tsx` so every consuming form gets it at once, rather than
+      editing each of the ~15 forms built so far one at a time)
+- [ ] Colour contrast checked in light and dark mode (not manually verified)
+- [x] Skip-to-content link (`src/app/layout.tsx`, targets `#main-content` in both the marketing
+      and admin layouts)
+- [~] Automated axe checks in Playwright (`tests/e2e/accessibility.spec.ts`, `@axe-core/playwright`
+  against 7 public pages; written and typechecked but never actually executed - this machine's
+  Windows Application Control Policy blocks Playwright's downloaded browser binary from running at
+  all (`chrome-headless-shell.exe`), confirmed by trying to launch it directly. Not a code issue;
+  will run in any normal CI environment or a machine without that policy)
 
 ---
 
@@ -681,11 +716,20 @@ This is also a cybersecurity portfolio piece, so treat it seriously and document
 
 **Milestone 1E: Hardening and QA**
 
-- [ ] Full Section 11 security checklist
-- [ ] Section 14 performance targets met
-- [ ] Section 15 accessibility checks
-- [ ] Playwright suite: quote flow, contact, admin login with 2FA, lead status change, booking creation
-- [ ] `README.md`, `SECURITY.md`, `TODO-OWNER.md` complete
+- [~] Full Section 11 security checklist (see Section 11; remaining items are owner/platform
+  work - Vercel Firewall, error monitoring, DB encryption/backups - that needs the project
+  actually deployed and its accounts provisioned first)
+- [~] Section 14 performance targets met (indexes, static generation, fonts, minimal client JS all
+  done; Lighthouse/Core Web Vitals targets can't be measured without a live deployment)
+- [~] Section 15 accessibility checks (skip link and an axe test suite exist; a real
+  `aria-describedby` gap was found and documented, not fixed; the axe suite itself couldn't run in
+  this environment, see Section 15)
+- [~] Playwright suite: quote flow, contact, admin login with 2FA, lead status change, booking
+  creation (all 5 have real spec files under `tests/e2e/`, typechecked and reviewed against the
+  actual component code; couldn't be executed here - this machine's Application Control Policy
+  blocks Playwright's browser binary from launching at all, unrelated to the test code itself;
+  the 2FA login and the two DB-dependent specs additionally need a live, seeded database)
+- [x] `README.md`, `SECURITY.md`, `TODO-OWNER.md` complete
 
 ### Phase 2: Payments, portal, SMS
 
