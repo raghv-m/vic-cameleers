@@ -356,7 +356,8 @@ Phase 2+: `Payment, Invoice, Document, Message, SupportTicket, Route`
 - [ ] Review submission API with signed tokens
 - [ ] Upload API with type/size checks
 - [~] Transactional lead creation, email after commit (transaction done; email dispatch lands in the next milestone)
-- [ ] Email retry queue via Vercel Cron
+- [x] Email retry queue via Vercel Cron (`/api/cron/email-retry`, retries FAILED `EmailLog` entries
+      from the last 48 hours via the shared `resendEmailLog` reconstruction)
 - [ ] Request ID on every request, structured logging
 - [ ] Lead source capture (UTM params, referrer, landing page) stored on lead (QuoteDraft has the columns; not populated yet)
 - [x] Every quote automatically becomes a structured lead in the CRM (Section 10)
@@ -375,12 +376,18 @@ Sender: `Vic Cameleers <quotes@DOMAIN>`, reply-to the public inbox. React Email 
 - [x] Customer: contact form received
 - [x] Staff: contact form alert
 - [ ] Customer: quote reminder (if quoted but not booked after X days, setting)
-- [ ] Customer: booking confirmed (triggered from admin)
-- [ ] Customer: 7-day reminder
-- [ ] Customer: 24-hour reminder
+- [x] Customer: booking confirmed (triggered from admin) ("Send confirmation email" button on the
+      lead detail page's Booking card, calls `sendBookingConfirmation`)
+- [x] Customer: 7-day reminder (`/api/cron/reminders`, checks bookings exactly 7 days out; see
+      `vercel.json` for the schedule) **OWNER to verify Vercel Cron Jobs are enabled on the project**
+- [x] Customer: 24-hour reminder (same cron, checks bookings exactly 1 day out; both reminder types
+      share one `MoveReminderEmail` template and skip any booking that already has that reminder logged)
 - [ ] Customer: moving-day "crew on the way" (manual trigger from admin in Phase 1)
 - [ ] Customer: move completed / thank you
-- [ ] Customer: review request 1 day after Completed, links to `GOOGLE_REVIEW_URL` and on-site review form
+- [x] Customer: review request 1 day after Completed, links to `GOOGLE_REVIEW_URL` and on-site review
+      form (`/api/cron/review-requests`; the on-site review form itself doesn't exist yet, see Section 8's
+      "Review submission API with signed tokens", so this only links to the Google review URL, and only
+      once one is set in Settings)
 - [ ] Payment receipt (Phase 2)
 - [ ] SMS versions of key notifications (Phase 2)
 - [ ] Unsubscribe / preference handling for non-transactional emails
@@ -429,12 +436,21 @@ Crew only see their own assigned jobs.
       drives `Job.status` through the Scheduled -> En route -> ... -> Completed states)
 - [x] Trucks (6t, 10t) and crew members management (`/admin/trucks`, `/admin/crew`; add and
       activate/deactivate, gated to DISPATCHER and above)
-- [ ] Reviews: approve, hide, feature, add manually with source
-- [ ] Settings: pricing, business details, services on/off, Google review URL, estimate mode (price vs callback)
-- [ ] Email log with resend button
-- [ ] Staff user management with roles
-- [ ] Audit log viewer
-- [ ] CSV export (leads, bookings)
+- [x] Reviews: approve, hide, feature, add manually with source (`/admin/reviews`; status select,
+      feature toggle, and a manual-entry form that saves as source MANUAL, status APPROVED)
+- [x] Settings: pricing, business details, services on/off, Google review URL, estimate mode (price
+      vs callback) (`/admin/settings`; writes the singleton `BusinessSettings`/`PricingSettings` rows;
+      the base-hours-by-property-size table is edited as raw JSON rather than one input per size)
+- [x] Email log with resend button (`/admin/emails`; resend reconstructs the original email from
+      its related lead/booking via `src/lib/email/resend.ts`, only for the types that carry enough
+      related data to rebuild - the ones actually sent today)
+- [x] Staff user management with roles (`/admin/staff`, SUPER_ADMIN only; creates an account with a
+      random one-time password shown once, matching `scripts/seed-admin.ts`'s credential shape; role
+      change and activate/deactivate. No email invite flow, the password is shown in the admin UI only)
+- [x] Audit log viewer (`/admin/audit-log`, OPERATIONS_MANAGER and above, most recent 300 actions
+      with an expandable before/after diff)
+- [x] CSV export (leads, bookings) (`/api/admin/export/leads`, `/api/admin/export/bookings`, linked
+      from their list pages)
 
 ### Phase 2/3 admin checklist
 
@@ -480,8 +496,8 @@ This is also a cybersecurity portfolio piece, so treat it seriously and document
 - [ ] Secrets only in Vercel env vars, never in code or logs
 - [ ] PII minimisation, no card data ever stored (Stripe handles it in Phase 2)
 - [~] Audit logs for all admin actions (who, what, when, IP, before/after) (`src/lib/audit-log.ts`,
-  wired into lead status/note/convert-to-booking, truck, crew, and job-status actions; not yet
-  wired into every admin action, since some (reviews, settings, staff management) don't exist yet)
+  wired into every mutating admin action built so far: leads, bookings, trucks, crew, reviews,
+  settings, and staff management; will need the same treatment on any future admin action)
 - [ ] Database encryption at rest (Neon default) + TLS connections
 - [ ] Regular backups and a tested restore
 - [ ] Dependency scanning (Dependabot / `pnpm audit`) in CI
@@ -629,8 +645,8 @@ This is also a cybersecurity portfolio piece, so treat it seriously and document
   still blocked on step-1 draft persistence)
 - [~] Bookings, trucks, crew, today's moves (see Section 10 checklist; bookings list has no
   calendar view yet)
-- [ ] Reviews moderation, settings, email log, audit log, CSV export
-- [ ] Booking confirmation, reminders, review request emails + crons
+- [x] Reviews moderation, settings, email log, audit log, CSV export (see Section 10 checklist)
+- [x] Booking confirmation, reminders, review request emails + crons (see Section 9)
 
 **Milestone 1D: Content and SEO**
 
