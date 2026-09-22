@@ -1,38 +1,37 @@
-import { Phone } from "lucide-react";
-import Link from "next/link";
+import type { Metadata } from "next";
 
-import { Button } from "@/components/ui/button";
-import { business } from "@/config/business";
+import { FaqAccordion } from "@/components/marketing/faq-accordion";
+import { FinalCta } from "@/components/marketing/final-cta";
+import { Hero } from "@/components/marketing/hero";
+import { HowItWorks } from "@/components/marketing/how-it-works";
+import { MovingTimeline } from "@/components/marketing/moving-timeline";
+import { PricingTeaser } from "@/components/marketing/pricing-teaser";
+import { ReviewsSection } from "@/components/marketing/reviews-section";
+import { ServiceAreas } from "@/components/marketing/service-areas";
+import { ServicesGrid } from "@/components/marketing/services-grid";
+import { TrustStrip } from "@/components/marketing/trust-strip";
+import { WhyUs } from "@/components/marketing/why-us";
 
-/**
- * Placeholder hero only, to prove out the design system (header, footer,
- * sticky mobile bar, theme tokens, fonts). The full 11-section homepage is
- * built in Milestone 1B.
- */
+export const metadata: Metadata = {
+  title: "Melbourne Removalists",
+  description:
+    "Vic Cameleers is a Cranbourne based removalist crew moving homes and businesses across Greater Melbourne. Transparent hourly pricing, no surprises.",
+};
+
 export default function Home() {
   return (
-    <div className="mx-auto flex max-w-3xl flex-col items-center gap-6 px-4 py-24 text-center sm:px-6 lg:px-8">
-      <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
-        You move. We make it easy.
-      </h1>
-      <p className="text-muted-foreground max-w-xl text-lg">
-        Based in {business.baseSuburb}, moving homes and businesses across{" "}
-        {business.serviceAreaDescription}.
-      </p>
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <Button size="lg" render={<Link href="/quote" />} nativeButton={false}>
-          Get an instant estimate
-        </Button>
-        <Button
-          size="lg"
-          variant="secondary"
-          render={<a href={`tel:${business.phoneE164}`} />}
-          nativeButton={false}
-        >
-          <Phone className="h-4 w-4" />
-          Call {business.phoneDisplay}
-        </Button>
-      </div>
-    </div>
+    <>
+      <Hero />
+      <TrustStrip />
+      <ServicesGrid />
+      <PricingTeaser />
+      <HowItWorks />
+      <WhyUs />
+      <ServiceAreas />
+      <ReviewsSection />
+      <MovingTimeline />
+      <FaqAccordion />
+      <FinalCta />
+    </>
   );
 }

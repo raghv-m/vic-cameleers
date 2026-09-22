@@ -6,7 +6,7 @@ export interface NavLink {
 export const primaryNav: NavLink[] = [
   { label: "Services", href: "/services" },
   { label: "Pricing", href: "/pricing" },
-  { label: "Removalists Melbourne", href: "/removalists" },
+  { label: "Service areas", href: "/removalists" },
   { label: "How it works", href: "/how-it-works" },
   { label: "Reviews", href: "/reviews" },
   { label: "FAQ", href: "/faq" },
