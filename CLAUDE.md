@@ -491,17 +491,17 @@ This is also a cybersecurity portfolio piece, so treat it seriously and document
 
 ### Checklist
 
-- [ ] Semantic HTML, one H1 per page, correct heading hierarchy
-- [ ] `generateMetadata` on every route (unique title and description)
+- [x] Semantic HTML, one H1 per page, correct heading hierarchy
+- [x] `generateMetadata` on every route that exists so far (unique title and description)
 - [ ] Open Graph + Twitter/X cards, generated OG images per page
-- [ ] `sitemap.xml` generated from routes, services, suburbs, guides
-- [ ] `robots.txt` (block admin, API, drafts)
+- [x] `sitemap.xml` generated from the routes that exist so far; grows as later milestones add more
+- [x] `robots.txt` (blocks `/api/` and the admin path once `ADMIN_PATH` is set; no drafts route exists yet)
 - [ ] Canonical URLs
-- [ ] JSON-LD `MovingCompany` / LocalBusiness: name, phone, `areaServed`, `priceRange`, `taxID`, geo, opening hours
+- [x] JSON-LD `MovingCompany` / LocalBusiness: name, phone, `areaServed`, `priceRange`, `taxID` (geo and opening hours not included — no confirmed address/hours yet)
 - [ ] JSON-LD `Service` on service pages
 - [ ] JSON-LD `FAQPage` where eligible
 - [ ] JSON-LD `BreadcrumbList` + visible breadcrumbs
-- [ ] `aggregateRating` only once real reviews exist
+- [x] `aggregateRating` only once real reviews exist (currently omitted entirely, correctly)
 - [ ] Internal linking: services ↔ suburbs ↔ guides
 - [ ] Image optimisation: `next/image`, AVIF/WebP, lazy loading, descriptive alt text
 - [ ] Pricing page written in plain text so Google and AI assistants can quote it directly
@@ -591,7 +591,7 @@ This is also a cybersecurity portfolio piece, so treat it seriously and document
 - [x] Customer + staff emails for quote and contact
 - [x] Privacy, Terms, Cancellation pages
 - [x] Vercel Analytics + Speed Insights
-- [ ] Basic SEO (metadata, sitemap, robots, MovingCompany schema)
+- [x] Basic SEO (metadata, sitemap, robots, MovingCompany schema)
 - [!] Deployed to Vercel production **OWNER to approve**
 
 **Milestone 1C: Admin and CRM**
