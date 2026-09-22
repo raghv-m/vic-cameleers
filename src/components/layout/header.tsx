@@ -5,7 +5,7 @@ import { CamelMark } from "@/components/brand/camel-mark";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { business } from "@/config/business";
-import { primaryNav } from "@/config/nav";
+import { primaryNav, secondaryNav } from "@/config/nav";
 
 export function Header() {
   return (
@@ -65,6 +65,16 @@ export function Header() {
                   key={link.href}
                   href={link.href}
                   className="text-foreground hover:bg-muted rounded-md px-2 py-2.5 text-sm font-medium"
+                >
+                  {link.label}
+                </Link>
+              ))}
+              <div className="border-border my-2 border-t" />
+              {secondaryNav.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-muted-foreground hover:bg-muted hover:text-foreground rounded-md px-2 py-2.5 text-sm font-medium"
                 >
                   {link.label}
                 </Link>
