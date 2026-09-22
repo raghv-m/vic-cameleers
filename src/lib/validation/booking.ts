@@ -16,3 +16,7 @@ export const jobStatusUpdateSchema = z.object({
 });
 
 export type JobStatusUpdate = z.infer<typeof jobStatusUpdateSchema>;
+
+export const sendBookingConfirmationSchema = z.object({
+  bookingId: z.string().min(1),
+});

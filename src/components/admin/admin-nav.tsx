@@ -14,6 +14,11 @@ const links = [
   { href: "/bookings", label: "Bookings" },
   { href: "/trucks", label: "Trucks" },
   { href: "/crew", label: "Crew" },
+  { href: "/reviews", label: "Reviews" },
+  { href: "/emails", label: "Emails" },
+  { href: "/audit-log", label: "Audit log" },
+  { href: "/settings", label: "Settings" },
+  { href: "/staff", label: "Staff" },
 ];
 
 export function AdminNav() {

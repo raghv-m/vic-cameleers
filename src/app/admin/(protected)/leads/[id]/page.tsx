@@ -7,6 +7,7 @@ import { Mail, Phone } from "lucide-react";
 import { AddNoteForm } from "@/components/admin/add-note-form";
 import { ConvertToBookingForm } from "@/components/admin/convert-to-booking-form";
 import { LeadStatusForm } from "@/components/admin/lead-status-form";
+import { SendBookingConfirmationButton } from "@/components/admin/send-booking-confirmation-button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { db } from "@/lib/db";
@@ -237,12 +238,13 @@ export default async function LeadDetailPage({ params }: PageProps<"/admin/leads
             <CardHeader>
               <CardTitle>Booking</CardTitle>
             </CardHeader>
-            <CardContent className="text-sm">
+            <CardContent className="space-y-3 text-sm">
               <p>
                 {format(lead.booking.moveDate, "d MMM yyyy")}
                 {lead.booking.preferredTime ? `, ${lead.booking.preferredTime}` : ""} &middot;{" "}
                 <Badge variant="secondary">{lead.booking.status}</Badge>
               </p>
+              <SendBookingConfirmationButton bookingId={lead.booking.id} />
             </CardContent>
           </Card>
         ) : (

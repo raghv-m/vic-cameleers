@@ -57,7 +57,12 @@ export default async function LeadsPage({ searchParams }: PageProps<"/admin/lead
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
-      <h1 className="text-2xl font-semibold">Leads</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold">Leads</h1>
+        <a href="/api/admin/export/leads" className="text-primary text-sm hover:underline">
+          Export CSV
+        </a>
+      </div>
 
       <form className="mt-6 flex flex-wrap items-center gap-3" method="GET">
         <Input

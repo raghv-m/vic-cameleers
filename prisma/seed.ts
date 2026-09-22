@@ -6,14 +6,12 @@ import { PrismaClient } from "@prisma/client";
 import { business } from "../src/config/business.ts";
 import { defaultPricingSettings } from "../src/config/pricing-defaults.ts";
 import { services } from "../src/config/services.ts";
+import { BUSINESS_SETTINGS_ID, PRICING_SETTINGS_ID } from "../src/lib/settings-ids.ts";
 
 const adapter = new PrismaPg({
   connectionString: process.env.DIRECT_URL ?? process.env.DATABASE_URL,
 });
 const db = new PrismaClient({ adapter });
-
-const BUSINESS_SETTINGS_ID = "business_settings_singleton";
-const PRICING_SETTINGS_ID = "pricing_settings_singleton";
 
 async function seedBusinessSettings() {
   await db.businessSettings.upsert({

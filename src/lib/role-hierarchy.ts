@@ -22,6 +22,19 @@ export const ROLE_HIERARCHY: Role[] = [
   "CREW",
 ];
 
+/** Alias of ROLE_HIERARCHY for call sites listing roles rather than ranking them. */
+export const ROLE_ORDER = ROLE_HIERARCHY;
+
+export const ROLE_LABEL: Record<Role, string> = {
+  SUPER_ADMIN: "Super admin",
+  OPERATIONS_MANAGER: "Operations manager",
+  DISPATCHER: "Dispatcher",
+  SALES: "Sales",
+  FINANCE: "Finance",
+  SUPPORT: "Support",
+  CREW: "Crew",
+};
+
 export function roleRank(role: Role): number {
   return ROLE_HIERARCHY.indexOf(role);
 }

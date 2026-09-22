@@ -26,9 +26,14 @@ export default async function BookingsPage() {
     <div className="mx-auto max-w-4xl px-4 py-10">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Bookings</h1>
-        <Link href="/admin/bookings/today" className="text-primary text-sm hover:underline">
-          Today&apos;s moves
-        </Link>
+        <div className="flex items-center gap-4">
+          <a href="/api/admin/export/bookings" className="text-primary text-sm hover:underline">
+            Export CSV
+          </a>
+          <Link href="/admin/bookings/today" className="text-primary text-sm hover:underline">
+            Today&apos;s moves
+          </Link>
+        </div>
       </div>
       <p className="text-muted-foreground mt-1 text-sm">Upcoming, soonest first.</p>
 
