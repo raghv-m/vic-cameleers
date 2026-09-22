@@ -4,9 +4,12 @@ import { addDays, format, startOfDay } from "date-fns";
 
 import { db } from "@/lib/db";
 import { isAuthorizedCronRequest } from "@/lib/cron-auth";
+import { logCronCompleted, logCronFailed, logCronStarted } from "@/lib/cron-log";
 import { sendEmail } from "@/lib/email/client";
 import { MoveReminderEmail } from "@/lib/email/templates/move-reminder";
 import type { EmailType } from "@prisma/client";
+
+const JOB_NAME = "reminders";
 
 /**
  * Runs once a day (Vercel Cron Jobs). Sends the 7-day and 24-hour move
@@ -53,13 +56,21 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const [sevenDay, twentyFourHour] = await Promise.all([
-    sendReminderBatch(7, "REMINDER_7_DAY", "in 7 days"),
-    sendReminderBatch(1, "REMINDER_24_HOUR", "tomorrow"),
-  ]);
+  logCronStarted(JOB_NAME);
 
-  return NextResponse.json({
-    sevenDayRemindersSent: sevenDay,
-    twentyFourHourRemindersSent: twentyFourHour,
-  });
+  try {
+    const [sevenDay, twentyFourHour] = await Promise.all([
+      sendReminderBatch(7, "REMINDER_7_DAY", "in 7 days"),
+      sendReminderBatch(1, "REMINDER_24_HOUR", "tomorrow"),
+    ]);
+
+    const result = { sevenDayRemindersSent: sevenDay, twentyFourHourRemindersSent: twentyFourHour };
+    logCronCompleted(JOB_NAME, result);
+    return NextResponse.json(result);
+  } catch (error) {
+    logCronFailed(JOB_NAME, error);
+    // Generic message only - the real error is in the server logs above,
+    // never echoed back in the response.
+    return NextResponse.json({ error: "Cron job failed" }, { status: 500 });
+  }
 }

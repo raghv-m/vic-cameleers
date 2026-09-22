@@ -9,6 +9,7 @@ import { twoFactor } from "better-auth/plugins";
 
 import { business } from "@/config/business";
 import { serverEnv } from "@/env.server";
+import { recordAuditLog } from "@/lib/audit-log";
 import { db } from "@/lib/db";
 import { checkAdminLoginRateLimit } from "@/lib/rate-limit";
 
@@ -80,6 +81,17 @@ export const auth = betterAuth({
           await db.user.update({
             where: { id: session.userId },
             data: { lastLoginAt: new Date() },
+          });
+          // Only fires once auth is fully complete (2FA included, where
+          // enabled) - better-auth's 2FA challenge step uses a separate
+          // short-lived cookie, not a Session row, so this never logs a
+          // partial/unverified sign-in.
+          await recordAuditLog({
+            userId: session.userId,
+            action: "staff.login",
+            entityType: "User",
+            entityId: session.userId,
+            ipAddress: session.ipAddress,
           });
         },
       },

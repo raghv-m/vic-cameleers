@@ -95,14 +95,43 @@ HTTPS itself is a Vercel platform default once the site is actually deployed the
   is only acceptable for local development, not production (see `TODO-OWNER.md`).
 - The three `/api/cron/*` endpoints require `Authorization: Bearer $CRON_SECRET`
   (`src/lib/cron-auth.ts`) and refuse the request outright if `CRON_SECRET` isn't set, rather than
-  running unauthenticated.
+  running unauthenticated. Each wraps its work in try/catch so a single bad row can't silently
+  kill the whole run, and logs a structured `CRON_STARTED`/`CRON_COMPLETED`/`CRON_FAILED` event
+  (`src/lib/cron-log.ts`, captured by Vercel's log pipeline).
+- `email-retry` specifically claims each row it's about to retry with a conditional
+  `FAILED -> QUEUED` update before acting on it, so if the same cron ever ran twice concurrently
+  (Vercel doesn't normally do this, but a manual trigger could race the real one), only one
+  invocation can win that row - no email gets sent twice for the same original failure.
 
 ## Audit logging
 
 Every mutating admin action (lead status/notes/conversion, truck and crew management, job status,
 reviews, settings, staff management) writes an entry to `AuditLog` via `src/lib/audit-log.ts`:
 who, what, when, and a before/after snapshot where relevant. Viewable at `/admin/audit-log`
-(OPERATIONS_MANAGER and above).
+(OPERATIONS_MANAGER and above). A successful staff sign-in also logs a `staff.login` entry
+(`src/lib/auth.ts`'s `session.create` hook) - it only fires once auth is fully complete, 2FA
+included where enabled, since the 2FA challenge step uses a short-lived cookie rather than a
+real session.
+
+## Error handling
+
+Every API route that touches the database (`/api/quote`, `/api/contact`, all three
+`/api/cron/*`) wraps its work in try/catch: the real error is logged server-side
+(`console.error`, captured by Vercel), and the client only ever gets a generic message
+("Something went wrong saving your quote, please call us instead", "Cron job failed"). No route
+in this codebase echoes a raw Prisma error, stack trace, or environment variable back to the
+client - audited directly by grepping for `error.message` and similar patterns reaching a
+response body. The one place server errors ARE detailed to the client is Zod validation
+responses (`{ error: "Invalid submission", issues: [...] }`), which is intentional and safe:
+those describe problems with the client's own submitted input (a bad email format, a missing
+field), not server internals.
+
+Admin Server Actions don't have explicit try/catch around their Prisma calls; an uncaught
+exception there is handled by Next.js itself, which strips the message/stack from a Server
+Action error before it reaches the client in production and replaces it with a generic message
+plus a correlation digest. That's a framework guarantee, not something this codebase has to
+implement itself, so it wasn't duplicated - but it does mean those errors show as a hard failure
+rather than a graceful inline message today, which is a UX gap, not a security one.
 
 ## Secrets
 
