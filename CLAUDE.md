@@ -409,10 +409,17 @@ Crew only see their own assigned jobs.
   hierarchy unit tested; no live login has actually run, blocked on Neon provisioning)
   **OWNER for Neon provisioning**
 - [ ] Dashboard: new leads today/week, conversion rates, upcoming moves, revenue estimate
-- [ ] Leads list: filters, search, sort, status pipeline (list + kanban)
-- [ ] Lead detail: all quote data, photos, notes, activity timeline, call/SMS/email buttons, convert to booking
-- [ ] Abandoned quote drafts list
-- [ ] Customers list and detail (history of leads and bookings)
+- [~] Leads list: filters, search, sort, status pipeline (list + kanban) (search + status filter +
+  newest-first list at `/admin/leads`; no kanban board yet)
+- [~] Lead detail: all quote data, photos, notes, activity timeline, call/SMS/email buttons, convert
+  to booking (quote/move data, photos, notes with add-note action, merged activity timeline,
+  call/email quick links all done at `/admin/leads/[id]`; no SMS link and no convert-to-booking
+  button yet, that lands with the Bookings slice)
+- [ ] Abandoned quote drafts list (blocked: nothing creates an unsubmitted `QuoteDraft` yet, see the
+      "Draft saved server-side after Step 1" item in Section 6, so this page would always be empty)
+- [x] Customers list and detail (history of leads and bookings) (`/admin/customers` and
+      `/admin/customers/[id]`; booking history renders correctly but has nothing to show until the
+      Bookings slice exists)
 - [ ] Bookings: calendar view, assign truck and crew, double-booking prevention
 - [ ] Today's moves dispatcher view with status updates
 - [ ] Trucks (6t, 10t) and crew members management
@@ -466,7 +473,9 @@ This is also a cybersecurity portfolio piece, so treat it seriously and document
 - [ ] File upload safety: MIME and magic-byte check, size limit, randomised names, no execution
 - [ ] Secrets only in Vercel env vars, never in code or logs
 - [ ] PII minimisation, no card data ever stored (Stripe handles it in Phase 2)
-- [ ] Audit logs for all admin actions (who, what, when, IP, before/after)
+- [~] Audit logs for all admin actions (who, what, when, IP, before/after) (`src/lib/audit-log.ts`,
+  wired into the lead status-change and add-note actions; not yet wired into every admin action,
+  since most don't exist yet)
 - [ ] Database encryption at rest (Neon default) + TLS connections
 - [ ] Regular backups and a tested restore
 - [ ] Dependency scanning (Dependabot / `pnpm audit`) in CI
@@ -610,7 +619,8 @@ This is also a cybersecurity portfolio piece, so treat it seriously and document
 
 - [~] Auth with mandatory 2FA + RBAC (see Section 10 and 11 checklists; code complete and unit
   tested, live login flow blocked on Neon provisioning) **OWNER for Neon provisioning**
-- [ ] Leads, drafts, customers, lead detail, pipeline
+- [~] Leads, drafts, customers, lead detail, pipeline (see Section 10 checklist; abandoned drafts
+  still blocked on step-1 draft persistence)
 - [ ] Bookings, trucks, crew, today's moves
 - [ ] Reviews moderation, settings, email log, audit log, CSV export
 - [ ] Booking confirmation, reminders, review request emails + crons
