@@ -23,7 +23,9 @@ in `CLAUDE.md` where relevant.
 - **Public liability / goods-in-transit insurance.** Details, if any.
 - **Which services are actually offered** (packing, storage, pianos, office removals)? Drives
   which rows in `src/config/services.ts` / the `Service` table stay enabled.
-- **Cancellation and rescheduling terms.**
+- **Cancellation and rescheduling terms.** `src/app/(marketing)/cancellation-policy/page.tsx`
+  currently describes the general approach honestly without a specific notice period or fee
+  amount, since neither is confirmed. Update once decided.
 - **Accepted payment methods.**
 - **Business hours / phone answering hours.** Not shown anywhere yet since it's unconfirmed —
   the contact page doesn't claim specific hours.
