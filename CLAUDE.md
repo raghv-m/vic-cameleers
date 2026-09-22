@@ -114,10 +114,10 @@ Store in `src/config/business.ts` and the `BusinessSettings` table. Never hardco
 - [ ] Address autocomplete restricted to Australia, capture suburb, state, postcode
 - [ ] Postcode/suburb data for Victoria service-area checks (warn if outside Greater Melbourne)
 - [ ] GST display driven by `gstInclusive` setting
-- [ ] ABN and ACN in footer, contact page, and schema (`taxID`)
-- [ ] Privacy Policy aligned with the Australian Privacy Principles (what's collected, why, storage location, access and correction, contact)
-- [ ] Terms and Conditions
-- [ ] Cancellation and rescheduling policy page
+- [~] ABN and ACN in footer, contact page, and schema (`taxID`) — visible in the footer on every page; JSON-LD `taxID` lands with the Section 13 SEO work
+- [x] Privacy Policy aligned with the Australian Privacy Principles (what's collected, why, storage location, access and correction, contact)
+- [x] Terms and Conditions
+- [x] Cancellation and rescheduling policy page
 - [ ] Consumer-law-friendly wording (no misleading claims, clear pricing)
 - [ ] Insurance information section (only shown when config is filled)
 - [ ] Service-area restriction clearly stated (Victoria only)
@@ -259,7 +259,7 @@ Services are config-driven so they can be switched on or off without code change
 - [ ] FAQ
 - [ ] Guides index + MDX article template + 5 starter articles (cost guide, moving checklist, apartment moving tips, packing guide, hourly vs fixed price)
 - [~] Contact (phone, email, form, service area) — hours not shown, unconfirmed (see TODO-OWNER.md)
-- [ ] Privacy, Terms, Cancellation policy
+- [x] Privacy, Terms, Cancellation policy
 - [ ] Custom 404 and error pages with quote CTA
 - [ ] Cookie / analytics consent notice if any non-essential tracking is added
 
@@ -585,14 +585,14 @@ This is also a cybersecurity portfolio piece, so treat it seriously and document
 
 **Milestone 1B: Lead capture live (deploy this as soon as it works)**
 
-- [ ] Homepage
-- [ ] Quote flow + pricing engine + tests
-- [ ] Contact page + form
-- [ ] Customer + staff emails for quote and contact
-- [ ] Privacy, Terms, Cancellation pages
+- [x] Homepage
+- [x] Quote flow + pricing engine + tests
+- [x] Contact page + form
+- [x] Customer + staff emails for quote and contact
+- [x] Privacy, Terms, Cancellation pages
 - [ ] Vercel Analytics + Speed Insights
 - [ ] Basic SEO (metadata, sitemap, robots, MovingCompany schema)
-- [ ] Deployed to Vercel production **OWNER to approve**
+- [!] Deployed to Vercel production **OWNER to approve**
 
 **Milestone 1C: Admin and CRM**
 
