@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { FaqAccordion } from "@/components/marketing/faq-accordion";
 import { FinalCta } from "@/components/marketing/final-cta";
+import { FleetSection } from "@/components/marketing/fleet-section";
 import { Hero } from "@/components/marketing/hero";
 import { HowItWorks } from "@/components/marketing/how-it-works";
 import { MovingTimeline } from "@/components/marketing/moving-timeline";
@@ -27,6 +28,7 @@ export default function Home() {
       <PricingTeaser />
       <HowItWorks />
       <WhyUs />
+      <FleetSection />
       <ServiceAreas />
       <ReviewsSection />
       <MovingTimeline />

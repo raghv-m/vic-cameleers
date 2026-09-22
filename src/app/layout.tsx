@@ -3,6 +3,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Inter, Oswald } from "next/font/google";
 
+import { MotionProvider } from "@/components/motion-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { business } from "@/config/business";
 
@@ -41,7 +42,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           Skip to content
         </a>
-        {children}
+        <MotionProvider>{children}</MotionProvider>
         <Toaster />
         <Analytics />
         <SpeedInsights />
