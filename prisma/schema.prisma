@@ -1,0 +1,568 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum Role {
+  SUPER_ADMIN
+  OPERATIONS_MANAGER
+  DISPATCHER
+  SALES
+  FINANCE
+  SUPPORT
+  CREW
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUOTED
+  FOLLOW_UP
+  BOOKED
+  COMPLETED
+  LOST
+}
+
+enum LeadSource {
+  QUOTE_FORM
+  CONTACT_FORM
+  PHONE
+  REFERRAL
+  GOOGLE_BUSINESS_PROFILE
+  OTHER
+}
+
+enum PropertyType {
+  STUDIO
+  APARTMENT
+  UNIT
+  TOWNHOUSE
+  HOUSE
+  OFFICE
+  STORAGE_UNIT
+  SINGLE_ITEM
+}
+
+enum TruckSize {
+  SIX_TONNE
+  TEN_TONNE
+}
+
+enum BookingStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+enum JobStatus {
+  SCHEDULED
+  EN_ROUTE
+  LOADING
+  IN_TRANSIT
+  UNLOADING
+  COMPLETED
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  HIDDEN
+}
+
+enum ReviewSource {
+  ON_SITE
+  GOOGLE
+  MANUAL
+}
+
+enum EstimateMode {
+  SHOW_PRICE
+  CALLBACK_ONLY
+}
+
+enum EmailType {
+  QUOTE_RECEIVED
+  NEW_LEAD_ALERT
+  CONTACT_RECEIVED
+  CONTACT_ALERT
+  QUOTE_REMINDER
+  BOOKING_CONFIRMED
+  REMINDER_7_DAY
+  REMINDER_24_HOUR
+  CREW_ON_THE_WAY
+  MOVE_COMPLETED
+  REVIEW_REQUEST
+}
+
+enum EmailStatus {
+  QUEUED
+  SENT
+  FAILED
+}
+
+enum AttachmentKind {
+  QUOTE_PHOTO
+  JOB_PHOTO
+  DOCUMENT
+}
+
+// ---------------------------------------------------------------------------
+// Auth (Better Auth compatible shape). Account / Session / Verification /
+// TwoFactor field names will be reconciled against `better-auth`'s Prisma
+// schema generator when auth is wired up in Milestone 1C, so this shape is a
+// close best-effort now to avoid a painful migration later.
+// ---------------------------------------------------------------------------
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  role          Role
+  isActive      Boolean   @default(true)
+  lastLoginAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts         Account[]
+  sessions         Session[]
+  twoFactor        TwoFactor?
+  crewMember       CrewMember?
+  auditLogs        AuditLog[]
+  notes            Note[]
+  moderatedReviews Review[]   @relation("ReviewModerator")
+
+  @@map("users")
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId             String
+  providerId            String
+  password              String?
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@unique([providerId, accountId])
+  @@map("accounts")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("sessions")
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("verifications")
+}
+
+model TwoFactor {
+  id          String @id @default(cuid())
+  userId      String @unique
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  secret      String
+  backupCodes String
+
+  @@map("two_factors")
+}
+
+// ---------------------------------------------------------------------------
+// Fleet and crew
+// ---------------------------------------------------------------------------
+
+model Truck {
+  id           String    @id @default(cuid())
+  name         String
+  size         TruckSize
+  registration String?
+  isActive     Boolean   @default(true)
+  bookings     Booking[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@map("trucks")
+}
+
+model CrewMember {
+  id              String           @id @default(cuid())
+  name            String
+  phone           String
+  userId          String?          @unique
+  user            User?            @relation(fields: [userId], references: [id])
+  isActive        Boolean          @default(true)
+  teamMemberships TeamMember[]
+  jobAssignments  JobAssignment[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@map("crew_members")
+}
+
+model Team {
+  id        String       @id @default(cuid())
+  name      String
+  isActive  Boolean      @default(true)
+  members   TeamMember[]
+  bookings  Booking[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@map("teams")
+}
+
+model TeamMember {
+  id           String     @id @default(cuid())
+  teamId       String
+  team         Team       @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  crewMemberId String
+  crewMember   CrewMember @relation(fields: [crewMemberId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, crewMemberId])
+  @@map("team_members")
+}
+
+// ---------------------------------------------------------------------------
+// CRM: customers, leads, quotes, bookings, jobs
+// ---------------------------------------------------------------------------
+
+model Customer {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String
+  email     String?
+  leads     Lead[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([phone])
+  @@index([email])
+  @@map("customers")
+}
+
+model QuoteDraft {
+  id                    String        @id @default(cuid())
+  step                  Int           @default(1)
+  pickupAddress         String?
+  pickupLat             Float?
+  pickupLng             Float?
+  dropoffAddress        String?
+  dropoffLat            Float?
+  dropoffLng            Float?
+  additionalStopAddress String?
+  moveDate              DateTime?
+  dateFlexibility       String?
+  preferredTime         String?
+  propertyType          PropertyType?
+  bedrooms              Int?
+  pickupAccess          Json?
+  dropoffAccess         Json?
+  inventorySummary      String?
+  inventoryItems        Json?
+  specialItems          Json?
+  extras                Json?
+  contactName           String?
+  contactPhone          String?
+  contactEmail          String?
+  howHeardAboutUs       String?
+  utmSource             String?
+  utmMedium             String?
+  utmCampaign           String?
+  referrer              String?
+  landingPath           String?
+  consentGiven          Boolean       @default(false)
+  isSubmitted           Boolean       @default(false)
+  lead                  Lead?
+  attachments           Attachment[]
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+
+  @@map("quote_drafts")
+}
+
+model Lead {
+  id              String      @id @default(cuid())
+  referenceNumber String      @unique
+  customerId      String?
+  customer        Customer?   @relation(fields: [customerId], references: [id])
+  source          LeadSource
+  status          LeadStatus  @default(NEW)
+  lostReason      String?
+  notes           Note[]
+  quoteDraftId    String?     @unique
+  quoteDraft      QuoteDraft? @relation(fields: [quoteDraftId], references: [id])
+  quotes          Quote[]
+  consentGiven    Boolean     @default(false)
+  emailFailed     Boolean     @default(false)
+  ipAddress       String?
+  userAgent       String?
+  booking         Booking?
+  emailLogs       EmailLog[]
+  reviews         Review[]
+  attachments     Attachment[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("leads")
+}
+
+model Quote {
+  id                   String     @id @default(cuid())
+  leadId               String
+  lead                 Lead       @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  estimateLowCents     Int
+  estimateHighCents    Int
+  estimatedLowHours    Float
+  estimatedHighHours   Float
+  recommendedTruck     TruckSize
+  recommendedCrewCount Int
+  assumptions          Json
+  pricingSnapshot      Json
+  createdAt            DateTime   @default(now())
+
+  @@map("quotes")
+}
+
+model Booking {
+  id            String        @id @default(cuid())
+  leadId        String        @unique
+  lead          Lead          @relation(fields: [leadId], references: [id])
+  moveDate      DateTime
+  preferredTime String?
+  truckId       String?
+  truck         Truck?        @relation(fields: [truckId], references: [id])
+  teamId        String?
+  team          Team?         @relation(fields: [teamId], references: [id])
+  status        BookingStatus @default(SCHEDULED)
+  job           Job?
+  emailLogs     EmailLog[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([moveDate])
+  @@map("bookings")
+}
+
+model Job {
+  id          String          @id @default(cuid())
+  bookingId   String          @unique
+  booking     Booking         @relation(fields: [bookingId], references: [id])
+  status      JobStatus       @default(SCHEDULED)
+  assignments JobAssignment[]
+  attachments Attachment[]
+  notes       String?
+  startedAt   DateTime?
+  completedAt DateTime?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@map("jobs")
+}
+
+model JobAssignment {
+  id           String     @id @default(cuid())
+  jobId        String
+  job          Job        @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  crewMemberId String
+  crewMember   CrewMember @relation(fields: [crewMemberId], references: [id])
+
+  @@unique([jobId, crewMemberId])
+  @@map("job_assignments")
+}
+
+// ---------------------------------------------------------------------------
+// Reviews, notes, attachments
+// ---------------------------------------------------------------------------
+
+model Review {
+  id                String       @id @default(cuid())
+  authorName        String
+  rating            Int
+  body              String
+  source            ReviewSource
+  status            ReviewStatus @default(PENDING)
+  isFeatured        Boolean      @default(false)
+  leadId            String?
+  lead              Lead?        @relation(fields: [leadId], references: [id])
+  moderatedByUserId String?
+  moderatedBy       User?        @relation("ReviewModerator", fields: [moderatedByUserId], references: [id])
+  moderatedAt       DateTime?
+  submittedAt       DateTime     @default(now())
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  @@map("reviews")
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  body      String
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  leadId    String?
+  lead      Lead?    @relation(fields: [leadId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@map("notes")
+}
+
+model Attachment {
+  id           String         @id @default(cuid())
+  url          String
+  filename     String
+  mimeType     String
+  sizeBytes    Int
+  kind         AttachmentKind
+  quoteDraftId String?
+  quoteDraft   QuoteDraft?    @relation(fields: [quoteDraftId], references: [id])
+  leadId       String?
+  lead         Lead?          @relation(fields: [leadId], references: [id])
+  jobId        String?
+  job          Job?           @relation(fields: [jobId], references: [id])
+  uploadedAt   DateTime       @default(now())
+
+  @@map("attachments")
+}
+
+// ---------------------------------------------------------------------------
+// Settings
+// ---------------------------------------------------------------------------
+
+model Service {
+  id               String   @id @default(cuid())
+  slug             String   @unique
+  name             String
+  shortDescription String
+  enabled          Boolean  @default(true)
+  sortOrder        Int      @default(0)
+  updatedAt        DateTime @updatedAt
+
+  @@map("services")
+}
+
+model PricingSettings {
+  id                          String   @id @default(cuid())
+  hourlyRateCents             Int
+  extraMoverHourlyRateCents   Int
+  minimumHours                Float
+  calloutMinutes              Int
+  gstInclusive                Boolean
+  baseHoursBySize             Json
+  accessPenaltyPerFlightHours Float
+  accessPenaltyLongCarryHours Float
+  packingHourPerBedroom       Float
+  unpackingHourPerBedroom     Float
+  disassemblyHourPerItem      Float
+  updatedByUserId             String?
+  updatedAt                   DateTime @updatedAt
+
+  @@map("pricing_settings")
+}
+
+model BusinessSettings {
+  id                         String       @id @default(cuid())
+  tradingName                String
+  legalName                  String?
+  abn                        String
+  acn                        String
+  baseSuburb                 String
+  serviceAreaDescription     String
+  phoneE164                  String
+  publicEmail                String?
+  domain                     String?
+  fleetDescription           String
+  crewSize                   Int?
+  isFullyInsured             Boolean      @default(false)
+  insuranceDetail            String?
+  isLicensed                 Boolean      @default(false)
+  licenseDetail              String?
+  googleReviewUrl            String?
+  estimateMode               EstimateMode @default(SHOW_PRICE)
+  cancellationPolicySummary  String?
+  paymentMethodsDescription  String?
+  updatedAt                  DateTime     @updatedAt
+
+  @@map("business_settings")
+}
+
+// ---------------------------------------------------------------------------
+// Logging and analytics
+// ---------------------------------------------------------------------------
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id])
+  action     String
+  entityType String
+  entityId   String?
+  ipAddress  String?
+  before     Json?
+  after      Json?
+  createdAt  DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@map("audit_logs")
+}
+
+model EmailLog {
+  id               String      @id @default(cuid())
+  type             EmailType
+  toAddress        String
+  status           EmailStatus @default(QUEUED)
+  relatedLeadId    String?
+  relatedLead      Lead?       @relation(fields: [relatedLeadId], references: [id])
+  relatedBookingId String?
+  relatedBooking   Booking?    @relation(fields: [relatedBookingId], references: [id])
+  errorMessage     String?
+  sentAt           DateTime?
+  createdAt        DateTime    @default(now())
+
+  @@map("email_logs")
+}
+
+model AnalyticsEvent {
+  id        String   @id @default(cuid())
+  eventName String
+  sessionId String?
+  leadId    String?
+  path      String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([eventName, createdAt])
+  @@map("analytics_events")
+}
