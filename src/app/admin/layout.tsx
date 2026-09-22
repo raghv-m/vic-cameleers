@@ -11,5 +11,9 @@ export const metadata: Metadata = {
 };
 
 export default function AdminLayout({ children }: LayoutProps<"/admin">) {
-  return <div className="bg-muted/30 min-h-svh">{children}</div>;
+  return (
+    <div id="main-content" className="bg-muted/30 min-h-svh">
+      {children}
+    </div>
+  );
 }

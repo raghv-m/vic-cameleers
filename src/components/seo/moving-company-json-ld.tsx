@@ -1,14 +1,11 @@
-import { headers } from "next/headers";
-
 import { business } from "@/config/business";
+import { JsonLd } from "@/components/seo/json-ld";
 
 /**
  * MovingCompany (LocalBusiness) structured data. No aggregateRating —
  * see CLAUDE.md section 3: no rating claims until real reviews exist.
  */
-export async function MovingCompanyJsonLd() {
-  const nonce = (await headers()).get("x-nonce") ?? undefined;
-
+export function MovingCompanyJsonLd() {
   const data = {
     "@context": "https://schema.org",
     "@type": "MovingCompany",
@@ -29,11 +26,5 @@ export async function MovingCompanyJsonLd() {
     priceRange: business.hourlyRateDisplay,
   };
 
-  return (
-    <script
-      type="application/ld+json"
-      nonce={nonce}
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
-    />
-  );
+  return <JsonLd data={data} />;
 }

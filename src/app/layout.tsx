@@ -35,6 +35,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${inter.variable} ${oswald.variable} h-full antialiased`}>
       <body className="bg-background text-foreground flex min-h-full flex-col">
+        <a
+          href="#main-content"
+          className="bg-background text-foreground focus-visible:ring-ring sr-only rounded-md border px-4 py-2 text-sm font-medium focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus-visible:ring-2 focus-visible:outline-none"
+        >
+          Skip to content
+        </a>
         {children}
         <Toaster />
         <Analytics />

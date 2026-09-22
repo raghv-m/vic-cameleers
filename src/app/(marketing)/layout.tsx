@@ -8,7 +8,9 @@ export default function MarketingLayout({ children }: LayoutProps<"/">) {
     <>
       <MovingCompanyJsonLd />
       <Header />
-      <main className="flex-1 pb-20 lg:pb-0">{children}</main>
+      <main id="main-content" className="flex-1 pb-20 lg:pb-0">
+        {children}
+      </main>
       <Footer />
       <StickyMobileBar />
     </>

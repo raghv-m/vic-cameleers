@@ -72,3 +72,11 @@ All should be owned by a business Google account with 2FA on.
 - **Google Business Profile**, Search Console, Bing Webmaster Tools verified.
 - **Directory citations** (True Local, Yellow Pages, hipages, Oneflare, Find a Mover, Yelp, Apple
   Business Connect, Bing Places) with consistent name/phone/website.
+
+## Security
+
+- `pnpm audit` currently reports 2 high-severity advisories, both in transitive dependencies of
+  `prisma`/`better-auth`'s own build tooling (`mysql2`, used internally even though this project
+  only uses Postgres, and `deepmerge-ts`, used by `@prisma/config`), not in code this app's
+  runtime actually reaches. Not urgent, but re-check after the next `prisma`/`better-auth` bump;
+  `.github/dependabot.yml` will open PRs as upstream patches land.

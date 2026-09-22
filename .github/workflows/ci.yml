@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint-typecheck-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: pnpm db:generate
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Unit tests
+        run: pnpm test
+
+      - name: Audit dependencies
+        run: pnpm audit --audit-level=high
+        continue-on-error: true
+
+      - name: Build
+        run: pnpm build
+        env:
+          # Placeholder values so the build can run without live infrastructure.
+          # Every consuming module falls back gracefully when these aren't real
+          # (see TODO-OWNER.md); CI only needs the build to succeed, not to
+          # connect to anything.
+          DATABASE_URL: "postgresql://user:password@localhost:5432/ci"
+          DIRECT_URL: "postgresql://user:password@localhost:5432/ci"
+          NEXT_PUBLIC_SITE_URL: "http://localhost:3000"
