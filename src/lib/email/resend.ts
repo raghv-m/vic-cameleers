@@ -3,6 +3,7 @@ import "server-only";
 import { format } from "date-fns";
 
 import { serverEnv } from "@/env.server";
+import { adminLeadUrl } from "@/lib/admin-lead-url";
 import { db } from "@/lib/db";
 import { sendEmail } from "@/lib/email/client";
 import { BookingConfirmedEmail } from "@/lib/email/templates/booking-confirmed";
@@ -104,6 +105,7 @@ export async function resendEmailLog(emailLogId: string): Promise<ResendResult> 
           estimateSummary: quote
             ? `$${quote.estimateLowCents / 100} to $${quote.estimateHighCents / 100}, ${quote.recommendedCrewCount} movers, ${truckLabel[quote.recommendedTruck]}`
             : undefined,
+          adminLeadUrl: adminLeadUrl(lead.id),
         }),
         relatedLeadId: lead.id,
       });

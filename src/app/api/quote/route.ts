@@ -4,6 +4,7 @@ import type { NextRequest } from "next/server";
 
 import { defaultPricingSettings } from "@/config/pricing-defaults";
 import { serverEnv } from "@/env.server";
+import { adminLeadUrl } from "@/lib/admin-lead-url";
 import { logAnalyticsEvent } from "@/lib/analytics";
 import { db } from "@/lib/db";
 import { sendEmail } from "@/lib/email/client";
@@ -244,6 +245,7 @@ export async function POST(request: NextRequest) {
             customerEmail: data.contactEmail,
             message: data.notes,
             estimateSummary: `$${estimate.priceLowCents / 100} to $${estimate.priceHighCents / 100}, ${estimate.recommendedCrewCount} movers, ${truckLabel[estimate.recommendedTruck]}`,
+            adminLeadUrl: adminLeadUrl(lead.id),
           }),
           relatedLeadId: lead.id,
         });

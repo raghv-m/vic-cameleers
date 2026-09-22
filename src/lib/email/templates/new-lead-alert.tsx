@@ -10,6 +10,8 @@ export interface NewLeadAlertEmailProps {
   customerEmail?: string;
   message?: string;
   estimateSummary?: string;
+  /** Deep link into the admin lead detail page, omitted if ADMIN_PATH isn't set yet. */
+  adminLeadUrl?: string;
 }
 
 export function NewLeadAlertEmail({
@@ -20,6 +22,7 @@ export function NewLeadAlertEmail({
   customerEmail,
   message,
   estimateSummary,
+  adminLeadUrl,
 }: NewLeadAlertEmailProps) {
   return (
     <EmailLayout
@@ -83,23 +86,43 @@ export function NewLeadAlertEmail({
         )}
       </Section>
 
-      {customerPhone && (
-        <Button
-          href={`tel:${customerPhone}`}
-          style={{
-            backgroundColor: emailColors.primary,
-            color: "#ffffff",
-            padding: "12px 20px",
-            borderRadius: 8,
-            fontSize: 14,
-            fontWeight: 600,
-            textDecoration: "none",
-            display: "inline-block",
-          }}
-        >
-          Call {customerName} now
-        </Button>
-      )}
+      <Section style={{ marginTop: 16 }}>
+        {customerPhone && (
+          <Button
+            href={`tel:${customerPhone}`}
+            style={{
+              backgroundColor: emailColors.primary,
+              color: "#ffffff",
+              padding: "12px 20px",
+              borderRadius: 8,
+              fontSize: 14,
+              fontWeight: 600,
+              textDecoration: "none",
+              display: "inline-block",
+              marginRight: 8,
+            }}
+          >
+            Call {customerName} now
+          </Button>
+        )}
+        {adminLeadUrl && (
+          <Button
+            href={adminLeadUrl}
+            style={{
+              border: `1px solid ${emailColors.border}`,
+              color: emailColors.text,
+              padding: "12px 20px",
+              borderRadius: 8,
+              fontSize: 14,
+              fontWeight: 600,
+              textDecoration: "none",
+              display: "inline-block",
+            }}
+          >
+            View in admin
+          </Button>
+        )}
+      </Section>
     </EmailLayout>
   );
 }

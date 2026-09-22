@@ -2,6 +2,7 @@ import { after, NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 import { serverEnv } from "@/env.server";
+import { adminLeadUrl } from "@/lib/admin-lead-url";
 import { logAnalyticsEvent } from "@/lib/analytics";
 import { toE164AuMobile } from "@/lib/au-phone";
 import { db } from "@/lib/db";
@@ -106,6 +107,7 @@ export async function POST(request: NextRequest) {
             customerPhone: phoneE164,
             customerEmail: data.email,
             message: data.message,
+            adminLeadUrl: adminLeadUrl(lead.id),
           }),
           relatedLeadId: lead.id,
         });
