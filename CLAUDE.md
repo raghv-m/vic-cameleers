@@ -233,21 +233,21 @@ Services are config-driven so they can be switched on or off without code change
 
 ### Trust section checklist
 
-- [ ] Google reviews / real testimonials block (empty state until real)
-- [ ] Review count (only when real)
-- [ ] Years in business / moves completed (hidden until real numbers exist)
-- [ ] Insurance information (hidden until confirmed)
-- [ ] ABN / ACN visible
-- [ ] Real team photos slot
-- [ ] Real truck photos slot
-- [ ] Base location (Cranbourne, service-area business)
-- [ ] Industry memberships (hidden until real)
-- [ ] Payment methods
-- [ ] Secure booking indicators (HTTPS, privacy link, no card data stored)
+- [x] Google reviews / real testimonials block (empty state until real)
+- [x] Review count (only when real — currently hidden, correctly)
+- [x] Years in business / moves completed (hidden until real numbers exist)
+- [x] Insurance information (hidden until confirmed)
+- [x] ABN / ACN visible
+- [ ] Real team photos slot (not yet — homepage currently uses icons, not photo placeholders)
+- [ ] Real truck photos slot (same as above)
+- [x] Base location (Cranbourne, service-area business)
+- [x] Industry memberships (hidden until real)
+- [x] Payment methods (not shown, correctly, since the accepted methods are still unconfirmed)
+- [~] Secure booking indicators (privacy link is live in the footer; HTTPS depends on the Vercel deployment, not live yet; no card data is collected anywhere yet)
 
 ### Pages checklist
 
-- [ ] Home
+- [x] Home
 - [ ] About
 - [ ] How it works
 - [ ] Services hub + each service page (unique content, FAQs, CTA)
