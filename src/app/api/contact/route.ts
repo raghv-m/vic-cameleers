@@ -1,8 +1,12 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+import { serverEnv } from "@/env.server";
 import { toE164AuMobile } from "@/lib/au-phone";
 import { db } from "@/lib/db";
+import { ContactReceivedEmail } from "@/lib/email/templates/contact-received";
+import { NewLeadAlertEmail } from "@/lib/email/templates/new-lead-alert";
+import { sendEmail } from "@/lib/email/client";
 import { checkPublicFormRateLimit } from "@/lib/rate-limit";
 import { generateReferenceNumber } from "@/lib/reference-number";
 import { verifyTurnstileToken } from "@/lib/turnstile";
@@ -45,7 +49,7 @@ export async function POST(request: NextRequest) {
   const phoneE164 = data.phone ? toE164AuMobile(data.phone) : undefined;
 
   try {
-    await db.$transaction(async (tx) => {
+    const lead = await db.$transaction(async (tx) => {
       const existingCustomer = phoneE164
         ? await tx.customer.findFirst({ where: { phone: phoneE164 } })
         : await tx.customer.findFirst({ where: { email: data.email } });
@@ -59,7 +63,7 @@ export async function POST(request: NextRequest) {
             data: { name: data.name, phone: phoneE164, email: data.email },
           });
 
-      await tx.lead.create({
+      return tx.lead.create({
         data: {
           referenceNumber: generateReferenceNumber(),
           customerId: customer.id,
@@ -73,8 +77,36 @@ export async function POST(request: NextRequest) {
       });
     });
 
-    // TODO: send the customer "we got your message" email and the staff
-    // LEAD_NOTIFY_EMAIL alert here once the Email sending milestone lands.
+    // Emails are best-effort and run after the response via after(), so a
+    // broken send never blocks or fails the lead save.
+    after(async () => {
+      await sendEmail({
+        type: "CONTACT_RECEIVED",
+        to: data.email,
+        subject: "We've got your message",
+        react: ContactReceivedEmail({ customerName: data.name }),
+        relatedLeadId: lead.id,
+      });
+
+      if (serverEnv.LEAD_NOTIFY_EMAIL) {
+        await sendEmail({
+          type: "CONTACT_ALERT",
+          to: serverEnv.LEAD_NOTIFY_EMAIL,
+          subject: `New contact form message: ${data.name} (${lead.referenceNumber})`,
+          react: NewLeadAlertEmail({
+            referenceNumber: lead.referenceNumber,
+            source: "Contact form",
+            customerName: data.name,
+            customerPhone: phoneE164,
+            customerEmail: data.email,
+            message: data.message,
+          }),
+          relatedLeadId: lead.id,
+        });
+      } else {
+        console.warn("LEAD_NOTIFY_EMAIL not set, skipping staff alert email (dev only).");
+      }
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {

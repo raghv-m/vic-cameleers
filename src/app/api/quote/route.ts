@@ -1,9 +1,13 @@
 import type { Prisma } from "@prisma/client";
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 import { defaultPricingSettings } from "@/config/pricing-defaults";
+import { serverEnv } from "@/env.server";
 import { db } from "@/lib/db";
+import { sendEmail } from "@/lib/email/client";
+import { NewLeadAlertEmail } from "@/lib/email/templates/new-lead-alert";
+import { QuoteReceivedEmail } from "@/lib/email/templates/quote-received";
 import { calculateQuote } from "@/lib/pricing";
 import { checkPublicFormRateLimit } from "@/lib/rate-limit";
 import { generateReferenceNumber } from "@/lib/reference-number";
@@ -11,6 +15,11 @@ import { verifyTurnstileToken } from "@/lib/turnstile";
 import { toE164AuMobile } from "@/lib/au-phone";
 import { quoteSubmissionSchema } from "@/lib/validation/quote";
 import type { PricingSettings, PropertySize } from "@/types/pricing";
+
+const truckLabel: Record<"SIX_TONNE" | "TEN_TONNE", string> = {
+  SIX_TONNE: "6 tonne truck",
+  TEN_TONNE: "10 tonne truck",
+};
 
 // TODO(owner): replace with a real Distance Matrix / Routes API call once
 // GOOGLE_MAPS_SERVER_KEY is set (see TODO-OWNER.md). Every estimate assumes
@@ -192,8 +201,49 @@ export async function POST(request: NextRequest) {
       return newLead;
     });
 
-    // TODO: send the customer "quote received" email and the staff
-    // LEAD_NOTIFY_EMAIL alert here once the Email sending milestone lands.
+    // Emails are best-effort: a broken send must never take the lead down
+    // with it, and the DB transaction has already committed by this point.
+    // after() hands this to Vercel's background work queue instead of a
+    // bare fire-and-forget promise, which the platform can kill the instant
+    // the response is sent.
+    after(async () => {
+      await sendEmail({
+        type: "QUOTE_RECEIVED",
+        to: data.contactEmail,
+        subject: `Your Vic Cameleers estimate: ${lead.referenceNumber}`,
+        react: QuoteReceivedEmail({
+          customerName: data.contactName,
+          referenceNumber: lead.referenceNumber,
+          priceLowCents: estimate.priceLowCents,
+          priceHighCents: estimate.priceHighCents,
+          lowHours: estimate.lowHours,
+          highHours: estimate.highHours,
+          recommendedCrewCount: estimate.recommendedCrewCount,
+          recommendedTruckLabel: truckLabel[estimate.recommendedTruck],
+        }),
+        relatedLeadId: lead.id,
+      });
+
+      if (serverEnv.LEAD_NOTIFY_EMAIL) {
+        await sendEmail({
+          type: "NEW_LEAD_ALERT",
+          to: serverEnv.LEAD_NOTIFY_EMAIL,
+          subject: `New quote lead: ${data.contactName} (${lead.referenceNumber})`,
+          react: NewLeadAlertEmail({
+            referenceNumber: lead.referenceNumber,
+            source: "Quote",
+            customerName: data.contactName,
+            customerPhone: phoneE164,
+            customerEmail: data.contactEmail,
+            message: data.notes,
+            estimateSummary: `$${estimate.priceLowCents / 100} to $${estimate.priceHighCents / 100}, ${estimate.recommendedCrewCount} movers, ${truckLabel[estimate.recommendedTruck]}`,
+          }),
+          relatedLeadId: lead.id,
+        });
+      } else {
+        console.warn("LEAD_NOTIFY_EMAIL not set, skipping staff alert email (dev only).");
+      }
+    });
 
     return NextResponse.json({
       referenceNumber: lead.referenceNumber,
