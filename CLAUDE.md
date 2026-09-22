@@ -248,19 +248,31 @@ Services are config-driven so they can be switched on or off without code change
 ### Pages checklist
 
 - [x] Home
-- [ ] About
-- [ ] How it works
-- [ ] Services hub + each service page (unique content, FAQs, CTA)
-- [ ] Pricing (rate, minimum, call-out, 3 worked examples in plain text, calculator)
-- [ ] Quote
-- [ ] Service areas hub with map
-- [ ] Suburb pages (Section 7)
-- [ ] Reviews
-- [ ] FAQ
-- [ ] Guides index + MDX article template + 5 starter articles (cost guide, moving checklist, apartment moving tips, packing guide, hourly vs fixed price)
+- [x] About
+- [x] How it works
+- [x] Services hub + each service page (unique content, FAQs, CTA) (`/services`, `/services/[slug]`
+      for each enabled service in `src/config/services.ts`; a disabled slug like `heavy-items` 404s)
+- [~] Pricing (rate, minimum, call-out, 3 worked examples in plain text, calculator) (rate, minimum,
+  call-out, and 3 worked examples computed live with the real pricing engine are on `/pricing`; no
+  interactive calculator widget, that links out to `/quote` instead)
+- [x] Quote
+- [~] Service areas hub with map (`/removalists` lists all 21 launch suburbs; no interactive map,
+  same as the homepage's service-areas section, both pending the Google Maps API key)
+- [x] Suburb pages (Section 7)
+- [x] Reviews (public `/reviews` reads real `Review` rows with status APPROVED; empty state until
+      any exist, matching the honesty rule; the homepage's reviews section was also made live for
+      the same reason, it used to be a hardcoded "we're new" regardless of real data)
+- [x] FAQ (`/faq`, FAQPage JSON-LD; content now lives in `src/config/faq.ts`, shared with the
+      homepage FAQ accordion so the two can't drift apart)
+- [~] Guides index + MDX article template + 5 starter articles (cost guide, moving checklist,
+  apartment moving tips, packing guide, hourly vs fixed price) (all 5 articles live at `/guides`
+  and `/guides/[slug]`; built as typed TSX content under `src/content/guides/` rather than MDX,
+  since no MDX toolchain was installed and this avoided adding one under time pressure - same
+  frontmatter-equivalent fields, same routing, just not the file format CLAUDE.md named)
 - [~] Contact (phone, email, form, service area) — hours not shown, unconfirmed (see TODO-OWNER.md)
 - [x] Privacy, Terms, Cancellation policy
-- [ ] Custom 404 and error pages with quote CTA
+- [~] Custom 404 and error pages with quote CTA (`src/app/not-found.tsx` has the quote CTA; no
+  custom `error.tsx` for runtime errors yet)
 - [ ] Cookie / analytics consent notice if any non-essential tracking is added
 
 ---
@@ -327,13 +339,18 @@ Rules:
 
 ### Checklist
 
-- [ ] Suburb MDX schema and loader
-- [ ] Suburb page template with embedded quote widget
-- [ ] 21 launch suburb pages drafted
-- [ ] All `<!-- REVIEW -->` items checked **OWNER**
-- [ ] Service areas hub with interactive map
-- [ ] Nearby-suburb internal linking
-- [ ] Suburb pages in sitemap
+- [~] Suburb MDX schema and loader (typed TS content in `src/content/suburbs.ts` +
+  `getSuburbBySlug`, not MDX, see the Section 5 guides note for why)
+- [~] Suburb page template with embedded quote widget (`/removalists/[suburb]`; CTA links to
+  `/quote` rather than an embedded widget, since the compact quote widget itself isn't built yet)
+- [x] 21 launch suburb pages drafted (postcode and LGA sourced from public directories, not
+      invented; every page renders a visible draft-content notice, see the next item)
+- [ ] All `<!-- REVIEW -->` items checked **OWNER** (each suburb page shows a standing draft
+      notice instead of inline comments, since there's no MDX; nothing here is verified firsthand)
+- [~] Service areas hub with interactive map (`/removalists` lists all 21 suburbs; no interactive
+  map, pending `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`, same blocker as the homepage's map)
+- [x] Nearby-suburb internal linking (4-6 real nearby suburbs per page based on actual adjacency)
+- [x] Suburb pages in sitemap
 
 ---
 
@@ -542,14 +559,17 @@ This is also a cybersecurity portfolio piece, so treat it seriously and document
 - [x] `robots.txt` (blocks `/api/` and the admin path once `ADMIN_PATH` is set; no drafts route exists yet)
 - [ ] Canonical URLs
 - [x] JSON-LD `MovingCompany` / LocalBusiness: name, phone, `areaServed`, `priceRange`, `taxID` (geo and opening hours not included — no confirmed address/hours yet)
-- [ ] JSON-LD `Service` on service pages
-- [ ] JSON-LD `FAQPage` where eligible
+- [x] JSON-LD `Service` on service pages
+- [x] JSON-LD `FAQPage` where eligible (dedicated FAQ page, every service page, every suburb page)
 - [ ] JSON-LD `BreadcrumbList` + visible breadcrumbs
 - [x] `aggregateRating` only once real reviews exist (currently omitted entirely, correctly)
-- [ ] Internal linking: services ↔ suburbs ↔ guides
+- [~] Internal linking: services ↔ suburbs ↔ guides (suburb pages link to services and to
+  `/guides`; guide articles link to relevant services and `/pricing`; the services hub doesn't
+  link back out to suburbs or guides yet)
 - [ ] Image optimisation: `next/image`, AVIF/WebP, lazy loading, descriptive alt text
-- [ ] Pricing page written in plain text so Google and AI assistants can quote it directly
-- [ ] `llms.txt` summarising the business, services, area and pricing
+- [x] Pricing page written in plain text so Google and AI assistants can quote it directly
+- [x] `llms.txt` summarising the business, services, area and pricing (`/llms.txt`, generated from
+      the same config and live `PricingSettings` as the rest of the site, can't drift out of sync)
 - [ ] Google Business Profile set up as service-area business, linked with UTM **OWNER**
 - [ ] Citations: True Local, Yellow Pages, hipages, Oneflare, Find a Mover, Yelp, Apple Business Connect, Bing Places (same name, phone, website everywhere) **OWNER**
 
@@ -651,10 +671,13 @@ This is also a cybersecurity portfolio piece, so treat it seriously and document
 
 **Milestone 1D: Content and SEO**
 
-- [ ] All remaining pages (Section 5)
-- [ ] Suburb pages (Section 7)
-- [ ] Guides + 5 starter articles
-- [ ] Full schema, OG images, internal linking, `llms.txt`
+- [~] All remaining pages (Section 5) (see Section 5 checklist; cookie consent notice not
+  applicable yet, no custom `error.tsx`)
+- [~] Suburb pages (Section 7) (see Section 7 checklist; owner review of drafted local facts
+  still outstanding, as designed)
+- [x] Guides + 5 starter articles
+- [~] Full schema, OG images, internal linking, `llms.txt` (Service/FAQPage JSON-LD and `llms.txt`
+  done; no OG images or BreadcrumbList yet)
 
 **Milestone 1E: Hardening and QA**
 
