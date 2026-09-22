@@ -114,23 +114,26 @@ enum AttachmentKind {
 }
 
 // ---------------------------------------------------------------------------
-// Auth (Better Auth compatible shape). Account / Session / Verification /
-// TwoFactor field names will be reconciled against `better-auth`'s Prisma
-// schema generator when auth is wired up in Milestone 1C, so this shape is a
-// close best-effort now to avoid a painful migration later.
+// Auth (Better Auth's expected shape, wired up in src/lib/auth.ts). User,
+// Account, Session, Verification and TwoFactor field names match what the
+// Prisma adapter and the twoFactor plugin read and write directly.
 // ---------------------------------------------------------------------------
 
 model User {
-  id            String    @id @default(cuid())
-  name          String
-  email         String    @unique
-  emailVerified Boolean   @default(false)
-  image         String?
-  role          Role
-  isActive      Boolean   @default(true)
-  lastLoginAt   DateTime?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id               String    @id @default(cuid())
+  name             String
+  email            String    @unique
+  emailVerified    Boolean   @default(false)
+  image            String?
+  role             Role
+  isActive         Boolean   @default(true)
+  lastLoginAt      DateTime?
+  // Managed by Better Auth's twoFactor plugin (src/plugins/two-factor/schema.ts).
+  // App-level login treats 2FA as mandatory: a session with this false is
+  // redirected to /setup-2fa before it can reach any other admin page.
+  twoFactorEnabled Boolean   @default(false)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
   accounts         Account[]
   sessions         Session[]
@@ -138,7 +141,7 @@ model User {
   crewMember       CrewMember?
   auditLogs        AuditLog[]
   notes            Note[]
-  moderatedReviews Review[]   @relation("ReviewModerator")
+  moderatedReviews Review[]    @relation("ReviewModerator")
 
   @@map("users")
 }
@@ -189,11 +192,14 @@ model Verification {
 }
 
 model TwoFactor {
-  id          String @id @default(cuid())
-  userId      String @unique
-  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  secret      String
-  backupCodes String
+  id                      String    @id @default(cuid())
+  userId                  String    @unique
+  user                    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  secret                  String
+  backupCodes             String
+  verified                Boolean   @default(true)
+  failedVerificationCount Int       @default(0)
+  lockedUntil             DateTime?
 
   @@map("two_factors")
 }
@@ -216,16 +222,16 @@ model Truck {
 }
 
 model CrewMember {
-  id              String           @id @default(cuid())
+  id              String          @id @default(cuid())
   name            String
   phone           String
-  userId          String?          @unique
-  user            User?            @relation(fields: [userId], references: [id])
-  isActive        Boolean          @default(true)
+  userId          String?         @unique
+  user            User?           @relation(fields: [userId], references: [id])
+  isActive        Boolean         @default(true)
   teamMemberships TeamMember[]
   jobAssignments  JobAssignment[]
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
 
   @@map("crew_members")
 }
@@ -314,31 +320,31 @@ model QuoteDraft {
 }
 
 model Lead {
-  id              String      @id @default(cuid())
-  referenceNumber String      @unique
+  id              String       @id @default(cuid())
+  referenceNumber String       @unique
   customerId      String?
-  customer        Customer?   @relation(fields: [customerId], references: [id])
+  customer        Customer?    @relation(fields: [customerId], references: [id])
   source          LeadSource
-  status          LeadStatus  @default(NEW)
+  status          LeadStatus   @default(NEW)
   lostReason      String?
   /// The visitor's own free-text message (contact form body, or a quote's
   /// "anything else?" field for source QUOTE_FORM). Distinct from `notes`
   /// below, which are staff-authored and require a User.
   message         String?
   notes           Note[]
-  quoteDraftId    String?     @unique
-  quoteDraft      QuoteDraft? @relation(fields: [quoteDraftId], references: [id])
+  quoteDraftId    String?      @unique
+  quoteDraft      QuoteDraft?  @relation(fields: [quoteDraftId], references: [id])
   quotes          Quote[]
-  consentGiven    Boolean     @default(false)
-  emailFailed     Boolean     @default(false)
+  consentGiven    Boolean      @default(false)
+  emailFailed     Boolean      @default(false)
   ipAddress       String?
   userAgent       String?
   booking         Booking?
   emailLogs       EmailLog[]
   reviews         Review[]
   attachments     Attachment[]
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
 
   @@index([status])
   @@index([createdAt])
@@ -346,9 +352,9 @@ model Lead {
 }
 
 model Quote {
-  id                   String     @id @default(cuid())
+  id                   String    @id @default(cuid())
   leadId               String
-  lead                 Lead       @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  lead                 Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
   estimateLowCents     Int
   estimateHighCents    Int
   estimatedLowHours    Float
@@ -357,7 +363,7 @@ model Quote {
   recommendedCrewCount Int
   assumptions          Json
   pricingSnapshot      Json
-  createdAt            DateTime   @default(now())
+  createdAt            DateTime  @default(now())
 
   @@map("quotes")
 }
@@ -499,27 +505,27 @@ model PricingSettings {
 }
 
 model BusinessSettings {
-  id                         String       @id @default(cuid())
-  tradingName                String
-  legalName                  String?
-  abn                        String
-  acn                        String
-  baseSuburb                 String
-  serviceAreaDescription     String
-  phoneE164                  String
-  publicEmail                String?
-  domain                     String?
-  fleetDescription           String
-  crewSize                   Int?
-  isFullyInsured             Boolean      @default(false)
-  insuranceDetail            String?
-  isLicensed                 Boolean      @default(false)
-  licenseDetail              String?
-  googleReviewUrl            String?
-  estimateMode               EstimateMode @default(SHOW_PRICE)
-  cancellationPolicySummary  String?
-  paymentMethodsDescription  String?
-  updatedAt                  DateTime     @updatedAt
+  id                        String       @id @default(cuid())
+  tradingName               String
+  legalName                 String?
+  abn                       String
+  acn                       String
+  baseSuburb                String
+  serviceAreaDescription    String
+  phoneE164                 String
+  publicEmail               String?
+  domain                    String?
+  fleetDescription          String
+  crewSize                  Int?
+  isFullyInsured            Boolean      @default(false)
+  insuranceDetail           String?
+  isLicensed                Boolean      @default(false)
+  licenseDetail             String?
+  googleReviewUrl           String?
+  estimateMode              EstimateMode @default(SHOW_PRICE)
+  cancellationPolicySummary String?
+  paymentMethodsDescription String?
+  updatedAt                 DateTime     @updatedAt
 
   @@map("business_settings")
 }

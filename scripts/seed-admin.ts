@@ -14,9 +14,15 @@ import argon2 from "argon2";
  * password"). Run with: pnpm seed:admin
  *
  * The Account row this writes (providerId "credential", accountId set to
- * the new user's id) is a best-effort match for Better Auth's expected
- * shape. Verify and adjust against Better Auth's own schema once auth is
- * actually wired up in Milestone 1C.
+ * the new user's id) matches what Better Auth's own email/password sign-up
+ * writes (see better-auth/dist/api/routes/sign-up.mjs), confirmed against
+ * its source when auth was wired up in src/lib/auth.ts. The argon2id hash
+ * here must stay in sync with the `password.hash`/`verify` functions
+ * configured there.
+ *
+ * The staff member should set up TOTP 2FA on first login, it's mandatory,
+ * enforced by src/lib/rbac.ts redirecting any session without it to
+ * /setup-2fa.
  */
 
 const adapter = new PrismaPg({
