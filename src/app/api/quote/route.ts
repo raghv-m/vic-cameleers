@@ -2,7 +2,6 @@ import type { Prisma } from "@prisma/client";
 import { after, NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-import { defaultPricingSettings } from "@/config/pricing-defaults";
 import { serverEnv } from "@/env.server";
 import { adminLeadUrl } from "@/lib/admin-lead-url";
 import { logAnalyticsEvent } from "@/lib/analytics";
@@ -11,12 +10,13 @@ import { sendEmail } from "@/lib/email/client";
 import { NewLeadAlertEmail } from "@/lib/email/templates/new-lead-alert";
 import { QuoteReceivedEmail } from "@/lib/email/templates/quote-received";
 import { calculateQuote } from "@/lib/pricing";
+import { getPricingSettings } from "@/lib/pricing-settings";
 import { checkPublicFormRateLimit } from "@/lib/rate-limit";
 import { generateReferenceNumber } from "@/lib/reference-number";
 import { verifyTurnstileToken } from "@/lib/turnstile";
 import { toE164AuMobile } from "@/lib/au-phone";
 import { quoteSubmissionSchema } from "@/lib/validation/quote";
-import type { PricingSettings, PropertySize } from "@/types/pricing";
+import type { PropertySize } from "@/types/pricing";
 
 const truckLabel: Record<"SIX_TONNE" | "TEN_TONNE", string> = {
   SIX_TONNE: "6 tonne truck",
@@ -47,30 +47,6 @@ function propertySizeToBedroomCount(size: PropertySize): number | null {
       return 4;
     default:
       return null;
-  }
-}
-
-async function getPricingSettings(): Promise<PricingSettings> {
-  try {
-    const settings = await db.pricingSettings.findFirst();
-    if (!settings) return defaultPricingSettings;
-
-    return {
-      hourlyRateCents: settings.hourlyRateCents,
-      extraMoverHourlyRateCents: settings.extraMoverHourlyRateCents,
-      minimumHours: settings.minimumHours,
-      calloutMinutes: settings.calloutMinutes,
-      gstInclusive: settings.gstInclusive,
-      baseHoursBySize: settings.baseHoursBySize as PricingSettings["baseHoursBySize"],
-      accessPenaltyPerFlightHours: settings.accessPenaltyPerFlightHours,
-      accessPenaltyLongCarryHours: settings.accessPenaltyLongCarryHours,
-      packingHourPerBedroom: settings.packingHourPerBedroom,
-      unpackingHourPerBedroom: settings.unpackingHourPerBedroom,
-      disassemblyHourPerItem: settings.disassemblyHourPerItem,
-    };
-  } catch (error) {
-    console.warn("Could not load PricingSettings from the database, using defaults.", error);
-    return defaultPricingSettings;
   }
 }
 
