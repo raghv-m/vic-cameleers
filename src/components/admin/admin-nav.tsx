@@ -11,6 +11,9 @@ const links = [
   { href: "", label: "Dashboard" },
   { href: "/leads", label: "Leads" },
   { href: "/customers", label: "Customers" },
+  { href: "/bookings", label: "Bookings" },
+  { href: "/trucks", label: "Trucks" },
+  { href: "/crew", label: "Crew" },
 ];
 
 export function AdminNav() {
@@ -19,8 +22,8 @@ export function AdminNav() {
 
   return (
     <header className="bg-background border-b">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
-        <nav className="flex items-center gap-4">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-3">
+        <nav className="flex flex-wrap items-center gap-4">
           {links.map((link) => {
             const href = `${adminRoot}${link.href}`;
             const active = link.href === "" ? pathname === adminRoot : pathname.startsWith(href);

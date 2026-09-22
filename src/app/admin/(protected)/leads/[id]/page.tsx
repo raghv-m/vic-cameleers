@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { Mail, Phone } from "lucide-react";
 
 import { AddNoteForm } from "@/components/admin/add-note-form";
+import { ConvertToBookingForm } from "@/components/admin/convert-to-booking-form";
 import { LeadStatusForm } from "@/components/admin/lead-status-form";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -84,6 +85,13 @@ export default async function LeadDetailPage({ params }: PageProps<"/admin/leads
 
   const latestQuote = lead.quotes[0];
   const draft = lead.quoteDraft;
+
+  const trucks = lead.booking
+    ? []
+    : await db.truck.findMany({ where: { isActive: true }, orderBy: { name: "asc" } });
+  const crewMembers = lead.booking
+    ? []
+    : await db.crewMember.findMany({ where: { isActive: true }, orderBy: { name: "asc" } });
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
@@ -224,7 +232,7 @@ export default async function LeadDetailPage({ params }: PageProps<"/admin/leads
           </Card>
         )}
 
-        {lead.booking && (
+        {lead.booking ? (
           <Card className="md:col-span-2">
             <CardHeader>
               <CardTitle>Booking</CardTitle>
@@ -235,6 +243,21 @@ export default async function LeadDetailPage({ params }: PageProps<"/admin/leads
                 {lead.booking.preferredTime ? `, ${lead.booking.preferredTime}` : ""} &middot;{" "}
                 <Badge variant="secondary">{lead.booking.status}</Badge>
               </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className="md:col-span-2">
+            <CardHeader>
+              <CardTitle>Convert to booking</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ConvertToBookingForm
+                leadId={lead.id}
+                defaultMoveDate={draft?.moveDate ? format(draft.moveDate, "yyyy-MM-dd") : null}
+                defaultPreferredTime={draft?.preferredTime ?? null}
+                trucks={trucks}
+                crewMembers={crewMembers}
+              />
             </CardContent>
           </Card>
         )}
