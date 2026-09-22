@@ -370,10 +370,10 @@ Sender: `Vic Cameleers <quotes@DOMAIN>`, reply-to the public inbox. React Email 
 
 ### Checklist
 
-- [ ] Customer: quote received (reference, move summary, estimate, next steps, phone)
-- [ ] Staff: new lead alert to `LEAD_NOTIFY_EMAIL` (all details, tap-to-call, link to admin lead)
-- [ ] Customer: contact form received
-- [ ] Staff: contact form alert
+- [x] Customer: quote received (reference, move summary, estimate, next steps, phone)
+- [~] Staff: new lead alert to `LEAD_NOTIFY_EMAIL` (all details, tap-to-call; link to the admin lead pending the admin console itself)
+- [x] Customer: contact form received
+- [x] Staff: contact form alert
 - [ ] Customer: quote reminder (if quoted but not booked after X days, setting)
 - [ ] Customer: booking confirmed (triggered from admin)
 - [ ] Customer: 7-day reminder
