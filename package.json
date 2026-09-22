@@ -28,6 +28,8 @@
     "@react-email/components": "^1.0.12",
     "@upstash/ratelimit": "^2.1.0",
     "@upstash/redis": "^1.38.4",
+    "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.0.0",
     "argon2": "^0.45.1",
     "better-auth": "^1.7.5",
     "class-variance-authority": "^0.7.1",

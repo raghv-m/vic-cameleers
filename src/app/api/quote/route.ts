@@ -4,6 +4,7 @@ import type { NextRequest } from "next/server";
 
 import { defaultPricingSettings } from "@/config/pricing-defaults";
 import { serverEnv } from "@/env.server";
+import { logAnalyticsEvent } from "@/lib/analytics";
 import { db } from "@/lib/db";
 import { sendEmail } from "@/lib/email/client";
 import { NewLeadAlertEmail } from "@/lib/email/templates/new-lead-alert";
@@ -207,6 +208,12 @@ export async function POST(request: NextRequest) {
     // bare fire-and-forget promise, which the platform can kill the instant
     // the response is sent.
     after(async () => {
+      await logAnalyticsEvent("quote_completed", {
+        leadId: lead.id,
+        path: "/quote",
+        metadata: { propertySize: data.propertySize, source: "QUOTE_FORM" },
+      });
+
       await sendEmail({
         type: "QUOTE_RECEIVED",
         to: data.contactEmail,

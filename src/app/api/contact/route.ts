@@ -2,6 +2,7 @@ import { after, NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 import { serverEnv } from "@/env.server";
+import { logAnalyticsEvent } from "@/lib/analytics";
 import { toE164AuMobile } from "@/lib/au-phone";
 import { db } from "@/lib/db";
 import { ContactReceivedEmail } from "@/lib/email/templates/contact-received";
@@ -80,6 +81,11 @@ export async function POST(request: NextRequest) {
     // Emails are best-effort and run after the response via after(), so a
     // broken send never blocks or fails the lead save.
     after(async () => {
+      await logAnalyticsEvent("contact_submitted", {
+        leadId: lead.id,
+        path: "/contact",
+      });
+
       await sendEmail({
         type: "CONTACT_RECEIVED",
         to: data.email,

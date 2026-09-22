@@ -1,3 +1,5 @@
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Inter, Oswald } from "next/font/google";
 
@@ -35,6 +37,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="bg-background text-foreground flex min-h-full flex-col">
         {children}
         <Toaster />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
