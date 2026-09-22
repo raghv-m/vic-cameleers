@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { TurnstileWidget } from "@/components/quote/turnstile-widget";
+import { TurnstileWidget } from "@/components/forms/turnstile-widget";
 import type { QuoteSubmissionInput } from "@/lib/validation/quote";
 
 const howHeardOptions = [

@@ -25,6 +25,8 @@ in `CLAUDE.md` where relevant.
   which rows in `src/config/services.ts` / the `Service` table stay enabled.
 - **Cancellation and rescheduling terms.**
 - **Accepted payment methods.**
+- **Business hours / phone answering hours.** Not shown anywhere yet since it's unconfirmed —
+  the contact page doesn't claim specific hours.
 
 ## Compliance claims (CLAUDE.md section 3, honesty rules)
 

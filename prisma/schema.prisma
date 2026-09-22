@@ -260,7 +260,8 @@ model TeamMember {
 model Customer {
   id        String   @id @default(cuid())
   name      String
-  phone     String
+  // Nullable: a contact-form-only lead may give an email but no phone.
+  phone     String?
   email     String?
   leads     Lead[]
   createdAt DateTime @default(now())
@@ -296,6 +297,7 @@ model QuoteDraft {
   contactPhone          String?
   contactEmail          String?
   howHeardAboutUs       String?
+  notes                 String?
   utmSource             String?
   utmMedium             String?
   utmCampaign           String?
@@ -319,6 +321,10 @@ model Lead {
   source          LeadSource
   status          LeadStatus  @default(NEW)
   lostReason      String?
+  /// The visitor's own free-text message (contact form body, or a quote's
+  /// "anything else?" field for source QUOTE_FORM). Distinct from `notes`
+  /// below, which are staff-authored and require a User.
+  message         String?
   notes           Note[]
   quoteDraftId    String?     @unique
   quoteDraft      QuoteDraft? @relation(fields: [quoteDraftId], references: [id])
