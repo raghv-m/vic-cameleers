@@ -476,11 +476,11 @@ This is also a cybersecurity portfolio piece, so treat it seriously and document
 
 ### Checklist
 
-- [ ] Vercel Web Analytics installed
-- [ ] Vercel Speed Insights installed
-- [ ] Events: `quote_started`, `quote_step_1..5`, `quote_completed`, `quote_abandoned`, `phone_click`, `email_click`, `contact_submitted`, `review_submitted`
+- [x] Vercel Web Analytics installed
+- [x] Vercel Speed Insights installed
+- [~] Events: `quote_started`, `quote_step_1..5`, `quote_completed`, `quote_abandoned`, `phone_click`, `email_click`, `contact_submitted`, `review_submitted` (`quote_completed` and `contact_submitted` logged; the rest need client-side instrumentation, not done yet)
 - [ ] Lead source attribution (organic, Google Ads, social, referral, direct, Google Business Profile via UTM on GBP link)
-- [ ] Server-side funnel table + admin funnel chart
+- [x] Server-side funnel table (`AnalyticsEvent`); the admin funnel chart itself waits on the admin console (Milestone 1C)
 - [ ] Metrics in admin: quote conversion, booking conversion, abandoned forms, phone clicks, revenue, cost per lead (manual ad spend input)
 - [ ] Google Search Console verified **OWNER**
 - [ ] Bing Webmaster Tools verified **OWNER**
@@ -590,7 +590,7 @@ This is also a cybersecurity portfolio piece, so treat it seriously and document
 - [x] Contact page + form
 - [x] Customer + staff emails for quote and contact
 - [x] Privacy, Terms, Cancellation pages
-- [ ] Vercel Analytics + Speed Insights
+- [x] Vercel Analytics + Speed Insights
 - [ ] Basic SEO (metadata, sitemap, robots, MovingCompany schema)
 - [!] Deployed to Vercel production **OWNER to approve**
 
