@@ -27,7 +27,7 @@ export function CoverageSection() {
             title="Based in Cranbourne. Moving all of Greater Melbourne."
             lede="We start closest to home: Casey and Cardinia are minutes from the depot. We go anywhere in Greater Melbourne, and we stay in Victoria."
           />
-          <ul className="border-navy-900 mt-8 grid grid-cols-2 border-t-2">
+          <ul className="border-navy-900 mt-8 grid grid-cols-1 border-t-2 min-[480px]:grid-cols-2 min-[480px]:gap-x-4">
             {publishedSuburbs.map((suburb) => (
               <li key={suburb.slug} className="border-navy-900/20 flex items-center border-b">
                 <Link
