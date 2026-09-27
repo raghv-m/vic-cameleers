@@ -86,6 +86,9 @@ export async function updatePricingSettings(input: unknown): Promise<ActionResul
   });
 
   revalidatePath("/admin/settings");
+  // Cached public pages that show live pricing numbers.
+  revalidatePath("/pricing");
+  revalidatePath("/llms.txt");
   return { success: true };
 }
 

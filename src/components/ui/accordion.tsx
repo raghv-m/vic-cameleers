@@ -47,10 +47,18 @@ function AccordionTrigger({ className, children, ...props }: AccordionPrimitive.
   );
 }
 
-function AccordionContent({ className, children, ...props }: AccordionPrimitive.Panel.Props) {
+function AccordionContent({
+  className,
+  children,
+  hiddenUntilFound = true,
+  ...props
+}: AccordionPrimitive.Panel.Props) {
   return (
+    // hiddenUntilFound keeps closed panels in the server HTML (hidden="until-found"), so FAQ
+    // answers are crawlable and findable with in-page search, not only present in JSON-LD.
     <AccordionPrimitive.Panel
       data-slot="accordion-content"
+      hiddenUntilFound={hiddenUntilFound}
       className="data-open:animate-accordion-down data-closed:animate-accordion-up overflow-hidden text-sm"
       {...props}
     >

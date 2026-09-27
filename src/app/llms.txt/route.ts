@@ -10,6 +10,9 @@ import { suburbs } from "@/content/suburbs";
  * assistants and crawlers can read directly, generated from the same
  * config/DB used everywhere else so it can't drift out of sync.
  */
+// Cached like the marketing pages; admin pricing changes revalidate it on demand.
+export const revalidate = 86400;
+
 export async function GET() {
   const settings = await getPricingSettings();
   const services = getEnabledServices();

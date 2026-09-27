@@ -11,6 +11,13 @@ import {
   reviewStatusSchema,
 } from "@/lib/validation/review";
 
+/** Public pages that list approved reviews are cached (ISR), so refresh them on every change. */
+function revalidatePublicReviewPages() {
+  revalidatePath("/admin/reviews");
+  revalidatePath("/");
+  revalidatePath("/reviews");
+}
+
 type ActionResult = { success: true } | { success: false; error: string };
 
 export async function updateReviewStatus(input: unknown): Promise<ActionResult> {
@@ -38,7 +45,7 @@ export async function updateReviewStatus(input: unknown): Promise<ActionResult> 
     after: { status: review.status },
   });
 
-  revalidatePath("/admin/reviews");
+  revalidatePublicReviewPages();
   return { success: true };
 }
 
@@ -62,7 +69,7 @@ export async function toggleReviewFeatured(input: unknown): Promise<ActionResult
     entityId: review.id,
   });
 
-  revalidatePath("/admin/reviews");
+  revalidatePublicReviewPages();
   return { success: true };
 }
 
@@ -93,6 +100,6 @@ export async function addManualReview(input: unknown): Promise<ActionResult> {
     entityId: review.id,
   });
 
-  revalidatePath("/admin/reviews");
+  revalidatePublicReviewPages();
   return { success: true };
 }

@@ -4,27 +4,33 @@ import type { NextRequest } from "next/server";
 import { serverEnv } from "@/env.server";
 
 /**
- * Security headers applied to every response (CLAUDE.md section 11).
- * CSP uses a per-request nonce for scripts (no 'unsafe-inline') while
- * allowing 'unsafe-inline' for styles, which is the pragmatic baseline for
- * Tailwind + Base UI/Radix-style component libraries that set inline
- * `style` attributes for positioning. Tighten style-src later if every
- * inline style can be moved to a class.
+ * Security headers on every response (CLAUDE.md section 11), plus the ADMIN_PATH rewrite.
+ *
+ * Two CSP flavours, because a per-request nonce forces a page to render on every request:
+ *
+ * - Nonce CSP ('nonce-...' + 'strict-dynamic', no 'unsafe-inline' for scripts) on the routes
+ *   that handle user input or staff sessions: the admin console, /quote and /contact (which
+ *   also load Cloudflare Turnstile). Those pages render per request anyway.
+ * - Static CSP everywhere else, so marketing pages can be prerendered and cached. Next's
+ *   prerendered HTML carries inline bootstrap scripts whose contents change every build, so
+ *   they can't be hashed in a fixed header; STATIC_SCRIPT_SRC below documents what's allowed.
+ *   Every other directive matches the nonce policy.
+ *
+ * Styles allow 'unsafe-inline' in both, the pragmatic baseline for Tailwind + Base UI, which
+ * set inline `style` attributes for positioning.
  */
-function withSecurityHeaders(
-  request: NextRequest,
-  response: NextResponse,
-  nonce: string,
-  isAdmin: boolean,
-): NextResponse {
-  const scriptSrc =
-    serverEnv.NODE_ENV === "production"
-      ? `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'`
-      : `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-eval'`;
 
-  const csp = [
+const isProduction = serverEnv.NODE_ENV === "production";
+
+/** Pages that must keep the nonce CSP. Keep this list short: each one renders per request. */
+const NONCE_PAGE_PATHS = ["/quote", "/contact"];
+
+const STATIC_SCRIPT_SRC = "script-src 'self' 'unsafe-inline'";
+
+function buildCsp(scriptSrc: string): string {
+  return [
     "default-src 'self'",
-    scriptSrc,
+    isProduction ? scriptSrc : `${scriptSrc} 'unsafe-eval'`,
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: https:",
     "font-src 'self' data:",
@@ -36,8 +42,19 @@ function withSecurityHeaders(
     "frame-ancestors 'none'",
     "upgrade-insecure-requests",
   ].join("; ");
+}
 
-  response.headers.set("Content-Security-Policy", csp);
+function cspFor(nonce: string | null): string {
+  return buildCsp(
+    nonce ? `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'` : STATIC_SCRIPT_SRC,
+  );
+}
+
+function withSecurityHeaders(
+  response: NextResponse,
+  { nonce, isAdmin }: { nonce: string | null; isAdmin: boolean },
+): NextResponse {
+  response.headers.set("Content-Security-Policy", cspFor(nonce));
   response.headers.set("X-Frame-Options", "DENY");
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
@@ -54,18 +71,26 @@ function withSecurityHeaders(
   return response;
 }
 
-export function middleware(request: NextRequest) {
-  // btoa/crypto are Web-standard globals available in the Edge runtime that
-  // middleware executes in; Node's Buffer is not guaranteed there.
-  const nonce = btoa(crypto.randomUUID());
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("x-nonce", nonce);
+function isNoncePage(pathname: string): boolean {
+  return NONCE_PAGE_PATHS.some((path) => pathname === path || pathname.startsWith(`${path}/`));
+}
 
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const adminPath = serverEnv.ADMIN_PATH;
   const isDirectAdminGuess = pathname === "/admin" || pathname.startsWith("/admin/");
   const adminRewriteMatch =
     adminPath && (pathname === `/${adminPath}` || pathname.startsWith(`/${adminPath}/`));
+  const needsNonce = adminRewriteMatch || isDirectAdminGuess || isNoncePage(pathname);
+
+  // btoa/crypto are Web-standard globals, available in every runtime proxy can execute in.
+  const nonce = needsNonce ? btoa(crypto.randomUUID()) : null;
+  const requestHeaders = new Headers(request.headers);
+  if (nonce) {
+    // Next reads the nonce from the request's CSP header and stamps it on its own scripts.
+    requestHeaders.set("x-nonce", nonce);
+    requestHeaders.set("Content-Security-Policy", cspFor(nonce));
+  }
 
   // The real admin routes live at /admin/* in the codebase, but that literal
   // path must never resolve for a visitor. Only requests to the obscure
@@ -77,18 +102,18 @@ export function middleware(request: NextRequest) {
     const rewritten = request.nextUrl.clone();
     rewritten.pathname = `/admin${pathname.slice(`/${adminPath}`.length)}`;
     const response = NextResponse.rewrite(rewritten, { request: { headers: requestHeaders } });
-    return withSecurityHeaders(request, response, nonce, true);
+    return withSecurityHeaders(response, { nonce, isAdmin: true });
   }
 
   if (isDirectAdminGuess) {
     const notFound = request.nextUrl.clone();
     notFound.pathname = "/admin/__not_found__";
     const response = NextResponse.rewrite(notFound, { request: { headers: requestHeaders } });
-    return withSecurityHeaders(request, response, nonce, true);
+    return withSecurityHeaders(response, { nonce, isAdmin: true });
   }
 
   const response = NextResponse.next({ request: { headers: requestHeaders } });
-  return withSecurityHeaders(request, response, nonce, false);
+  return withSecurityHeaders(response, { nonce, isAdmin: false });
 }
 
 export const config = {
