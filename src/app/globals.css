@@ -435,6 +435,115 @@
   }
 }
 
+/* Disclosures (<details class="vc-details">) open with a smooth height change where the browser
+ * supports animating to `auto`; elsewhere they simply open. Content is never faded. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (interpolate-size: allow-keywords) {
+    .vc-details {
+      interpolate-size: allow-keywords;
+    }
+    .vc-details::details-content {
+      block-size: 0;
+      overflow-y: clip;
+      transition:
+        block-size 280ms var(--ease-haul),
+        content-visibility 280ms allow-discrete;
+    }
+    .vc-details[open]::details-content {
+      block-size: auto;
+    }
+  }
+}
+
+/* Card lift on hover (pointer devices only): a small rise and a hard freight shadow, no scaling. */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .vc-lift {
+    transition:
+      transform var(--duration-quick) var(--ease-haul),
+      box-shadow var(--duration-quick) var(--ease-haul);
+  }
+  .vc-lift:hover,
+  .vc-lift:focus-within {
+    transform: translateY(-3px);
+    box-shadow: 4px 4px 0 var(--color-navy-900);
+  }
+}
+
+/* The depot on the coverage map: a slow radar ping. */
+@keyframes vc-ping {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .vc-ping {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: vc-ping 2.4s var(--ease-route) infinite;
+  }
+}
+
+/* One-shot glow when a badge scrolls into view. */
+@keyframes vc-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+  40% {
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--color-signal-400) 45%, transparent);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .vc-glow {
+      animation: vc-glow linear both;
+      animation-timeline: view();
+      animation-range: entry 60% cover 40%;
+    }
+  }
+}
+
+/* The Name: layered art that moves at different speeds as the section scrolls past (parallax).
+ * Scroll-driven CSS only; static art on phones, under reduced motion, or without support. */
+@keyframes vc-parallax {
+  from {
+    transform: translate3d(0, var(--vc-parallax-from, 0), 0);
+  }
+  to {
+    transform: translate3d(0, var(--vc-parallax-to, 0), 0);
+  }
+}
+@keyframes vc-parallax-x {
+  from {
+    transform: translate3d(var(--vc-parallax-from, 0), 0, 0);
+  }
+  to {
+    transform: translate3d(var(--vc-parallax-to, 0), 0, 0);
+  }
+}
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .vc-story {
+      view-timeline-name: --vc-story;
+    }
+    .vc-layer {
+      animation: vc-parallax linear both;
+      animation-timeline: --vc-story;
+      animation-range: cover 0% cover 100%;
+    }
+    .vc-layer-x {
+      animation: vc-parallax-x linear both;
+      animation-timeline: --vc-story;
+      animation-range: cover 0% cover 100%;
+    }
+  }
+}
+
 /* Route truck only exists where it can actually ride the line. */
 .vc-route-truck {
   display: none;

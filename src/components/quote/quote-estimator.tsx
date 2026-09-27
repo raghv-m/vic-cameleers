@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Phone } from "lucide-react";
 import { cn } from "cn";
@@ -10,6 +10,13 @@ import { MeasureRule } from "@/components/brand/signage";
 import { ChipGroup } from "@/components/quote/chip-group";
 import { Odometer } from "@/components/quote/odometer";
 import { business } from "@/config/business";
+import {
+  PREFILL_EVENT,
+  STORE_KEYS,
+  readStore,
+  writeStore,
+  type PrefillDetail,
+} from "@/lib/browser-store";
 import { calculateQuote } from "@/lib/pricing";
 import type { PricingSettings, PropertySize } from "@/types/pricing";
 
@@ -65,6 +72,58 @@ function todayISO(): string {
   return local.toISOString().slice(0, 10);
 }
 
+/** "1.5 hrs", "45 min": short and exact enough for a breakdown line. */
+function formatHours(hours: number): string {
+  if (hours < 1) return `${Math.round(hours * 60)} min`;
+  const rounded = Math.round(hours * 10) / 10;
+  return `${rounded} hr${rounded === 1 ? "" : "s"}`;
+}
+
+const SIZE_LABEL: Record<PropertySize, string> = {
+  studio: "studio",
+  "1bed": "1 bedroom home",
+  "2bed": "2 bedroom home",
+  "3bed": "3 bedroom home",
+  "4plus": "4+ bedroom home",
+  office: "small office",
+  singleItem: "single item or small load",
+};
+
+interface SavedEstimate {
+  kind: MoveKind;
+  homeSize: PropertySize;
+  stairs: string;
+  stairsTouched: boolean;
+  packing: boolean;
+  from: string;
+  to: string;
+  date: string;
+}
+
+/**
+ * How much of the move we know about. Deliberately never claims "accurate": even with every field
+ * filled, the drive time is still assumed until we check the addresses.
+ */
+function completeness(details: { stairsTouched: boolean; from: string; to: string; date: string }) {
+  const known = [
+    details.stairsTouched,
+    details.from.trim() !== "",
+    details.to.trim() !== "",
+    details.date !== "",
+  ].filter(Boolean).length;
+  if (known >= 4) {
+    return { level: 3, label: "Ready to confirm", hint: "That's what we need to confirm a quote." };
+  }
+  if (known >= 2) {
+    return { level: 2, label: "Getting closer", hint: "Add your suburbs and date to firm it up." };
+  }
+  return {
+    level: 1,
+    label: "Ballpark",
+    hint: "Tell us about stairs, suburbs and a date to firm it up.",
+  };
+}
+
 /**
  * The hero price tool. Live estimate from the real pricing engine at the current rates (passed
  * from the server, so admin changes apply), clearly labelled as an estimate, with the confirmed
@@ -87,6 +146,62 @@ export function QuoteEstimator({
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [date, setDate] = useState("");
+  const [stairsTouched, setStairsTouched] = useState(false);
+  const [flash, setFlash] = useState(false);
+  const restored = useRef(false);
+  const detailsRef = useRef<HTMLDetailsElement>(null);
+
+  // Restore the visitor's last estimate after mount, never during render: the page is
+  // prerendered, and a render-time read would mismatch the server HTML.
+  useEffect(() => {
+    const saved = readStore<SavedEstimate>(STORE_KEYS.estimator);
+    if (saved) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time sync from localStorage, which only exists after hydration
+      setKind(saved.kind);
+      setHomeSize(saved.homeSize);
+      setStairs(saved.stairs);
+      setStairsTouched(saved.stairsTouched);
+      setPacking(saved.packing);
+      setFrom(saved.from);
+      setTo(saved.to);
+      setDate(saved.date);
+      if (saved.from || saved.to || saved.date) detailsRef.current?.setAttribute("open", "");
+    }
+    restored.current = true;
+  }, []);
+
+  useEffect(() => {
+    if (!restored.current) return;
+    writeStore<SavedEstimate>(STORE_KEYS.estimator, {
+      kind,
+      homeSize,
+      stairs,
+      stairsTouched,
+      packing,
+      from,
+      to,
+      date,
+    });
+  }, [kind, homeSize, stairs, stairsTouched, packing, from, to, date]);
+
+  // "Use as pickup" buttons elsewhere on the page fill the suburb fields.
+  useEffect(() => {
+    let timer = 0;
+    function onPrefill(event: Event) {
+      const detail = (event as CustomEvent<PrefillDetail>).detail;
+      if (detail.from !== undefined) setFrom(detail.from);
+      if (detail.to !== undefined) setTo(detail.to);
+      detailsRef.current?.setAttribute("open", "");
+      setFlash(true);
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => setFlash(false), 1400);
+    }
+    window.addEventListener(PREFILL_EVENT, onPrefill);
+    return () => {
+      window.removeEventListener(PREFILL_EVENT, onPrefill);
+      window.clearTimeout(timer);
+    };
+  }, []);
 
   const size = sizeFor(kind, homeSize);
   const canPack = BEDROOMS[size] !== undefined;
@@ -110,6 +225,21 @@ export function QuoteEstimator({
     estimate.priceLowCents === estimate.priceHighCents
       ? dollars(estimate.priceLowCents)
       : `${dollars(estimate.priceLowCents)} to ${dollars(estimate.priceHighCents)}`;
+
+  const known = completeness({ stairsTouched, from, to, date });
+  const a = estimate.assumptions;
+  const extraMovers = Math.max(0, estimate.recommendedCrewCount - 2);
+  const breakdown: { label: string; value: string }[] = [
+    {
+      label: `Loading and unloading, ${SIZE_LABEL[size]}`,
+      value: `${formatHours(a.baseHoursRange[0])} to ${formatHours(a.baseHoursRange[1])}`,
+    },
+    ...(a.accessPenaltyHours > 0
+      ? [{ label: "Stairs at the pickup", value: `+${formatHours(a.accessPenaltyHours)}` }]
+      : []),
+    ...(a.extrasHours > 0 ? [{ label: "Packing", value: `+${formatHours(a.extrasHours)}` }] : []),
+    { label: "Drive between addresses (assumed)", value: `+${formatHours(a.travelHours)}` },
+  ];
 
   const quoteHref = useMemo(() => {
     const params = new URLSearchParams({ type: kind, size, stairs });
@@ -156,7 +286,10 @@ export function QuoteEstimator({
           name={`${id}-stairs`}
           value={stairs}
           options={STAIR_OPTIONS}
-          onChange={setStairs}
+          onChange={(value) => {
+            setStairs(value);
+            setStairsTouched(true);
+          }}
         />
         {canPack && (
           <label className="text-navy-900 flex min-h-11 cursor-pointer items-center gap-3 text-[0.9375rem] font-semibold">
@@ -170,7 +303,7 @@ export function QuoteEstimator({
           </label>
         )}
 
-        <details className="group border-border border-t pt-4">
+        <details ref={detailsRef} className="group vc-details border-border border-t pt-4">
           <summary className="text-navy-900 flex min-h-11 cursor-pointer list-none items-center justify-between text-[0.9375rem] font-semibold">
             Add suburbs and a date (optional)
             <span
@@ -180,7 +313,12 @@ export function QuoteEstimator({
               +
             </span>
           </summary>
-          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          <div
+            className={cn(
+              "mt-3 grid gap-3 rounded-sm transition-shadow duration-500 sm:grid-cols-2",
+              flash && "ring-signal-400 ring-offset-sand-50 ring-4 ring-offset-4",
+            )}
+          >
             <label className="text-sm font-semibold" htmlFor={`${id}-from`}>
               Moving from
               <input
@@ -248,7 +386,64 @@ export function QuoteEstimator({
           {truckLabel[estimate.recommendedTruck]}, {estimate.recommendedCrewCount} movers,{" "}
           {business.calloutMinutes} minute call-out included.
         </p>
-        <p className="text-muted-600 mt-1 text-xs">
+
+        <div className="mt-4">
+          <div className="flex items-center justify-between gap-3">
+            <span className="manifest-index text-muted-600">How firm is this?</span>
+            <span className="text-navy-900 text-[0.8125rem] font-bold">{known.label}</span>
+          </div>
+          <div
+            className="mt-1.5 grid grid-cols-3 gap-1"
+            role="img"
+            aria-label={`Estimate detail: ${known.label}, ${known.level} of 3`}
+          >
+            {[1, 2, 3].map((step) => (
+              <span
+                key={step}
+                className={cn(
+                  "h-1.5 rounded-full transition-colors duration-300 motion-reduce:transition-none",
+                  step <= known.level ? "bg-terracotta-600" : "bg-navy-900/15",
+                )}
+              />
+            ))}
+          </div>
+          <p className="text-muted-600 mt-1.5 text-xs">{known.hint}</p>
+        </div>
+
+        <details className="group vc-details border-navy-900/20 mt-4 border-t pt-2">
+          <summary className="text-navy-900 flex min-h-11 cursor-pointer list-none items-center justify-between text-[0.9375rem] font-semibold">
+            How we got this number
+            <span
+              aria-hidden="true"
+              className="text-terracotta-600 transition-transform duration-150 group-open:rotate-45"
+            >
+              +
+            </span>
+          </summary>
+          <dl className="text-ink-900 tabular mt-1 space-y-1.5 text-sm">
+            {breakdown.map((row) => (
+              <div key={row.label} className="flex justify-between gap-4">
+                <dt className="text-muted-600">{row.label}</dt>
+                <dd className="shrink-0 font-semibold">{row.value}</dd>
+              </div>
+            ))}
+            <div className="border-navy-900/30 flex justify-between gap-4 border-t pt-1.5">
+              <dt className="text-navy-900 font-bold">Time on the job</dt>
+              <dd className="text-navy-900 shrink-0 font-bold">
+                {formatHours(estimate.lowHours)} to {formatHours(estimate.highHours)}
+              </dd>
+            </div>
+          </dl>
+          <p className="text-muted-600 mt-2 text-xs leading-relaxed">
+            Charged at {business.hourlyRateShort} with a {business.minimumHours} hour minimum, plus
+            the {formatHours(a.calloutHours)} call-out at the same rate.
+            {extraMovers > 0 &&
+              ` A job this size gets ${extraMovers} extra mover${extraMovers > 1 ? "s" : ""} at ${dollars(settings.extraMoverHourlyRateCents)}/hr each.`}{" "}
+            Rounded to the nearest $10.
+          </p>
+        </details>
+
+        <p className="text-muted-600 mt-3 text-xs">
           Estimate only, assuming a {ASSUMED_DRIVE_MINUTES} minute drive and easy parking. Your
           confirmed quote comes after we check the addresses and access.
         </p>
