@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { business } from "@/config/business";
 import { getEnabledServices } from "@/config/services";
 import { getPricingSettings } from "@/lib/pricing-settings";
-import { suburbs } from "@/content/suburbs";
+import { publishedSuburbs } from "@/content/suburbs";
 
 /**
  * llms.txt (CLAUDE.md section 13): a short, plain-text summary AI
@@ -38,7 +38,7 @@ export async function GET() {
     "Full pricing and worked examples: " + `${business.siteUrl}/pricing`,
     "",
     "## Service area",
-    `Suburbs covered include: ${suburbs.map((suburb) => suburb.name).join(", ")}.`,
+    `Suburbs covered include: ${publishedSuburbs.map((suburb) => suburb.name).join(", ")}.`,
     "",
     "## Getting a quote",
     `Instant online estimate: ${business.siteUrl}/quote`,

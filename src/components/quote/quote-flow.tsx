@@ -66,7 +66,11 @@ const defaultValues: Partial<QuoteSubmissionInput> = {
   website: "",
 };
 
-export function QuoteFlow() {
+/**
+ * `initialPickupAddress` comes from a suburb page's quote link (`/quote?suburb=clyde-north`),
+ * resolved server-side against the published suburb list, so it's never raw URL input.
+ */
+export function QuoteFlow({ initialPickupAddress = "" }: { initialPickupAddress?: string }) {
   const [step, setStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -74,7 +78,7 @@ export function QuoteFlow() {
 
   const form = useForm<QuoteSubmissionInput, unknown, QuoteSubmission>({
     resolver: zodResolver(quoteSubmissionSchema),
-    defaultValues,
+    defaultValues: { ...defaultValues, pickupAddress: initialPickupAddress },
     mode: "onSubmit",
   });
 

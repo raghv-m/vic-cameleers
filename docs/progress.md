@@ -108,24 +108,25 @@ Current-state facts from the code map that shape the plan:
 - [x] S2.7 Validated with validator.schema.org on 8 pages (home, service, guide, suburb, faq,
       privacy, pricing, quote): 0 errors, 0 warnings.
 
-## SEO PHASE S3: Local pages that are not doorway pages
+## SEO PHASE S3: Local pages that are not doorway pages (done 27 Sep 2026)
 
-- [ ] S3.1 One content file per suburb with fields: name, postcode, council,
-      driveTimeFromCranbourneMins, housingNotes, accessNotes, parkingNotes, nearbySuburbs,
-      featuredJobs[], reviews[], photos[], published. Format per Decision D-4.
-      Files: `content/suburbs/*` (new), `src/content/suburbs.ts` (becomes the loader)
-- [ ] S3.2 Only `published: true` suburbs are built, linked, and in the sitemap; others 404.
-      Files: `removalists/[suburb]/page.tsx`, `removalists/page.tsx`, `service-areas.tsx`,
-      `sitemap.ts`, `llms.txt/route.ts`
-- [ ] S3.3 Richer template, sections render only when data exists: local intro, drive time,
-      housing and access, recent job (story, photo, truck, hours, price), reviews, services,
-      nearby suburbs, 2-3 local FAQs, quote CTA prefilled with the suburb (`/quote?from=clyde-north`).
-      Files: `removalists/[suburb]/page.tsx`, `src/components/quote/quote-flow.tsx`
-      (read `searchParams` prefill)
-- [ ] S3.4 Draft content for the 8 (Cranbourne, Cranbourne East, Cranbourne North, Clyde North,
-      Berwick, Narre Warren, Officer, Pakenham), drafts flagged `// REVIEW` in the content
-      file only. featuredJobs and reviews empty with TODO.
-- [ ] S3.5 The other 13 suburbs set `published: false`.
+- [x] S3.1 One typed file per suburb in `src/content/suburbs/<slug>.ts` exporting `suburbData`
+      (`types.ts` has the owner's interface plus two optional fields the template needs: `intro` and
+      `localFaqs`). Loader in `src/content/suburbs/index.ts`.
+- [x] S3.2 Only `published: true` suburbs are built, linked, in the sitemap, in llms.txt and in
+      schema areaServed; unpublished and unknown slugs 404 (`dynamicParams = false`).
+- [x] S3.3 New template: drive-time label, local intro, housing/access/parking notes, recent jobs,
+      reviews, local photo, 3 service links, local + 2 general FAQs (FAQPage from the visible ones),
+      published neighbours, quote CTA prefilled via `/quote?suburb=<slug>` (resolved server-side
+      against published suburbs only). Every optional section renders only when its data exists.
+- [x] S3.4 Drafted local content for Cranbourne, Cranbourne East, Cranbourne North, Clyde North,
+      Berwick, Narre Warren, Officer, Pakenham, every drafted line marked `// REVIEW` in the data file
+      (nothing on the live page). Drive times are approximations to confirm. featuredJobs, reviews and
+      photos empty with TODO(owner).
+- [x] S3.5 The other 13 suburbs are `published: false`.
+- Tests: `tests/unit/suburbs.test.ts` enforces unique slugs, the published set, minimum local
+  content per published suburb, valid nearby slugs, 2+ published neighbours, no em dashes. It
+  caught a real bug: Cranbourne West listed a non-existent `cranbourne-south` neighbour (fixed).
 
 ## SEO PHASE S4: New pages and internal links
 

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 import { business } from "@/config/business";
 import { pageMetadata } from "@/lib/seo";
-import { suburbs } from "@/content/suburbs";
+import { publishedSuburbs } from "@/content/suburbs";
 
 export const metadata: Metadata = pageMetadata({
   title: "Removalists south-east Melbourne",
@@ -26,7 +26,7 @@ export default function ServiceAreasPage() {
       </div>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-        {suburbs.map((suburb) => (
+        {publishedSuburbs.map((suburb) => (
           <Link
             key={suburb.slug}
             href={`/removalists/${suburb.slug}`}

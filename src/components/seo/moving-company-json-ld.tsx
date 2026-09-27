@@ -2,7 +2,7 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { business } from "@/config/business";
 import { getEnabledServices } from "@/config/services";
 import { absoluteUrl, SITE_URL } from "@/config/site-url";
-import { suburbs } from "@/content/suburbs";
+import { publishedSuburbs } from "@/content/suburbs";
 import { BUSINESS_ID, hourlyPriceSpecification } from "@/lib/structured-data";
 import { DEFAULT_OG_IMAGE } from "@/lib/seo";
 
@@ -51,7 +51,7 @@ export function MovingCompanyJsonLd() {
       latitude: business.baseGeo.latitude,
       longitude: business.baseGeo.longitude,
     },
-    areaServed: suburbs.map((suburb) => ({
+    areaServed: publishedSuburbs.map((suburb) => ({
       "@type": "City",
       name: suburb.name,
       address: {

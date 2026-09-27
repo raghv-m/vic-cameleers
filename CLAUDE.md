@@ -341,14 +341,14 @@ Rules:
 
 ### Checklist
 
-- [~] Suburb MDX schema and loader (typed TS content in `src/content/suburbs.ts` +
-  `getSuburbBySlug`, not MDX, see the Section 5 guides note for why)
+- [x] Suburb schema and loader: one typed TS file per suburb in `src/content/suburbs/` exporting
+      `suburbData`, owner-approved format (no MDX); only `published: true` suburbs build
 - [~] Suburb page template with embedded quote widget (`/removalists/[suburb]`; CTA links to
   `/quote` rather than an embedded widget, since the compact quote widget itself isn't built yet)
-- [x] 21 launch suburb pages drafted (postcode and LGA sourced from public directories, not
-      invented; every page renders a visible draft-content notice, see the next item)
-- [ ] All `<!-- REVIEW -->` items checked **OWNER** (each suburb page shows a standing draft
-      notice instead of inline comments, since there's no MDX; nothing here is verified firsthand)
+- [x] 21 launch suburb data files; 8 published with drafted local detail (Cranbourne area), 13
+      unpublished until written and checked (SEO report: fewer, better, real)
+- [ ] All `// REVIEW` items in `src/content/suburbs/*.ts` checked **OWNER** (drafted, not verified
+      firsthand; nothing is flagged on the live page)
 - [~] Service areas hub with interactive map (`/removalists` lists all 21 suburbs; no interactive
   map, pending `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`, same blocker as the homepage's map)
 - [x] Nearby-suburb internal linking (4-6 real nearby suburbs per page based on actual adjacency)

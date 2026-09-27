@@ -1,12 +1,13 @@
 import Link from "next/link";
 
 import { business } from "@/config/business";
-import { getSuburbBySlug } from "@/content/suburbs";
+import { getPublishedSuburb } from "@/content/suburbs";
 
 /**
  * Grouped by where they actually are, not a generic compass-point template
  * (CLAUDE.md section 7: no invented coverage). Only the two clusters this
- * business's real suburb list actually covers, see src/content/suburbs.ts.
+ * business's real suburb list actually covers, see src/content/suburbs/. Only
+ * published suburbs are linked, and a zone with none published is hidden.
  */
 const zones = [
   {
@@ -14,6 +15,7 @@ const zones = [
     slugs: [
       "cranbourne",
       "cranbourne-east",
+      "cranbourne-north",
       "clyde",
       "clyde-north",
       "berwick",
@@ -29,6 +31,8 @@ const zones = [
 ];
 
 export function ServiceAreas() {
+  const visibleZones = zones.filter((zone) => zone.slugs.some((slug) => getPublishedSuburb(slug)));
+
   return (
     <section className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
       <div className="mb-10 text-center">
@@ -38,15 +42,15 @@ export function ServiceAreas() {
         </p>
       </div>
 
-      <div className="grid gap-8 sm:grid-cols-2">
-        {zones.map((zone) => (
+      <div className={visibleZones.length > 1 ? "grid gap-8 sm:grid-cols-2" : "grid gap-8"}>
+        {visibleZones.map((zone) => (
           <div key={zone.name} className="border-border rounded-lg border p-5">
             <h3 className="font-heading text-sm font-semibold tracking-wide uppercase">
               {zone.name}
             </h3>
             <div className="mt-3 flex flex-wrap gap-2">
               {zone.slugs.map((slug) => {
-                const suburb = getSuburbBySlug(slug);
+                const suburb = getPublishedSuburb(slug);
                 if (!suburb) return null;
                 return (
                   <Link

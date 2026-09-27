@@ -3,7 +3,7 @@ import type { MetadataRoute } from "next";
 import { getEnabledServices } from "@/config/services";
 import { absoluteUrl } from "@/config/site-url";
 import { guides } from "@/content/guides";
-import { suburbs } from "@/content/suburbs";
+import { publishedSuburbs } from "@/content/suburbs";
 
 /**
  * Indexable public pages only: no admin, API, or noindexed routes. lastModified is the date the
@@ -27,9 +27,9 @@ const PAGES: { path: string; updated: string }[] = [
   { path: "/cancellation-policy", updated: "2026-09-26" },
 ];
 
-/** Service and suburb page copy last changed on this date. Per-suburb dates arrive with SEO phase S3. */
+/** Service and suburb page copy last changed on these dates. Unpublished suburbs are left out. */
 const SERVICES_UPDATED = "2026-09-26";
-const SUBURBS_UPDATED = "2026-09-26";
+const SUBURBS_UPDATED = "2026-09-27";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
@@ -38,7 +38,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: absoluteUrl(`/services/${service.slug}`),
       lastModified: SERVICES_UPDATED,
     })),
-    ...suburbs.map((suburb) => ({
+    ...publishedSuburbs.map((suburb) => ({
       url: absoluteUrl(`/removalists/${suburb.slug}`),
       lastModified: SUBURBS_UPDATED,
     })),
