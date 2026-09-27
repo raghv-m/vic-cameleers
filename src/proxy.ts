@@ -20,7 +20,8 @@ import { serverEnv } from "@/env.server";
  * set inline `style` attributes for positioning.
  */
 
-const isProduction = serverEnv.NODE_ENV === "production";
+// NODE_ENV is set by Next.js itself, not a secret, so it is read directly: no env validation at load.
+const isProduction = process.env.NODE_ENV === "production";
 
 /** Pages that must keep the nonce CSP. Keep this list short: each one renders per request. */
 const NONCE_PAGE_PATHS = ["/quote", "/contact"];

@@ -34,6 +34,11 @@ const stencil = Big_Shoulders_Stencil({
   variable: "--font-stencil",
   subsets: ["latin"],
   display: "swap",
+  // next/font has no metric overrides for this family ("Failed to find font override values"),
+  // so it can't size-match an automatic fallback. Switch that off and name the fallback
+  // directly; it only shows for the moment before the font loads, on small accents.
+  adjustFontFallback: false,
+  fallback: ["Arial Narrow", "sans-serif"],
 });
 
 const siteDescription = `Removalists based in ${business.baseSuburb.replace(" VIC", "")}, moving homes and businesses across ${business.serviceAreaDescription}. ${business.hourlyRateShort}, ${business.minimumHours} hour minimum. Get a free quote.`;
