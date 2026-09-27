@@ -469,6 +469,36 @@
   }
 }
 
+/* How it works: countdown bar, panel swap, and deliverables ticking in. */
+@keyframes vc-countdown {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.vc-countdown {
+  transform: scaleX(0);
+  animation: vc-countdown linear both;
+}
+@keyframes vc-panel-in {
+  from {
+    transform: translateX(14px);
+  }
+  to {
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .vc-panel-in {
+    animation: vc-panel-in 360ms var(--ease-haul) both;
+  }
+  .vc-tick {
+    animation: vc-settle 360ms var(--ease-haul) both;
+  }
+}
+
 /* The depot on the coverage map: a slow radar ping. */
 @keyframes vc-ping {
   0% {
