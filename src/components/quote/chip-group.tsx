@@ -54,6 +54,9 @@ export function ChipGroup<T extends string>({
               value={option.value}
               checked={value === option.value}
               onChange={() => onChange(option.value)}
+              // No browser form-state restore: it can tick a different chip than React's state
+              // after Back/reload, and clicking an already-ticked radio never fires onChange.
+              autoComplete="off"
               className="sr-only"
             />
             {option.label}

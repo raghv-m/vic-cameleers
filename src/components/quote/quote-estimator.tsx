@@ -8,7 +8,7 @@ import { cn } from "cn";
 import { buttonVariants } from "@/components/ui/button";
 import { MeasureRule } from "@/components/brand/signage";
 import { ChipGroup } from "@/components/quote/chip-group";
-import { Odometer } from "@/components/quote/odometer";
+import { AnimatedRange } from "@/components/quote/animated-range";
 import { business } from "@/config/business";
 import {
   PREFILL_EVENT,
@@ -222,11 +222,6 @@ export function QuoteEstimator({
     [size, stairs, packing, canPack, settings],
   );
 
-  const priceText =
-    estimate.priceLowCents === estimate.priceHighCents
-      ? dollars(estimate.priceLowCents)
-      : `${dollars(estimate.priceLowCents)} to ${dollars(estimate.priceHighCents)}`;
-
   const known = completeness({ stairsTouched, from, to, date });
   const a = estimate.assumptions;
   const extraMovers = Math.max(0, estimate.recommendedCrewCount - 2);
@@ -376,11 +371,8 @@ export function QuoteEstimator({
         <p className="text-muted-600 text-[0.75rem] font-bold tracking-[0.14em] uppercase">
           Estimated price
         </p>
-        <p
-          className="font-headline text-navy-900 mt-1 text-[2.75rem] leading-none sm:text-5xl"
-          aria-live="polite"
-        >
-          <Odometer value={priceText} />
+        <p className="font-headline text-navy-900 mt-1 text-[2.75rem] leading-none sm:text-5xl">
+          <AnimatedRange lowCents={estimate.priceLowCents} highCents={estimate.priceHighCents} />
         </p>
         <p className="text-ink-900 mt-2 text-sm">
           About {estimate.lowHours.toFixed(1)} to {estimate.highHours.toFixed(1)} hours,{" "}
@@ -391,24 +383,35 @@ export function QuoteEstimator({
         <div className="mt-4">
           <div className="flex items-center justify-between gap-3">
             <span className="manifest-index text-muted-600">How firm is this?</span>
-            <span className="text-navy-900 text-[0.8125rem] font-bold">{known.label}</span>
+            <span
+              key={known.label}
+              className="vc-panel-in text-navy-900 text-[0.8125rem] font-bold"
+              aria-live="polite"
+            >
+              {known.label}
+            </span>
           </div>
           <div
             className="mt-1.5 grid grid-cols-3 gap-1"
             role="img"
             aria-label={`Estimate detail: ${known.label}, ${known.level} of 3`}
           >
+            {/* Each segment fills from the left; filling cascades forward and empties backward. */}
             {[1, 2, 3].map((step) => (
-              <span
-                key={step}
-                className={cn(
-                  "h-1.5 rounded-full transition-colors duration-300 motion-reduce:transition-none",
-                  step <= known.level ? "bg-terracotta-600" : "bg-navy-900/15",
-                )}
-              />
+              <span key={step} className="bg-navy-900/15 h-1.5 overflow-hidden rounded-full">
+                <span
+                  className="bg-terracotta-600 block h-full origin-left transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+                  style={{
+                    transform: `scaleX(${step <= known.level ? 1 : 0})`,
+                    transitionDelay: `${step <= known.level ? (step - 1) * 120 : (3 - step) * 120}ms`,
+                  }}
+                />
+              </span>
             ))}
           </div>
-          <p className="text-muted-600 mt-1.5 text-xs">{known.hint}</p>
+          <p key={known.hint} className="vc-panel-in text-muted-600 mt-1.5 text-xs">
+            {known.hint}
+          </p>
         </div>
 
         <details className="group vc-details border-navy-900/20 mt-4 border-t pt-2">
