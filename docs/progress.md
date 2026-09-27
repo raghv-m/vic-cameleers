@@ -43,8 +43,8 @@ Current-state facts from the code map that shape the plan:
 
 - `business.siteUrl` falls back to `http://localhost:3000` (`src/config/business.ts:353`).
   That's why sitemap, robots, JSON-LD and the metadata base all point at localhost in production.
-- `robots.ts` publishes `ADMIN_PATH` (`src/app/robots.ts:257`). The live value leaked is
-  `ops-dev-7f3k`, the same one hardcoded as the e2e default. It must be rotated in Vercel.
+- `robots.ts` publishes `ADMIN_PATH` (`src/app/robots.ts:257`). The live value leaked, and
+  was also hardcoded as the e2e default. It must be rotated in Vercel.
 - Unauthenticated admin requests redirect to `/login` (`src/lib/rbac.ts:885`), not 404.
 - Suburb title template doubles the brand (`removalists/[suburb]/page.tsx:2378` + layout template).
 - `DraftContentNotice` renders publicly on all 21 suburb pages.
@@ -56,14 +56,14 @@ Current-state facts from the code map that shape the plan:
 
 ---
 
-## SEO PHASE S1: Technical fixes (done 26 Sep 2026, branch `seo/s1-technical`, awaiting OK)
+## SEO PHASE S1: Technical fixes (done 26 Sep 2026, branch `site-rebuild`, awaiting OK)
 
 - [x] S1.1 Single `SITE_URL` in `src/config/site-url.ts` from `NEXT_PUBLIC_SITE_URL`. Vercel
       production/preview builds fail if it's empty, not https, or localhost; vercel.app allowed.
       Local/CI builds unaffected. Unit tested (`tests/unit/site-url.test.ts`).
 - [x] S1.2 robots: allow all, disallow `/api/`, sitemap on SITE_URL, admin path removed. Signed-out
       requests to protected admin pages (and API exports) return 404 with `X-Robots-Tag`; login
-      page renders. Old `ops-dev-7f3k` and literal `/admin` 404. Local ADMIN_PATH rotated.
+      page renders. The old leaked path and literal `/admin` 404. Local ADMIN_PATH rotated.
 - [x] S1.3 Self-referencing canonical on every public page (`pageMetadata()` in `src/lib/seo.ts`).
 - [x] S1.4 Titles: "[keyword] | From $120/hr | Vic Cameleers", brand once, 60 char budget with
       automatic fallback (drops price, then brand). Unit tested (`tests/unit/seo.test.ts`).

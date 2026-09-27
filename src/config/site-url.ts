@@ -1,11 +1,18 @@
 /**
- * The public site origin, read once from NEXT_PUBLIC_SITE_URL. Every absolute URL on the site
- * (metadataBase, canonicals, sitemap, robots, JSON-LD, OG, llms.txt, security.txt, auth) comes
- * from here, so moving to the real domain is a one env var change.
+ * The public site origin. Every absolute URL on the site (metadataBase, canonicals, sitemap,
+ * robots, JSON-LD, OG, llms.txt, security.txt, auth) comes from here, so moving to the real
+ * domain is a one env var change: NEXT_PUBLIC_SITE_URL.
  *
- * Kept free of path aliases and server-only imports because next.config.ts imports it too, to
- * fail the build before a bad value can ship.
+ * Resolution, done once at build time in next.config.ts and inlined everywhere:
+ * - Vercel production: NEXT_PUBLIC_SITE_URL must be a real https origin, or the build fails.
+ * - Vercel preview: NEXT_PUBLIC_SITE_URL if it's usable, otherwise the preview's own branch URL,
+ *   so every pushed branch still builds and links to itself.
+ * - Local and CI: NEXT_PUBLIC_SITE_URL, falling back to localhost.
+ *
+ * Kept free of path aliases and server-only imports because next.config.ts imports it too.
  */
+
+type Env = Record<string, string | undefined>;
 
 const LOCAL_DEV_URL = "http://localhost:3000";
 
@@ -27,25 +34,31 @@ export function siteUrlProblem(value: string | undefined): string | null {
   return null;
 }
 
-/**
- * Throws on Vercel production and preview builds if NEXT_PUBLIC_SITE_URL is missing or local.
- * Local and CI builds are left alone so `pnpm build` still works against localhost.
- */
-export function assertDeploySiteUrl(env: Record<string, string | undefined> = process.env): void {
-  if (env.VERCEL_ENV !== "production" && env.VERCEL_ENV !== "preview") return;
-
-  const problem = siteUrlProblem(env.NEXT_PUBLIC_SITE_URL);
-  if (problem) {
-    throw new Error(
-      `${problem}. Set it in the Vercel project (${env.VERCEL_ENV}) to the public origin, ` +
-        "e.g. https://vic-cameleers.vercel.app, with no trailing slash.",
-    );
-  }
-}
-
 function normalise(value: string | undefined): string | null {
   const trimmed = value?.trim();
   return trimmed ? trimmed.replace(/\/+$/, "") : null;
+}
+
+/** The origin this build should use. Throws on a Vercel production build with a bad value. */
+export function resolveSiteUrl(env: Env = process.env): string {
+  const configured = normalise(env.NEXT_PUBLIC_SITE_URL);
+  const problem = siteUrlProblem(configured ?? undefined);
+
+  if (env.VERCEL_ENV === "production" && problem) {
+    throw new Error(
+      `${problem}. Set it in the Vercel project (Production) to the public origin, ` +
+        "e.g. https://vic-cameleers.vercel.app, with no trailing slash.",
+    );
+  }
+
+  if (env.VERCEL_ENV === "preview" && problem) {
+    // Vercel system env vars: the stable per-branch alias first, the per-commit URL second.
+    const previewHost = env.VERCEL_BRANCH_URL ?? env.VERCEL_URL;
+    if (previewHost) return `https://${previewHost}`;
+    throw new Error(`${problem}, and no VERCEL_BRANCH_URL/VERCEL_URL to fall back to.`);
+  }
+
+  return configured ?? LOCAL_DEV_URL;
 }
 
 export const SITE_URL = normalise(process.env.NEXT_PUBLIC_SITE_URL) ?? LOCAL_DEV_URL;

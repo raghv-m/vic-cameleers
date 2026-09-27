@@ -1,10 +1,11 @@
 import type { NextConfig } from "next";
 
-import { assertDeploySiteUrl, SITE_URL } from "./src/config/site-url";
+import { resolveSiteUrl } from "./src/config/site-url";
 
-// Fails Vercel production/preview builds when NEXT_PUBLIC_SITE_URL is empty or local, so a
-// sitemap, canonical, or JSON-LD pointing at localhost can never ship again.
-assertDeploySiteUrl();
+// Fails Vercel production builds when NEXT_PUBLIC_SITE_URL is empty or local, so a sitemap,
+// canonical, or JSON-LD pointing at localhost can never ship again. Preview builds fall back to
+// their own branch URL. See src/config/site-url.ts.
+const siteUrl = resolveSiteUrl();
 
 /**
  * TODO(owner): flip to true once a custom domain is live and NEXT_PUBLIC_SITE_URL points at it.
@@ -17,19 +18,23 @@ const CUSTOM_DOMAIN_REDIRECTS_ENABLED = false;
 const VERCEL_APP_HOST = "vic-cameleers.vercel.app";
 
 function nonCanonicalHosts(): string[] {
-  const canonical = new URL(SITE_URL).hostname;
+  const canonical = new URL(siteUrl).hostname;
   const alternate = canonical.startsWith("www.") ? canonical.slice(4) : `www.${canonical}`;
   return [VERCEL_APP_HOST, alternate].filter((host) => host !== canonical);
 }
 
 const nextConfig: NextConfig = {
+  // Inline the resolved origin into server and client bundles, so every SITE_URL read agrees
+  // with the check above.
+  env: { NEXT_PUBLIC_SITE_URL: siteUrl },
+
   async redirects() {
     if (!CUSTOM_DOMAIN_REDIRECTS_ENABLED) return [];
 
     return nonCanonicalHosts().map((host) => ({
       source: "/:path*",
       has: [{ type: "host" as const, value: host }],
-      destination: `${SITE_URL}/:path*`,
+      destination: `${siteUrl}/:path*`,
       permanent: true,
     }));
   },

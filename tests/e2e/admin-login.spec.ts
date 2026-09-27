@@ -38,8 +38,8 @@ test("a direct guess at the literal /admin path 404s", async ({ page }) => {
   expect(response?.status()).toBe(404);
 });
 
-test("the old leaked admin path 404s", async ({ page }) => {
-  const response = await page.goto("/ops-dev-7f3k");
+test("a guessed admin-style path that isn't ADMIN_PATH 404s", async ({ page }) => {
+  const response = await page.goto("/ops-guessed-path");
   expect(response?.status()).toBe(404);
 });
 
