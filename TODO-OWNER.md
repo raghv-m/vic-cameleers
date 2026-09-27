@@ -80,3 +80,28 @@ All should be owned by a business Google account with 2FA on.
   only uses Postgres, and `deepmerge-ts`, used by `@prisma/config`), not in code this app's
   runtime actually reaches. Not urgent, but re-check after the next `prisma`/`better-auth` bump;
   `.github/dependabot.yml` will open PRs as upstream patches land.
+
+## SEO and design build (from the Sep 2026 SEO report, see docs/progress.md)
+
+- **Set `NEXT_PUBLIC_SITE_URL=https://vic-cameleers.vercel.app`** in Vercel for Production and
+  Preview before merging SEO phase S1. Vercel builds now fail on purpose if it's empty or
+  localhost (`src/config/site-url.ts`). When a custom domain exists, change only this value, then
+  flip `CUSTOM_DOMAIN_REDIRECTS_ENABLED` in `next.config.ts` to redirect vercel.app and the
+  www/apex twin to it.
+- **Rotate `ADMIN_PATH` in Vercel.** The old value was published in robots.txt and now 404s.
+  Format: `ops-` plus 48 random hex characters. Generate with
+  `node -e "console.log('ops-'+require('crypto').randomBytes(24).toString('hex'))"`.
+  Production, Preview and local `.env` should each use a different value.
+- **Google Business Profile.** Not set up. When it is: add the profile URL to `sameAs` in
+  `src/components/seo/moving-company-json-ld.tsx`, the review link to Settings (Google review URL),
+  and use a UTM-tagged website link (SEO phase S5).
+- **Business hours.** Not confirmed, so there's no `openingHoursSpecification` in the schema and no
+  hours shown on the site. Add both once confirmed.
+- **Guide author.** Guides will credit "Vic Cameleers crew" (SEO phase S2) until then. Needs a real person's name and a
+  short bio for the Article schema.
+- **Photos.** None yet. Every photo slot is a labelled placeholder with the right aspect ratio,
+  driven from one config file; see `docs/photo-shot-list.md` (written in the design phase). The
+  default share image `public/og/default.jpg` is a branded card until a real 10 tonne truck photo
+  replaces it (1200x630, same path).
+- **Heavy items.** The FAQ says pianos and safes aren't handled, but the SEO report wants piano and
+  pool table pages. Confirm which is true before SEO phase S4 builds those pages.

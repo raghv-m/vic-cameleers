@@ -111,7 +111,7 @@ Most of this is one-time setup, done once by whoever owns the Vercel/Neon/etc ac
 
 ```
 src/app/(marketing)/    Public marketing pages (App Router route group)
-src/app/admin/          Admin console, mounted behind ADMIN_PATH via middleware rewrite
+src/app/admin/          Admin console, mounted behind ADMIN_PATH via the src/proxy.ts rewrite
 src/app/api/            Route handlers: auth, quote, contact, cron jobs, CSV export
 src/components/         UI components, grouped by feature (admin, marketing, quote, ui, ...)
 src/config/             Business facts, services, pricing defaults, nav, FAQ - single source of truth

@@ -491,7 +491,7 @@ This is also a cybersecurity portfolio piece, so treat it seriously and document
 
 ### Checklist
 
-- [~] HTTPS everywhere (Vercel default) + HSTS (HSTS header set in middleware; HTTPS itself depends on the Vercel deployment, not live yet) **OWNER for deployment**
+- [~] HTTPS everywhere (Vercel default) + HSTS (HSTS header set in `src/proxy.ts`; HTTPS itself depends on the Vercel deployment, not live yet) **OWNER for deployment**
 - [~] Secure authentication, argon2id password hashing (`src/lib/auth.ts` overrides Better Auth's
   default hasher with argon2id, matching `scripts/seed-admin.ts`; unverified against a live login)
 - [~] MFA (TOTP) mandatory for all staff (Better Auth's twoFactor plugin + app-level enforcement
@@ -511,10 +511,13 @@ This is also a cybersecurity portfolio piece, so treat it seriously and document
       input with a Zod schema before touching the database, see `src/lib/validation/*`)
 - [x] Output encoding, no `dangerouslySetInnerHTML` with user content (only 2 uses in the codebase,
       both JSON-LD built from `JSON.stringify()` with `<` escaped, see `src/components/seo/json-ld.tsx`)
-- [x] Security headers in middleware: CSP (nonce-based), X-Frame-Options DENY, X-Content-Type-Options, Referrer-Policy, Permissions-Policy
-- [x] Admin: `noindex, nofollow`, `X-Robots-Tag`, excluded from sitemap and robots (middleware sets
-      `X-Robots-Tag`; `robots.ts` excludes the `ADMIN_PATH` prefix; the admin console isn't in
-      `sitemap.ts` at all)
+- [x] Security headers in `src/proxy.ts` (Next 16 rename of middleware): CSP (nonce-based on admin,
+      /quote and /contact; static policy with `'unsafe-inline'` scripts on prerendered marketing
+      pages, see SECURITY.md for why), X-Frame-Options DENY, X-Content-Type-Options,
+      Referrer-Policy, Permissions-Policy
+- [x] Admin: `noindex, nofollow` via `X-Robots-Tag` (`src/proxy.ts`), never named in `robots.txt`
+      (listing it advertised the path, see SEO report), not in `sitemap.ts`, and every protected
+      admin page returns a plain 404 to signed-out visitors (`requireSession` in `src/lib/rbac.ts`)
 - [~] Rate limiting on all public APIs (Upstash) + Vercel Firewall rules (quote, contact, and staff
   login are all rate limited; Vercel Firewall rules are dashboard config, need the project deployed
   first) **OWNER**
@@ -571,10 +574,13 @@ This is also a cybersecurity portfolio piece, so treat it seriously and document
 
 - [x] Semantic HTML, one H1 per page, correct heading hierarchy
 - [x] `generateMetadata` on every route that exists so far (unique title and description)
-- [ ] Open Graph + Twitter/X cards, generated OG images per page
+- [~] Open Graph + Twitter/X cards, generated OG images per page (OG + Twitter on every public
+  page via `pageMetadata()` in `src/lib/seo.ts`; one shared default image
+  `public/og/default.jpg`, a branded card until a real truck photo exists; no per-page images yet)
 - [x] `sitemap.xml` generated from the routes that exist so far; grows as later milestones add more
-- [x] `robots.txt` (blocks `/api/` and the admin path once `ADMIN_PATH` is set; no drafts route exists yet)
-- [ ] Canonical URLs
+- [x] `robots.txt` (blocks `/api/` only; deliberately never names the admin path)
+- [x] Canonical URLs (self-referencing `alternates.canonical` on every public page, resolved
+      against `NEXT_PUBLIC_SITE_URL`)
 - [x] JSON-LD `MovingCompany` / LocalBusiness: name, phone, `areaServed`, `priceRange`, `taxID` (geo and opening hours not included — no confirmed address/hours yet)
 - [x] JSON-LD `Service` on service pages
 - [x] JSON-LD `FAQPage` where eligible (dedicated FAQ page, every service page, every suburb page)
@@ -682,7 +688,7 @@ This is also a cybersecurity portfolio piece, so treat it seriously and document
 - [~] Section 4 setup checklist (only Neon provisioning and Vercel/GitHub connection remain, both **OWNER**)
 - [~] Section 2 design system (Stepper and the copy audit remain, both deferred to the milestones that actually need them)
 - [x] Layout, header, footer, sticky mobile bar
-- [x] Security headers middleware + env validation
+- [x] Security headers (`src/proxy.ts`) + env validation
 
 **Milestone 1B: Lead capture live (deploy this as soon as it works)**
 

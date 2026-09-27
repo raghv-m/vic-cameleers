@@ -14,8 +14,8 @@ issue for anything that isn't already public.
 
 ## Architecture, in brief
 
-- **Hosting**: Vercel (Next.js App Router, Node runtime for anything touching the database, Edge
-  for middleware).
+- **Hosting**: Vercel (Next.js App Router, Node runtime for anything touching the database and
+  for `src/proxy.ts`).
 - **Database**: PostgreSQL via Neon, accessed through Prisma with the `pg` driver adapter.
 - **Auth**: Better Auth, argon2id password hashing, mandatory TOTP 2FA for all staff, backed by
   the same Postgres database.
@@ -57,9 +57,15 @@ FINANCE > SUPPORT > CREW`, `src/lib/role-hierarchy.ts`, unit tested) backs `requ
   directly, they don't rely solely on the UI hiding a button.
 - Crew accounts are excluded from the general admin console entirely (Section 10 of `CLAUDE.md`)
   and are scoped to their own assigned jobs, once that view is built.
-- The `ADMIN_PATH` segment is obscurity, not security: middleware rewrites it to the internal
+- The `ADMIN_PATH` segment is obscurity, not security: `src/proxy.ts` rewrites it to the internal
   `/admin/*` routes and 404s a direct guess at the literal path, but the actual gate is the
   session + role check above, which runs regardless of which path got you there.
+- A signed-out (or deactivated) visitor to any protected admin page gets a plain 404, not a
+  redirect to the login page, so a protected URL never confirms an admin console exists there.
+  Only the login page itself renders without a session.
+- `robots.txt` deliberately never mentions the admin path (listing it would advertise it). The
+  admin routes send `X-Robots-Tag: noindex, nofollow` instead. The first production value was
+  published in an earlier robots.txt, so it was rotated; old values simply 404.
 
 ## Input validation and output handling
 
@@ -73,9 +79,21 @@ FINANCE > SUPPORT > CREW`, `src/lib/role-hierarchy.ts`, unit tested) backs `requ
 
 ## Transport and headers
 
-Set in `src/middleware.ts` on every response:
+Set in `src/proxy.ts` (Next 16's rename of `middleware.ts`) on every response:
 
-- `Content-Security-Policy`, nonce-based for scripts (no `unsafe-inline`), `frame-ancestors 'none'`
+- `Content-Security-Policy` in two flavours, because a per-request nonce forces a page to render
+  on every request and so can't be cached:
+  - **Nonce CSP** (`'nonce-…' 'strict-dynamic'`, no `unsafe-inline` for scripts) on the admin
+    console, `/quote` and `/contact`: the pages that take user input, load Turnstile, or carry a
+    staff session. They render per request.
+  - **Static CSP** on the prerendered marketing pages: identical except `script-src 'self'
+'unsafe-inline'`. Next's prerendered HTML carries inline bootstrap scripts whose contents
+    change every build, so they can't be pinned by hash in a fixed header, and with `script-src
+'self'` alone React never hydrates (tested against a production build, 26 Sep 2026). These
+    pages render no user-supplied content, load no third-party scripts, and still block plugins,
+    framing, base-URI changes and off-site form posts, so the practical XSS exposure is small.
+    Tightening this is tracked: revisit when Next's hash-based CSP support covers inline scripts.
+  - Both: `frame-ancestors 'none'`, `object-src 'none'`, `base-uri 'self'`, `form-action 'self'`
 - `Strict-Transport-Security` (`max-age=63072000; includeSubDomains; preload`)
 - `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`,
   `Referrer-Policy: strict-origin-when-cross-origin`, a restrictive `Permissions-Policy`
@@ -169,7 +187,7 @@ These are tracked, not overlooked:
 ## For anyone reviewing this as a portfolio piece
 
 The interesting parts to look at are `src/lib/rbac.ts` and `src/lib/auth.ts` (how mandatory 2FA
-is enforced around a library that doesn't do that by default), `src/middleware.ts` (the
-ADMIN_PATH rewrite plus CSP nonce plumbing), and `src/lib/booking-conflicts.ts` (a small, deliberately
+is enforced around a library that doesn't do that by default), `src/proxy.ts` (the
+ADMIN_PATH rewrite plus the nonce/static CSP split), and `src/lib/booking-conflicts.ts` (a small, deliberately
 pure, unit-tested function kept separate from its Prisma-querying caller specifically so the
 conflict logic itself is trivially testable).
