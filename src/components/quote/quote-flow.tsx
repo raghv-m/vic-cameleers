@@ -15,6 +15,7 @@ import { ResultScreen } from "@/components/quote/result-screen";
 import type { QuoteResult } from "@/components/quote/result-screen";
 import { Button } from "@/components/ui/button";
 import { business } from "@/config/business";
+import { STORE_KEYS, clearStore, readStore, writeStore } from "@/lib/browser-store";
 import { calculateQuote } from "@/lib/pricing";
 import { FALLBACK_TRAVEL_MINUTES, toPricingInput } from "@/lib/quote-pricing";
 import { quoteSubmissionSchema, stepSchemas } from "@/lib/validation/quote";
@@ -60,6 +61,28 @@ export const quoteDefaultValues: QuoteSubmissionInput = {
   turnstileToken: "",
   website: "",
 };
+
+interface QuoteDraft {
+  step: number;
+  values: Partial<QuoteSubmissionInput>;
+}
+
+/** The parts of a quote that are safe to keep in the browser: the move, never the person. */
+const PERSONAL_FIELDS = [
+  "contactName",
+  "contactPhone",
+  "contactEmail",
+  "consentGiven",
+  "turnstileToken",
+  "website",
+  "notes",
+] as const satisfies readonly (keyof QuoteSubmissionInput)[];
+
+function withoutPersonalDetails(values: QuoteSubmissionInput): Partial<QuoteSubmissionInput> {
+  const move: Partial<QuoteSubmissionInput> = { ...values };
+  for (const field of PERSONAL_FIELDS) delete move[field];
+  return move;
+}
 
 type SubmitState =
   { kind: "idle" } | { kind: "sending" } | { kind: "error"; message: string; retryable: boolean };
@@ -172,6 +195,46 @@ export function QuoteFlow({
     shouldFocusError: true,
   });
 
+  // Offer a saved draft back (move details only) instead of silently overwriting what's on screen.
+  const [draft, setDraft] = useState<QuoteDraft | null>(null);
+  useEffect(() => {
+    const saved = readStore<QuoteDraft>(STORE_KEYS.quoteDraft);
+    if (saved?.values.pickupAddress || saved?.values.dropoffAddress) setDraft(saved);
+  }, []);
+
+  // Save the move details as they change, and the step as it changes. Contact details, consent
+  // and the bot token never are.
+  const stepRef = useRef(step);
+  useEffect(() => {
+    function save() {
+      if (inFlight.current) return;
+      writeStore<QuoteDraft>(STORE_KEYS.quoteDraft, {
+        step: stepRef.current,
+        values: withoutPersonalDetails(form.getValues()),
+      });
+    }
+    const subscription = form.watch(save);
+    return () => subscription.unsubscribe();
+  }, [form]);
+
+  useEffect(() => {
+    stepRef.current = step;
+    const current = readStore<QuoteDraft>(STORE_KEYS.quoteDraft);
+    if (current) writeStore<QuoteDraft>(STORE_KEYS.quoteDraft, { ...current, step });
+  }, [step]);
+
+  function resumeDraft() {
+    if (!draft) return;
+    form.reset({ ...form.getValues(), ...draft.values });
+    setStep(Math.min(Math.max(draft.step, 1), TOTAL_STEPS));
+    setDraft(null);
+  }
+
+  function discardDraft() {
+    clearStore(STORE_KEYS.quoteDraft);
+    setDraft(null);
+  }
+
   // On each step change: record it, bring the top of the form into view, and move focus to the
   // step heading so screen readers announce where they are. Skipped on first load.
   useEffect(() => {
@@ -248,6 +311,7 @@ export function QuoteFlow({
         return;
       }
 
+      clearStore(STORE_KEYS.quoteDraft);
       track("quote_submitted", {
         path: window.location.pathname,
         fromSuburb: new URLSearchParams(window.location.search).get("suburb"),
@@ -297,6 +361,27 @@ export function QuoteFlow({
               aria-busy={sending}
               className="lg:col-span-8"
             >
+              {draft && (
+                <div
+                  role="status"
+                  className="border-navy-900 bg-sand-100 mb-6 flex flex-col gap-3 rounded-sm border-2 border-l-8 p-4 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <p className="text-navy-900 text-[0.9375rem]">
+                    <span className="font-bold">Pick up where you left off?</span>{" "}
+                    {[draft.values.pickupAddress, draft.values.dropoffAddress]
+                      .filter(Boolean)
+                      .join(" to ")}
+                  </p>
+                  <div className="flex shrink-0 gap-2">
+                    <Button type="button" size="sm" onClick={resumeDraft}>
+                      Resume
+                    </Button>
+                    <Button type="button" size="sm" variant="ghost" onClick={discardDraft}>
+                      Start fresh
+                    </Button>
+                  </div>
+                </div>
+              )}
               <QuoteProgress step={step} onJump={goTo} disabled={sending} />
 
               <div className="mt-8">
