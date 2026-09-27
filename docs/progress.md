@@ -168,15 +168,16 @@ Current-state facts from the code map that shape the plan:
 
 - [x] D0.1 Code map, including the "must not break" list: CSP/proxy, admin rewrite + RBAC +
       2FA, quote and contact APIs (Zod, honeypot, Turnstile, Upstash, Resend `after()`).
-- [ ] D0.2 mem-search for earlier decisions on CSP, admin route, forms.
+- [x] D0.2 mem-search attempted: the claude-mem worker isn't running, so no results. Earlier
+      decisions are in CLAUDE.md, git history and this file instead.
 - [ ] D0.3 "Before" screenshots of every public page at 390px and 1440px (agent-browser),
       saved under `docs/screens/before/`.
 
-## DESIGN PHASE D1: Audit (design-is)
+## DESIGN PHASE D1: Audit (design-is) (done 26 Sep 2026)
 
-- [ ] D1.1 Dieter Rams audit of the current site, including the known issues: zero images,
-      duplicated How it works + timeline, duplicated difference + why-us, icon-card grids with
-      hover lift, 01-04 badges, Oswald + Inter, "no surprises" overuse.
+- [x] D1.1 Dieter Rams audit in `DESIGN-IS-2026-09-26/`: 15/30, verdict REDESIGN. Worst: aesthetic,
+      long-lasting, thorough, as-little-design (1/3 each). New finding: the CTA terracotta #c1502e
+      fails AA (4.41:1), and the why-us and fleet sections render blank until scrolled (opacity 0).
 
 ## DESIGN PHASE D2: Direction and brand
 
@@ -185,11 +186,16 @@ industrial-brutalist-ui accents only; brandkit tokens; imagegen-frontend-web ONL
 route line, SE Melbourne map, stamps, 1860 archival illustration. Skip: minimalist-ui,
 gpt-taste, stitch-design-taste, imagegen-frontend-mobile, image-to-code, wowerpoint, dataviz.)
 
-- [ ] D2.1 One-page design brief: 3 font pairings + pick, final tokens (sand-50 #faf7f0,
-      sand-100 #f5efdd, kraft-300 #c9a878, terracotta-500 #d5673f, terracotta-700 #c1502e,
-      navy-800 #1b3a5c, navy-950 #0b1b2e, ink-900 #232323, signal-400 #f99c00), 70/20/10,
-      clamp() type scale, 4px radius, 2px navy borders, grain spec, photo grading/duotone, icons.
-      5 hero headline options, pick one. **Wait for OK.**
+- [~] D2.1 Design brief published for approval (https://claude.ai/artifact/Uy93DrYgAxyAwG7SHWnjtQ,
+  copy in `docs/design-brief.html`): recommends Big Shoulders Stencil + Barlow, CTA terracotta
+  deepened to #b34628 for AA, headline "Same job as the 1860 cameleers. Better suspension.",
+  services as a freight manifest. Skills used: redesign-existing-projects, high-end-visual-design,
+  design-taste-frontend, industrial-brutalist-ui (accents). brandkit and imagegen-frontend-web
+  skipped: no image-generation tool in this environment. Original item: 3 font pairings + pick, final tokens (sand-50 #faf7f0,
+  sand-100 #f5efdd, kraft-300 #c9a878, terracotta-500 #d5673f, terracotta-700 #c1502e,
+  navy-800 #1b3a5c, navy-950 #0b1b2e, ink-900 #232323, signal-400 #f99c00), 70/20/10,
+  clamp() type scale, 4px radius, 2px navy borders, grain spec, photo grading/duotone, icons.
+  5 hero headline options, pick one. **Wait for OK.**
 - [ ] D2.2 Tokens in `src/app/globals.css` (`@theme`), fonts in `src/app/layout.tsx`, contrast
       checked on every text/background pair (terracotta on sand for small text).
 - [ ] D2.3 Generated decorative assets (texture under 20KB, map, stamps, archival

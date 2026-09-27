@@ -1,0 +1,380 @@
+<title>Caravan Route Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Big+Shoulders+Stencil:opsz,wght@10..72,600..900&family=Public+Sans:wght@400;600&family=Roboto+Slab:wght@600;700&family=Zilla+Slab:wght@600;700&display=swap">
+<style>
+  :root {
+    --sand-50: #faf7f0;
+    --sand-100: #f5efdd;
+    --kraft-300: #c9a878;
+    --terra-500: #d5673f;
+    --terra-600: #b34628;
+    --terra-700: #9f3b20;
+    --navy-800: #1b3a5c;
+    --navy-950: #0b1b2e;
+    --ink-900: #232323;
+    --muted: #5f574c;
+    --signal-400: #f99c00;
+
+    --page: var(--sand-50);
+    --surface: var(--sand-100);
+    --text: var(--ink-900);
+    --text-muted: var(--muted);
+    --rule: var(--navy-800);
+    --accent: var(--terra-600);
+    --display: "Big Shoulders Stencil", "Arial Narrow", sans-serif;
+    --body: "Barlow", "Segoe UI", system-ui, sans-serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --page: #0b1b2e;
+      --surface: #11263d;
+      --text: #f5efdd;
+      --text-muted: #c9bfa8;
+      --rule: #c9a878;
+      --accent: #e0835f;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --page: #0b1b2e;
+    --surface: #11263d;
+    --text: #f5efdd;
+    --text-muted: #c9bfa8;
+    --rule: #c9a878;
+    --accent: #e0835f;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--text);
+    font: 400 17px/1.6 var(--body);
+    padding-inline: 16px;
+    padding-block: 0 64px;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; }
+  h1, h2 { font-family: var(--display); font-weight: 800; line-height: 1; letter-spacing: 0.01em; text-wrap: balance; margin: 0; }
+  h1 { font-size: clamp(2.6rem, 7vw, 5rem); }
+  h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); margin-top: 72px; }
+  h3 { font: 700 1.05rem/1.3 var(--body); margin: 0 0 6px; }
+  p { max-width: 65ch; margin: 12px 0 0; }
+  .muted { color: var(--text-muted); }
+  .label {
+    display: inline-block;
+    font: 700 0.72rem/1 var(--body);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    border: 2px solid var(--rule);
+    padding: 6px 8px 5px;
+    border-radius: 4px;
+  }
+  header.top { padding-block: 48px 8px; border-bottom: 2px solid var(--rule); }
+  header.top p { font-size: 1.1rem; }
+  .route {
+    height: 14px;
+    margin-top: 28px;
+    background-image: radial-gradient(circle, var(--kraft-300) 2px, transparent 2.5px);
+    background-size: 18px 14px;
+    background-position: left center;
+  }
+  .grid { display: grid; gap: 16px; }
+  .cols-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .panel { background: var(--surface); border: 2px solid var(--rule); border-radius: 4px; padding: 20px; }
+
+  /* swatches */
+  .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-top: 20px; }
+  .sw { border: 2px solid var(--rule); border-radius: 4px; overflow: hidden; background: var(--surface); }
+  .sw .chip { height: 64px; }
+  .sw .meta { padding: 8px 10px 10px; font-size: 0.82rem; line-height: 1.35; }
+  .sw code { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 0.8rem; }
+  .ratio { display: flex; gap: 8px; align-items: center; margin-top: 10px; }
+  .pairs { margin-top: 20px; overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.92rem; font-variant-numeric: tabular-nums; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid color-mix(in srgb, var(--rule) 30%, transparent); }
+  th { font-weight: 600; }
+  .pass { color: #2f6b3a; font-weight: 600; }
+  .fail { color: #9a2a1a; font-weight: 600; }
+  :root[data-theme="dark"] .pass { color: #8fd49c; }
+  :root[data-theme="dark"] .fail { color: #ff9c86; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .pass { color: #8fd49c; }
+    :root:not([data-theme="light"]) .fail { color: #ff9c86; }
+  }
+  .demo { padding: 4px 8px; border-radius: 4px; font-weight: 600; white-space: nowrap; }
+
+  /* type specimens */
+  .spec { border: 2px solid var(--rule); border-radius: 4px; background: var(--surface); padding: 22px; position: relative; }
+  .spec.pick { border-color: var(--accent); }
+  .spec .tag { position: absolute; top: -12px; left: 16px; background: var(--page); padding: 0 8px; font: 700 0.72rem/1.4 var(--body); letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); }
+  .spec .h { font-size: clamp(2rem, 5vw, 2.8rem); line-height: 1; margin: 6px 0 10px; }
+  .spec .price { font-size: 2rem; font-variant-numeric: tabular-nums; margin-top: 10px; }
+  .spec .body { font-size: 1rem; }
+  .f-zilla .h { font-family: "Zilla Slab", Georgia, serif; font-weight: 700; }
+  .f-zilla .body, .f-zilla .price { font-family: "Barlow", system-ui, sans-serif; }
+  .f-roboto .h { font-family: "Roboto Slab", Georgia, serif; font-weight: 700; }
+  .f-roboto .body, .f-roboto .price { font-family: "Public Sans", system-ui, sans-serif; }
+  .f-stencil .h { font-family: "Big Shoulders Stencil", "Arial Narrow", sans-serif; font-weight: 800; }
+  .f-stencil .body, .f-stencil .price { font-family: "Barlow", system-ui, sans-serif; }
+  .price b { font-weight: 700; }
+
+  /* photo slot */
+  .slot {
+    aspect-ratio: 4 / 3;
+    max-width: 100%;
+    border-radius: 4px;
+    border: 2px dashed var(--kraft-300);
+    background:
+      repeating-linear-gradient(135deg, rgba(201,168,120,0.18) 0 10px, transparent 10px 20px),
+      var(--sand-100);
+    display: grid;
+    place-items: center;
+    text-align: center;
+    padding: 16px;
+    color: #5f574c;
+    font: 600 0.85rem/1.4 var(--body);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .slot small { display: block; letter-spacing: 0; text-transform: none; font-weight: 400; margin-top: 4px; }
+
+  /* headline options */
+  ol.heads { list-style: none; padding: 0; margin: 20px 0 0; display: grid; gap: 10px; }
+  ol.heads li { border: 2px solid var(--rule); border-radius: 4px; padding: 14px 16px; background: var(--surface); }
+  ol.heads li.pick { border-color: var(--accent); }
+  ol.heads .hl { font-family: var(--display); font-weight: 800; font-size: clamp(1.4rem, 3.4vw, 2rem); line-height: 1.05; }
+  ol.heads .why { font-size: 0.92rem; margin-top: 6px; color: var(--text-muted); }
+
+  /* stops */
+  .stops { counter-reset: none; display: grid; gap: 0; margin-top: 20px; border-left: 3px dotted var(--kraft-300); padding-left: 22px; }
+  .stop { position: relative; padding-block: 12px; }
+  .stop::before { content: ""; position: absolute; left: -31px; top: 18px; width: 14px; height: 14px; border-radius: 50%; background: var(--page); border: 3px solid var(--accent); }
+  .stop.end::before { background: var(--accent); }
+  .stop h3 { margin: 0; }
+  .stop p { margin-top: 4px; font-size: 0.96rem; }
+
+  .note { border-left: 4px solid var(--accent); padding: 4px 0 4px 14px; margin-top: 16px; }
+  .ok { margin-top: 72px; padding: 24px; border: 2px solid var(--accent); border-radius: 4px; background: var(--surface); }
+  ul.tight { margin: 10px 0 0; padding-left: 20px; }
+  ul.tight li { margin-top: 4px; }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <span class="label">Design brief &middot; D2</span>
+    <h1 style="margin-top:14px">The Caravan Route</h1>
+    <p>Vic Cameleers redesign, for approval before any code. Reading this as: a local-service
+      landing site for people in Melbourne's south-east planning a move on their phone, with a warm
+      outback-freight language, leaning toward Tailwind 4 tokens, one stencil display face and a
+      plain industrial body face, and restrained, motivated motion.</p>
+    <p class="muted">Dials: variance 7, motion 6, density 4. Audit verdict before this: REDESIGN,
+      15/30 (Dieter Rams scorecard in <code>DESIGN-IS-2026-09-26/</code>).</p>
+    <div class="route" aria-hidden="true"></div>
+  </header>
+
+  <h2>One idea</h2>
+  <p>The site is a single journey. A dotted caravan route starts in the hero, draws itself down
+    the page as you scroll, pauses at each section like a stop on a trip, and ends at the quote
+    button. Three moments carry the site: the headline stamping in like a freight label, the
+    route drawing itself with a small truck riding it, and prices rolling like an odometer.
+    Everything else stays still.</p>
+
+  <h2>Colour</h2>
+  <p>The brand's own hues, kept. One change: the CTA terracotta is deepened from
+    <code>#c1502e</code> to <code>#b34628</code>, because the current buttons fail WCAG AA (4.41:1).
+    Terracotta is only for things you're meant to click. 70% sand, 20% navy, 10% terracotta.</p>
+  <div class="swatches">
+    <div class="sw"><div class="chip" style="background:#faf7f0"></div><div class="meta"><b>sand-50</b> <code>#faf7f0</code><br>Page</div></div>
+    <div class="sw"><div class="chip" style="background:#f5efdd"></div><div class="meta"><b>sand-100</b> <code>#f5efdd</code><br>Bands, panels</div></div>
+    <div class="sw"><div class="chip" style="background:#c9a878"></div><div class="meta"><b>kraft-300</b> <code>#c9a878</code><br>Route line, texture. Never text</div></div>
+    <div class="sw"><div class="chip" style="background:#d5673f"></div><div class="meta"><b>terracotta-500</b> <code>#d5673f</code><br>Route truck, large display only</div></div>
+    <div class="sw"><div class="chip" style="background:#b34628"></div><div class="meta"><b>terracotta-600</b> <code>#b34628</code><br>CTA, links (new)</div></div>
+    <div class="sw"><div class="chip" style="background:#9f3b20"></div><div class="meta"><b>terracotta-700</b> <code>#9f3b20</code><br>CTA hover, pressed</div></div>
+    <div class="sw"><div class="chip" style="background:#1b3a5c"></div><div class="meta"><b>navy-800</b> <code>#1b3a5c</code><br>Headlines, 2px rules</div></div>
+    <div class="sw"><div class="chip" style="background:#0b1b2e"></div><div class="meta"><b>navy-950</b> <code>#0b1b2e</code><br>Cameleer story, footer</div></div>
+    <div class="sw"><div class="chip" style="background:#232323"></div><div class="meta"><b>ink-900</b> <code>#232323</code><br>Body text</div></div>
+    <div class="sw"><div class="chip" style="background:#f99c00"></div><div class="meta"><b>signal-400</b> <code>#f99c00</code><br>One tiny stamp, on navy only</div></div>
+  </div>
+  <div class="pairs">
+    <table>
+      <thead><tr><th>Pair</th><th>Sample</th><th>Ratio</th><th>AA small text</th></tr></thead>
+      <tbody>
+        <tr><td>Sand on terracotta-600 (CTA)</td><td><span class="demo" style="background:#b34628;color:#faf7f0">Get a free quote</span></td><td>5.13</td><td class="pass">Pass</td></tr>
+        <tr><td>Sand on old #c1502e (today)</td><td><span class="demo" style="background:#c1502e;color:#faf7f0">Get a free quote</span></td><td>4.41</td><td class="fail">Fail</td></tr>
+        <tr><td>Terracotta-600 link on sand-100</td><td><span class="demo" style="background:#f5efdd;color:#b34628">See pricing</span></td><td>4.78</td><td class="pass">Pass</td></tr>
+        <tr><td>Muted text on sand-100</td><td><span class="demo" style="background:#f5efdd;color:#5f574c">2 hour minimum</span></td><td>6.19</td><td class="pass">Pass</td></tr>
+        <tr><td>Navy-800 on sand-50</td><td><span class="demo" style="background:#faf7f0;color:#1b3a5c">Removalists in Berwick</span></td><td>10.87</td><td class="pass">Pass</td></tr>
+        <tr><td>Sand-100 on navy-950</td><td><span class="demo" style="background:#0b1b2e;color:#f5efdd">1860, Port Melbourne</span></td><td>15.10</td><td class="pass">Pass</td></tr>
+        <tr><td>Terracotta-500 on navy-950</td><td><span class="demo" style="background:#0b1b2e;color:#d5673f">Same job, bigger trucks</span></td><td>4.83</td><td class="pass">Pass</td></tr>
+        <tr><td>Kraft-300 on sand-50</td><td><span class="demo" style="background:#faf7f0;color:#c9a878">decoration only</span></td><td>2.10</td><td class="fail">Never text</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="muted">Light only, deliberately: this is a printed-freight world, and the site has never
+    had a working dark mode. The navy cameleer story and the footer give it its dark notes.</p>
+
+  <h2>Type</h2>
+  <p>Two families, self-hosted through <code>next/font</code>, subset to Latin, <code>font-display: swap</code>.
+    Tabular figures on every price so digits don't jump when they roll.</p>
+  <div class="grid cols-2" style="margin-top:24px">
+    <div class="spec f-zilla">
+      <span class="tag">Option A</span>
+      <div><b>Zilla Slab</b> display + <b>Barlow</b> body</div>
+      <div class="h">Removalists in Clyde North</div>
+      <div class="price"><b>$480 to $660</b></div>
+      <p class="body">A friendly, bookish slab. Reads well at every size. Closest to the SEO
+        report's suggestion, but more "newsletter" than "freight".</p>
+    </div>
+    <div class="spec f-roboto">
+      <span class="tag">Option B</span>
+      <div><b>Roboto Slab</b> display + <b>Public Sans</b> body</div>
+      <div class="h">Removalists in Clyde North</div>
+      <div class="price"><b>$480 to $660</b></div>
+      <p class="body">Solid and neutral, very legible. Also very common: it's the slab most sites
+        default to, so it adds the least character.</p>
+    </div>
+    <div class="spec f-stencil pick" style="grid-column: 1 / -1">
+      <span class="tag">Option C &middot; recommended</span>
+      <div><b>Big Shoulders Stencil</b> display + <b>Barlow</b> body</div>
+      <div class="h" style="font-size:clamp(2.6rem,7vw,4.4rem)">Removalists in Clyde North</div>
+      <div class="price"><b>$480 to $660</b></div>
+      <p class="body">A condensed stencil cut from industrial Chicago lettering, the closest free
+        face to stencilled crate lettering. Condensed, so the headline fits two lines on a 390px
+        phone at 44px. Barlow was drawn from highway and signage lettering, so the pair speaks the
+        same road-and-freight language, and Barlow has tabular figures for prices. Stencil is used
+        only for headlines and freight labels; anything under 24px is Barlow.</p>
+    </div>
+  </div>
+  <div class="panel" style="margin-top:16px">
+    <h3>Type scale (fluid)</h3>
+    <table>
+      <tbody>
+        <tr><td>Hero headline</td><td><code>clamp(2.75rem, 7vw + 1rem, 6rem)</code>, line-height 1.0</td></tr>
+        <tr><td>Section headline</td><td><code>clamp(2rem, 4vw + 0.5rem, 3.5rem)</code>, line-height 1.05</td></tr>
+        <tr><td>Subhead</td><td>Barlow 600, <code>1.25rem</code></td></tr>
+        <tr><td>Body</td><td>Barlow 400, <code>1.0625rem</code> (17px), line-height 1.6, 65ch max</td></tr>
+        <tr><td>Freight label</td><td>Barlow 700, <code>0.75rem</code>, uppercase, tracking 0.16em, 2px navy box</td></tr>
+        <tr><td>Price</td><td>Barlow 700, tabular figures</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Surfaces</h2>
+  <div class="grid cols-2" style="margin-top:20px">
+    <div>
+      <ul class="tight">
+        <li>Radius 4px everywhere: crates, not bubbles.</li>
+        <li>Hard 2px navy borders on the few panels that need separating (calculator, invoice
+          example). No soft shadows anywhere.</li>
+        <li>Paper grain: one inline SVG noise layer, fixed, <code>pointer-events: none</code>, 4%
+          opacity, under 2 KB.</li>
+        <li>Kraft cardboard band behind the fleet section only.</li>
+        <li>One tape or torn edge per page, maximum.</li>
+        <li>Freight labels on 3 of the 9 homepage stops, not every section.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="slot">Photo: 10 tonne truck, side view<small>Placeholder, 4:3, 1600 x 1200. Real photo drops in from one config file.</small></div>
+    </div>
+  </div>
+  <p class="note">Photos: every slot is a labelled sand-and-kraft block at its final aspect ratio,
+    with its path and alt text in one config file (<code>src/config/photos.ts</code>) and a shot
+    list in <code>docs/photo-shot-list.md</code>. No stock or AI photos of trucks, crew, homes or
+    customers. There's no image-generation tool in this environment, so the grain, route line,
+    south-east map and the 1860 archival panel will be hand-built as SVG in the brand palette,
+    not generated images.</p>
+
+  <h2>Hero headline</h2>
+  <p>Five options only this business could say. None of them implies the business itself dates
+    from 1860.</p>
+  <ol class="heads">
+    <li class="pick"><div class="hl">Same job as the 1860 cameleers. Better suspension.</div>
+      <div class="why">Recommended. Short, a bit funny, sets up the story, and fits two lines on a phone.</div></li>
+    <li><div class="hl">The camels retired. The cameleers didn't.</div>
+      <div class="why">Strong line, but needs the story to land. Better as the story section's headline.</div></li>
+    <li><div class="hl">Two trucks, ten movers, zero camels.</div>
+      <div class="why">Every word is a checkable fact. Good for the fleet section.</div></li>
+    <li><div class="hl">Cameleers hauled Melbourne's freight in 1860. We brought trucks.</div>
+      <div class="why">Clear, but long, and less of a laugh.</div></li>
+    <li><div class="hl">Your couch, carried like it's 1860. Driven like it's now.</div>
+      <div class="why">Warm, but "carried like it's 1860" can read as old-fashioned.</div></li>
+  </ol>
+  <p>Subtext (under 20 words): <em>Cranbourne removalists moving homes across Melbourne.
+    $120/hr, 2 hour minimum. See your price below.</em></p>
+
+  <h2>Homepage: 9 stops</h2>
+  <p>Down from 12 sections. Each stop makes one point, once.</p>
+  <div class="stops">
+    <div class="stop"><h3>0. Hero</h3><p>Truck photo slot full-bleed with a navy overlay on the
+      left. Headline, subtext, Call and Get a free quote on the left. The live calculator panel
+      overlaps the photo on the right; on a phone it sits directly under the headline, inside the
+      first screen. The route starts here.</p></div>
+    <div class="stop"><h3>1. Proof strip</h3><p>One thin row: ABN, 6 and 10 tonne trucks,
+      Cranbourne base, 2 hour minimum. The Google rating joins it once real. Replaces the trust
+      strip, the "difference" section and the review trust cards.</p></div>
+    <div class="stop"><h3>2. What we move</h3><p>A freight manifest instead of 8 cards: services
+      listed as rows on the left, one large photo slot on the right that swaps to the hovered or
+      tapped service, with a roller-door reveal. Photo-led without 8 zigzag rows.</p></div>
+    <div class="stop"><h3>3. How it works</h3><p>One merged version, three stops on a short branch
+      of the route: Get your price, Pick your day, We move you. No 01 to 04 badges.</p></div>
+    <div class="stop"><h3>4. The crew</h3><p>Hidden until real crew profiles exist. When they do: a
+      strip of faces and names, duotone to colour on hover.</p></div>
+    <div class="stop"><h3>5. The cameleer story</h3><p>The one dark navy section. An archival-style
+      1860 panel (hand-drawn SVG route map), three short paragraphs, ending on "Same idea, bigger
+      trucks." The only place the camel appears large.</p></div>
+    <div class="stop"><h3>6. Fleet</h3><p>Two truck photo slots side by side on a kraft band, each
+      with a "what fits" outline diagram whose items load in on scroll.</p></div>
+    <div class="stop"><h3>7. Where we move</h3><p>A stylised south-east Melbourne map (SVG) with
+      Cranbourne pinned and the 8 published suburbs as chips, pins dropping in.</p></div>
+    <div class="stop end"><h3>8. FAQ and final quote</h3><p>FAQ on the left, a big "Get your price
+      in 60 seconds" panel on the right. The route ends at its button.</p></div>
+  </div>
+
+  <h2>Motion</h2>
+  <table style="margin-top:16px">
+    <tbody>
+      <tr><td><b>ease-haul</b></td><td><code>cubic-bezier(0.22, 1, 0.36, 1)</code></td><td>Default entrance: fast start, heavy settle</td></tr>
+      <tr><td><b>ease-route</b></td><td><code>cubic-bezier(0.65, 0, 0.35, 1)</code></td><td>The route line and anything travelling</td></tr>
+      <tr><td><b>ease-stamp</b></td><td>spring, stiffness 500, damping 30</td><td>The headline stamp and badges</td></tr>
+      <tr><td><b>Durations</b></td><td>150 / 400 / 700 ms</td><td>Hover, section, hero</td></tr>
+      <tr><td><b>Stagger</b></td><td>60 ms, max 6 items</td><td>Groups</td></tr>
+      <tr><td><b>Travel</b></td><td>16 to 24 px</td><td>Never more</td></tr>
+    </tbody>
+  </table>
+  <ul class="tight">
+    <li>Nothing starts invisible. Content is readable at first paint; motion only settles it into
+      place. (Today, two sections render blank until scrolled.)</li>
+    <li>Framer Motion is already installed; GSAP (ScrollTrigger, MotionPath) is added for the route
+      line only, bundled locally, loaded only on pages that draw a route. Budget: under 60 KB gzipped.</li>
+    <li>Every effect has a reduced-motion fallback. No custom cursors, scroll-jacking, particles,
+      typewriter text, 3D tilt, marquees or confetti.</li>
+  </ul>
+
+  <h2>Where the skills and the playbook disagreed</h2>
+  <ul class="tight">
+    <li><b>Radius and glass.</b> The high-end skill wants pill buttons, glass and 2rem rounded shells.
+      The playbook's 4px radius, hard borders and no glass win.</li>
+    <li><b>Reveals.</b> Skills want elements to fade up from invisible. Here, content is visible first and only
+      settles.</li>
+    <li><b>Services layout.</b> The playbook says alternating photo rows; the taste skill caps zigzags at
+      2 in a row. The manifest list plus one swapping photo keeps it photo-led without 8 zigzags.</li>
+    <li><b>Eyebrows.</b> The playbook says freight labels "sparingly"; the taste skill says at most 1 in 3
+      sections. Labels go on 3 of the 9 stops.</li>
+    <li><b>Placeholder photos.</b> Skills suggest picsum or stock. Your rule wins: labelled slots only.</li>
+  </ul>
+
+  <div class="ok">
+    <h3>What I need from you</h3>
+    <ul class="tight">
+      <li>OK on font option C (or pick A or B).</li>
+      <li>OK on the headline "Same job as the 1860 cameleers. Better suspension." (or pick another).</li>
+      <li>OK on deepening the CTA terracotta to <code>#b34628</code> for accessibility.</li>
+      <li>OK on the services "freight manifest" instead of alternating photo rows.</li>
+    </ul>
+    <p class="muted">Then I build tokens and fonts, the motion system, and the homepage, and stop
+      again with screenshots at 390px and 1440px before touching the inner pages.</p>
+  </div>
+</div>
