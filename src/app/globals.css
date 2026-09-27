@@ -469,6 +469,19 @@
   }
 }
 
+/* Pairs for SVG/SMIL art that can't read the media query itself: one version moves, one stays. */
+.vc-still-only {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .vc-motion-only {
+    display: none;
+  }
+  .vc-still-only {
+    display: inline;
+  }
+}
+
 /* How it works: countdown bar, panel swap, and deliverables ticking in. */
 @keyframes vc-countdown {
   from {

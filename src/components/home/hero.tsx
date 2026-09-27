@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight, BadgeCheck, Phone } from "lucide-react";
 import { cn } from "cn";
 
+import { HeroRoute } from "@/components/brand/hero-route";
 import { CamelSign, SignPlate } from "@/components/brand/signage";
 import { CountUp } from "@/components/motion/count-up";
 import { Photo } from "@/components/brand/photo";
@@ -148,6 +149,8 @@ export function Hero({ settings }: { settings: PricingSettings }) {
               </dd>
             </div>
           </dl>
+
+          <HeroRoute className="mt-6 hidden h-auto w-full max-w-xl lg:block" />
         </div>
 
         <div className="relative flex flex-col lg:col-span-6 xl:col-span-5">
