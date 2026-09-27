@@ -69,3 +69,14 @@ describe("auth", () => {
     expect(() => getAuth()).toThrow(/AUTH_SECRET is not set/);
   });
 });
+
+describe("middleware", () => {
+  it("serves pages when the database isn't configured", async () => {
+    setEnv({ DATABASE_URL: undefined, DIRECT_URL: undefined, ADMIN_PATH: undefined });
+    const { NextRequest } = await import("next/server");
+    const { middleware } = await import("@/middleware");
+    const response = await middleware(new NextRequest("https://example.com/pricing"));
+    expect(response.status).not.toBe(500);
+    expect(response.headers.get("x-frame-options")).toBe("DENY");
+  });
+});
