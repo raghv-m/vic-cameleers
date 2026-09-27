@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { ArrowRight, Phone, Star } from "lucide-react";
+import { ArrowRight, MessageSquare, Phone, PhoneCall, Star } from "lucide-react";
 import { cn } from "cn";
 
 import { CamelMark } from "@/components/brand/camel-mark";
 import { CoverageMap } from "@/components/brand/coverage-map";
 import { RouteArrow, SignPlate } from "@/components/brand/signage";
+import { ResumeEstimate } from "@/components/home/resume-estimate";
 import { StoryScroll } from "@/components/home/story-scroll";
 import { UseSuburbButton } from "@/components/home/use-suburb-button";
 import { Container, SectionHeader } from "@/components/site/layout-primitives";
@@ -217,6 +218,24 @@ export function FinalCta({ index }: { index: string }) {
           <p className="text-ink-900 mt-4 max-w-[46ch] text-lg">
             Get your estimate in a couple of minutes, then we&apos;ll confirm the details and lock
             in your truck and crew.
+          </p>
+          <ResumeEstimate />
+          <p className="text-navy-900 mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-[0.9375rem] font-semibold">
+            <span className="text-muted-600 font-medium">Rather not fill in a form?</span>
+            <a
+              href={`sms:${business.phoneE164}`}
+              className="inline-flex min-h-11 items-center gap-2 underline decoration-2 underline-offset-4"
+            >
+              <MessageSquare className="size-4" aria-hidden="true" />
+              Text us
+            </a>
+            <Link
+              href="/contact"
+              className="inline-flex min-h-11 items-center gap-2 underline decoration-2 underline-offset-4"
+            >
+              <PhoneCall className="size-4" aria-hidden="true" />
+              Ask for a callback
+            </Link>
           </p>
         </div>
         <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row md:flex-col lg:flex-row">
