@@ -1,7 +1,7 @@
 import type { SuburbData } from "./types";
 
 /**
- * Narre Warren. Published. Local details drafted 27 Sep 2026 and marked REVIEW for the owner to fact-check.
+ * Narre Warren. Published. Local details drafted 26 Sep 2026 and marked REVIEW for the owner to fact-check.
  */
 export const suburbData: SuburbData = {
   name: "Narre Warren",

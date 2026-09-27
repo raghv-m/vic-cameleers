@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { MapPin, MessageCircle, Star, Truck, Wallet } from "lucide-react";
+import { Star } from "lucide-react";
 
 import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 import { Button } from "@/components/ui/button";
@@ -14,29 +14,6 @@ export const metadata: Metadata = pageMetadata({
   path: "/reviews",
   description: `Reviews from ${business.tradingName} customers, a Cranbourne removalist crew moving homes across Melbourne from ${business.hourlyRateShort}.`,
 });
-
-const trustSignals = [
-  {
-    icon: MapPin,
-    title: "Local Melbourne crew",
-    description: `Based in ${business.baseSuburb}, not a call centre.`,
-  },
-  {
-    icon: Wallet,
-    title: "Transparent pricing",
-    description: `${business.hourlyRateDisplay}, ${business.minimumHours} hour minimum. No surprise invoice.`,
-  },
-  {
-    icon: Truck,
-    title: "Professional fleet",
-    description: `${business.fleet.map((truck) => truck.label).join(" and ")}.`,
-  },
-  {
-    icon: MessageCircle,
-    title: "Direct communication",
-    description: "Talk to the crew who's actually moving you, not a booking agent.",
-  },
-];
 
 export default async function ReviewsPage() {
   const reviews = await db.review
@@ -57,30 +34,26 @@ export default async function ReviewsPage() {
       </div>
 
       {reviews.length === 0 ? (
-        <div>
-          <div className="rounded-lg border p-8 text-center">
-            <p className="text-foreground font-medium">
-              We&apos;re a young business, no reviews here yet.
-            </p>
-            <p className="text-muted-foreground mt-2 text-sm">
-              We&apos;d rather show you what we can back up today than pad this out with numbers we
-              can&apos;t. Once your move is done, we&apos;d genuinely appreciate your review.
-            </p>
-            <Button className="mt-6" render={<Link href="/quote" />} nativeButton={false}>
+        <div className="rounded-lg border p-8 text-center">
+          <p className="font-heading text-2xl font-medium">Reviews coming soon, we&apos;re new</p>
+          <p className="text-muted-foreground mt-2">
+            Reviews from real customers will show up here as they come in. We won&apos;t fill this
+            page with anything else in the meantime.
+          </p>
+          <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
+            <Button render={<Link href="/quote" />} nativeButton={false}>
               {ctaCopy.primary}
             </Button>
-          </div>
-
-          <div className="mt-8 grid gap-4 text-left sm:grid-cols-2">
-            {trustSignals.map((signal) => (
-              <div key={signal.title} className="flex gap-3 rounded-lg border p-4">
-                <signal.icon className="text-primary mt-0.5 h-5 w-5 shrink-0" />
-                <div>
-                  <p className="text-foreground text-sm font-medium">{signal.title}</p>
-                  <p className="text-muted-foreground mt-0.5 text-sm">{signal.description}</p>
-                </div>
-              </div>
-            ))}
+            {/* TODO(owner): appears once the Google review link is set (business.googleReviewUrl). */}
+            {business.googleReviewUrl && (
+              <Button
+                variant="secondary"
+                render={<a href={business.googleReviewUrl} target="_blank" rel="noreferrer" />}
+                nativeButton={false}
+              >
+                Review us on Google
+              </Button>
+            )}
           </div>
         </div>
       ) : (

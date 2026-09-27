@@ -1,8 +1,25 @@
 import type { ServiceSlug } from "@/config/services";
+import type { PricingInput } from "@/types/pricing";
+
+export interface ServiceSection {
+  heading: string;
+  paragraphs: string[];
+  list?: string[];
+}
+
+/** A worked price, calculated live from the real pricing engine and current settings. */
+export interface ServicePriceExample {
+  heading: string;
+  description: string;
+  input: PricingInput;
+}
 
 export interface ServiceContent {
   intro: string;
   included: string[];
+  /** Longer-form sections for the fuller service pages. */
+  sections?: ServiceSection[];
+  priceExample?: ServicePriceExample;
   faqs: { question: string; answer: string }[];
 }
 
@@ -155,6 +172,144 @@ export const serviceContent: Record<ServiceSlug, ServiceContent> = {
         question: "Do you charge more for same-day bookings?",
         answer:
           "The same hourly rate applies. We'll be upfront on the phone if last-minute availability affects timing.",
+      },
+    ],
+  },
+  "marketplace-pickups": {
+    intro:
+      "Found a couch on Facebook Marketplace or a fridge on Gumtree, and now you need to get it home? We pick up second-hand furniture from the seller's place and bring it to yours, anywhere in Greater Melbourne. For one or two items, the 6 tonne truck with two movers is usually the right fit.",
+    included: [
+      "Pickup from the seller's home and delivery to the room you choose",
+      "Furniture blankets and straps to protect the item in the truck",
+      "A second pickup on the same trip, added as an extra stop in your quote",
+      "Disassembly and reassembly if it won't fit through a doorway (extra, quoted upfront)",
+    ],
+    sections: [
+      {
+        heading: "How a marketplace pickup works",
+        paragraphs: [
+          "Once you've agreed a price with the seller, get a free quote with the seller's address as the pickup and yours as the drop-off. Collecting from more than one seller? Add the second address as an extra stop so it all happens in one trip.",
+          "Sort out payment and a pickup time with the seller before we arrive. We do the carrying, but the sale is between you and them, so we can't pay sellers or negotiate for you.",
+          "On the day, we load at the seller's place with blankets and straps, drive it over, and carry it into the room you want it in.",
+        ],
+      },
+      {
+        heading: "Check these before you book",
+        paragraphs: [
+          "A few minutes of checking before pickup day saves a wasted trip, or a couch stuck in a doorway.",
+        ],
+        list: [
+          "Get the height, width and depth from the seller, then measure your doorways, hallways, stairs and lift. A three-seater that fits the seller's lounge won't always fit through your front door.",
+          "Ask whether it comes apart. Bed frames, wardrobes and some couches do, which makes them much easier to carry. If the seller has already taken it apart, ask them to keep the screws and fittings together.",
+          "Ask about access at the seller's end: stairs, a lift, or a long walk from where the truck can park all add time.",
+          "Look closely at the photos, or ask for more. We don't inspect or vouch for items, so check the condition before you pay.",
+          "For fridges and washing machines, ask the seller to have them disconnected and drained before we arrive.",
+        ],
+      },
+      {
+        heading: "What a pickup costs",
+        paragraphs: [
+          "Every job has a 2 hour minimum at $120/hour, plus the 45 minute call-out. A single pickup between nearby suburbs often fits inside that minimum, so the total is just the minimum charge. Two pickups on one trip, stairs at either end, or a long drive between addresses can take it past the minimum, and then you pay for the actual time on the job.",
+        ],
+      },
+    ],
+    priceExample: {
+      heading: "One couch, Cranbourne North to Clyde North",
+      description:
+        "A single three-seater, ground floor at both ends, about 15 minutes' drive between the seller and you.",
+      input: {
+        propertySize: "singleItem",
+        pickupAccess: { flightsOfStairsNoLift: 0, longCarry: false },
+        dropoffAccess: { flightsOfStairsNoLift: 0, longCarry: false },
+        travelMinutes: 15,
+      },
+    },
+    faqs: [
+      {
+        question: "Can you pick up from two different sellers in one trip?",
+        answer:
+          "Yes. Add the second seller's address as an extra stop when you get your quote. Each stop adds driving and loading time, so the price range allows for it.",
+      },
+      {
+        question: "Do I need to be at the pickup?",
+        answer:
+          "Someone needs to be at the seller's place to hand the item over, usually the seller. You, or someone you trust, should be at the drop-off to show us where it goes.",
+      },
+      {
+        question: "Can you pay the seller for me?",
+        answer:
+          "No. Please sort out payment with the seller directly before pickup day. We just do the carrying.",
+      },
+      {
+        question: "What's the minimum charge for one item?",
+        answer:
+          "The same as any job: 2 hours at $120/hour, plus the 45 minute call-out, because it still takes a truck and two movers on the road.",
+      },
+    ],
+  },
+  "end-of-lease-moves": {
+    intro:
+      "Renting means your move has a hard deadline: the lease ends, the keys go back, and the final inspection happens whether you're packed or not. We help renters across Melbourne get out on time, at an hourly rate you can see before you book.",
+    included: [
+      "Loading, transport and unloading of your furniture and boxes",
+      "Furniture blankets to protect your things on the way out",
+      "Packing and unpacking if you want it (extra, quoted upfront)",
+      "Disassembly and reassembly of beds and flat-pack furniture (extra, quoted upfront)",
+    ],
+    sections: [
+      {
+        heading: "Work back from the day you hand the keys back",
+        paragraphs: [
+          "Your lease end date, key handover and final inspection are fixed, so plan the move around them rather than the other way round. If you can, book the move a few days before the lease ends. That leaves time for cleaning and any small repairs before the keys go back.",
+          "If your new lease starts the same day the old one ends, tell us your preferred start time when you get your quote, so we can plan the day around picking up your new keys.",
+        ],
+      },
+      {
+        heading: "Looking after the place on the way out",
+        paragraphs: [
+          "Scuffed walls and chipped doorframes on moving day are the last thing you want before an inspection. Tell us about anything tight, fragile or awkward before we start, and we'll plan how each piece comes out.",
+          "Once a room is empty, take photos of it before the cleaners go in. They're useful to have at the final inspection.",
+          "We don't do end-of-lease cleaning. Book your cleaner for after we've finished, so they're cleaning an empty home.",
+        ],
+      },
+      {
+        heading: "The last week before you move",
+        paragraphs: ["A short list that makes moving day and the handover go smoothly:"],
+        list: [
+          "Confirm the key handover time with your agent or landlord.",
+          "Book the lift or loading bay if you're leaving an apartment.",
+          "Pack everything except what you need day to day, and label boxes by room.",
+          "Set up mail redirection and update your address.",
+          "Tell us about stairs, lifts and parking at both ends when you get your quote.",
+        ],
+      },
+    ],
+    priceExample: {
+      heading: "2 bedroom unit, first floor with no lift",
+      description:
+        "One flight of stairs at the old place, ground floor at the new one, about 25 minutes' drive between them.",
+      input: {
+        propertySize: "2bed",
+        pickupAccess: { flightsOfStairsNoLift: 1, longCarry: false },
+        dropoffAccess: { flightsOfStairsNoLift: 0, longCarry: false },
+        travelMinutes: 25,
+      },
+    },
+    faqs: [
+      {
+        question: "Can you move me on the day my lease ends?",
+        answer:
+          "Often, if a truck and crew are free that day. Book as early as you can, and tell us about any key handover time you need to work around.",
+      },
+      {
+        question: "Do you clean the property after the move?",
+        answer:
+          "No, we're removalists, not cleaners. Book an end-of-lease cleaner for after we've emptied the place.",
+      },
+      {
+        question: "What if the move takes longer than the estimate?",
+        answer:
+          "You pay for the actual time at the hourly rate. If something on the day changes the job, like more furniture than expected or a lift that's out of action, we'll tell you before it affects the price.",
       },
     ],
   },

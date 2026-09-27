@@ -16,8 +16,8 @@ function Body() {
         items={[
           "Book your removalist and lock in a date",
           "Start sorting through belongings, decide what to sell, donate, or bin",
-          "If you&apos;re renting, give notice and confirm your bond inspection date",
-          "Research schools, doctors, and services near your new place if you&apos;re moving suburbs",
+          "If you're renting, give notice and confirm your bond inspection date",
+          "Research schools, doctors, and services near your new place if you're moving suburbs",
         ]}
       />
 
@@ -27,7 +27,7 @@ function Body() {
           "Start packing rooms you use less often, spare rooms, garage, storage",
           "Organise mail redirection with Australia Post",
           "Update your address with your bank, employer, and Medicare",
-          "Book any lift access or building move-in/out windows if you&apos;re in an apartment",
+          "Book any lift access or building move-in/out windows if you're in an apartment",
         ]}
       />
 
@@ -46,7 +46,7 @@ function Body() {
         items={[
           "Have essentials (medication, chargers, a change of clothes) packed separately",
           "Do a final walkthrough of every room, including cupboards and the garage",
-          "Take meter readings if you&apos;re responsible for utilities",
+          "Take meter readings if you're responsible for utilities",
           "Keep your phone charged, your removalist will call or text if anything comes up",
         ]}
       />
@@ -72,5 +72,6 @@ export const movingChecklist: Guide = {
   description:
     "A week-by-week timeline to keep your move organised, from 8 weeks out to moving day.",
   publishedAt: "2026-09-26",
+  relatedService: "end-of-lease-moves",
   Body,
 };

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { format } from "date-fns";
+// parseISO reads a date-only string as a local date; new Date() would read it as UTC
+// midnight and show the previous day in timezones behind UTC.
+import { format, parseISO } from "date-fns";
 
 import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 import { pageMetadata } from "@/lib/seo";
@@ -30,7 +32,7 @@ export default function GuidesIndexPage() {
               </h2>
               <p className="text-muted-foreground mt-1">{guide.description}</p>
               <p className="text-muted-foreground mt-2 text-xs">
-                {format(new Date(guide.publishedAt), "d MMMM yyyy")}
+                {format(parseISO(guide.publishedAt), "d MMMM yyyy")}
               </p>
             </Link>
           </li>

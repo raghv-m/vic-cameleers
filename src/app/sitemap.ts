@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 
 import { getEnabledServices } from "@/config/services";
 import { absoluteUrl } from "@/config/site-url";
+import { hasCrewProfiles } from "@/content/crew";
 import { guides } from "@/content/guides";
 import { publishedSuburbs } from "@/content/suburbs";
 
@@ -29,11 +30,14 @@ const PAGES: { path: string; updated: string }[] = [
 
 /** Service and suburb page copy last changed on these dates. Unpublished suburbs are left out. */
 const SERVICES_UPDATED = "2026-09-26";
-const SUBURBS_UPDATED = "2026-09-27";
+const SUBURBS_UPDATED = "2026-09-26";
+const CREW_UPDATED = "2026-09-26";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     ...PAGES.map(({ path, updated }) => ({ url: absoluteUrl(path), lastModified: updated })),
+    // /crew only exists once real crew profiles do (src/content/crew.ts).
+    ...(hasCrewProfiles() ? [{ url: absoluteUrl("/crew"), lastModified: CREW_UPDATED }] : []),
     ...getEnabledServices().map((service) => ({
       url: absoluteUrl(`/services/${service.slug}`),
       lastModified: SERVICES_UPDATED,

@@ -5,6 +5,7 @@ import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { business } from "@/config/business";
 import { ctaCopy } from "@/config/copy";
+import { hasCrewProfiles } from "@/content/crew";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
@@ -56,6 +57,14 @@ export default function AboutPage() {
           {business.crewSize} movers, {business.fleet.map((truck) => truck.label).join(" and ")},
           all working out of {business.baseSuburb.replace(" VIC", "")}.
         </p>
+        {hasCrewProfiles() && (
+          <Link
+            href="/crew"
+            className="text-primary mt-3 inline-block text-sm font-medium hover:underline"
+          >
+            Meet the crew
+          </Link>
+        )}
       </div>
 
       <div className="mt-12 text-center">

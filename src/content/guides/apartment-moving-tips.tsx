@@ -36,7 +36,7 @@ function Body() {
       <GuideH2>Tell your removalist about access, not just the address</GuideH2>
       <GuideList
         items={[
-          "Floor number and whether there&apos;s a lift",
+          "Floor number and whether there's a lift",
           "Any lift booking windows you need to work around",
           "Stairs, if the lift is out of action or too small for larger items",
           "How far the truck can park from the entrance",
@@ -59,5 +59,6 @@ export const apartmentMovingTips: Guide = {
   title: "Moving out of an apartment: what to plan for",
   description: "Lift bookings, building rules, and access tips for a smoother apartment move.",
   publishedAt: "2026-09-26",
+  relatedService: "apartment-removals",
   Body,
 };

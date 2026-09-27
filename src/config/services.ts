@@ -5,7 +5,9 @@ export type ServiceSlug =
   | "furniture-removals"
   | "packing"
   | "heavy-items"
-  | "same-day-removals";
+  | "same-day-removals"
+  | "marketplace-pickups"
+  | "end-of-lease-moves";
 
 export interface ServiceConfig {
   slug: ServiceSlug;
@@ -70,6 +72,20 @@ export const services: ServiceConfig[] = [
     name: "Same-day removals",
     seoKeyword: "Same-day removals Melbourne",
     shortDescription: "Mover cancelled on you? We can often get a crew out today.",
+    enabled: true,
+  },
+  {
+    slug: "marketplace-pickups",
+    name: "Marketplace pickups",
+    seoKeyword: "Marketplace pickups Melbourne",
+    shortDescription: "Facebook Marketplace and Gumtree furniture, picked up and brought home.",
+    enabled: true,
+  },
+  {
+    slug: "end-of-lease-moves",
+    name: "End-of-lease moves",
+    seoKeyword: "End of lease removalists Melbourne",
+    shortDescription: "Renters moving out on a deadline, planned around your key handover.",
     enabled: true,
   },
 ];

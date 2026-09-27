@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { format } from "date-fns";
+// parseISO reads a date-only string as a local date; new Date() would read it as UTC
+// midnight and show the previous day in timezones behind UTC.
+import { format, parseISO } from "date-fns";
 
 import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/seo/json-ld";
+import { business } from "@/config/business";
 import { ctaCopy } from "@/config/copy";
+import { getServiceBySlug } from "@/config/services";
 import { absoluteUrl } from "@/config/site-url";
 import { getGuideBySlug, GUIDE_AUTHOR, guides } from "@/content/guides";
 import { DEFAULT_OG_IMAGE, pageMetadata } from "@/lib/seo";
@@ -38,6 +42,7 @@ export default async function GuidePage({ params }: PageProps<"/guides/[slug]">)
   const guide = getGuideBySlug(slug);
   if (!guide) notFound();
 
+  const relatedService = getServiceBySlug(guide.relatedService);
   const url = absoluteUrl(`/guides/${guide.slug}`);
   const articleJsonLd = {
     "@context": "https://schema.org",
@@ -67,7 +72,7 @@ export default async function GuidePage({ params }: PageProps<"/guides/[slug]">)
       <p className="text-muted-foreground mt-2 text-sm">
         By the {GUIDE_AUTHOR.name} &middot;{" "}
         <time dateTime={guide.publishedAt}>
-          {format(new Date(guide.publishedAt), "d MMMM yyyy")}
+          {format(parseISO(guide.publishedAt), "d MMMM yyyy")}
         </time>
       </p>
 
@@ -76,6 +81,17 @@ export default async function GuidePage({ params }: PageProps<"/guides/[slug]">)
       </div>
 
       <div className="mt-12 border-t pt-8 text-center">
+        {relatedService && (
+          <p className="text-muted-foreground mb-4 text-sm">
+            Related:{" "}
+            <Link
+              href={`/services/${relatedService.slug}`}
+              className="text-primary font-medium hover:underline"
+            >
+              {relatedService.name} with {business.tradingName}
+            </Link>
+          </p>
+        )}
         <Button size="lg" render={<Link href="/quote" />} nativeButton={false}>
           {ctaCopy.primary}
         </Button>

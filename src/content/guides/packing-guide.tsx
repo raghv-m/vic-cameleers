@@ -66,5 +66,6 @@ export const packingGuide: Guide = {
   title: "How to pack for a move: a room-by-room guide",
   description: "Practical packing tips, from choosing the right boxes to protecting fragile items.",
   publishedAt: "2026-09-26",
+  relatedService: "packing",
   Body,
 };

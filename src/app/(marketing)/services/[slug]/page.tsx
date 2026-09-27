@@ -9,6 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { WorkedPriceExample } from "@/components/marketing/worked-price-example";
 import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -17,6 +18,9 @@ import { ctaCopy } from "@/config/copy";
 import { serviceContent } from "@/config/service-content";
 import { getEnabledServices, getServiceBySlug } from "@/config/services";
 import { absoluteUrl } from "@/config/site-url";
+import { publishedSuburbs } from "@/content/suburbs";
+import { calculateQuote } from "@/lib/pricing";
+import { getPricingSettings } from "@/lib/pricing-settings";
 import { pageMetadata } from "@/lib/seo";
 import { businessRef, faqPageJsonLd, hourlyPriceSpecification } from "@/lib/structured-data";
 
@@ -48,6 +52,16 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
   if (!service) notFound();
 
   const content = serviceContent[service.slug];
+  const settings = await getPricingSettings();
+  const priceExample = content.priceExample
+    ? { ...content.priceExample, result: calculateQuote(content.priceExample.input, settings) }
+    : null;
+
+  // The published suburbs closest to the Cranbourne depot (Cranbourne itself counts as 0).
+  const closestSuburbs = [...publishedSuburbs]
+    .sort((a, b) => (a.driveTimeFromCranbourneMins ?? 0) - (b.driveTimeFromCranbourneMins ?? 0))
+    .slice(0, 4);
+  const serviceNameLower = service.name.toLowerCase();
 
   const serviceJsonLd = {
     "@context": "https://schema.org",
@@ -101,10 +115,46 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
         </ul>
       </div>
 
+      {content.sections?.map((section) => (
+        <section key={section.heading} className="mt-12">
+          <h2 className="font-heading text-2xl font-medium">{section.heading}</h2>
+          {section.paragraphs.map((paragraph) => (
+            <p key={paragraph} className="text-muted-foreground mt-3 leading-relaxed">
+              {paragraph}
+            </p>
+          ))}
+          {section.list && (
+            <ul className="text-muted-foreground mt-3 list-disc space-y-2 pl-5 leading-relaxed">
+              {section.list.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          )}
+        </section>
+      ))}
+
+      {priceExample && (
+        <div className="mt-10">
+          <WorkedPriceExample
+            heading={priceExample.heading}
+            description={priceExample.description}
+            result={priceExample.result}
+            settings={settings}
+          />
+        </div>
+      )}
+
       <div className="mt-12 text-center">
         <Button size="lg" render={<Link href="/quote" />} nativeButton={false}>
           {ctaCopy.primary}
         </Button>
+        <p className="text-muted-foreground mt-3 text-sm">
+          Or see how we work out every price on our{" "}
+          <Link href="/pricing" className="text-primary hover:underline">
+            pricing page
+          </Link>
+          .
+        </p>
       </div>
 
       {content.faqs.length > 0 && (
@@ -121,6 +171,34 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
             ))}
           </Accordion>
         </div>
+      )}
+
+      {closestSuburbs.length > 0 && (
+        <section className="mt-16">
+          <h2 className="font-heading text-lg font-medium">
+            {service.name} close to our Cranbourne depot
+          </h2>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {closestSuburbs.map((suburb) => (
+              <Link
+                key={suburb.slug}
+                href={`/removalists/${suburb.slug}`}
+                className="border-border bg-card hover:border-primary/40 rounded-full border px-3 py-1 text-sm"
+              >
+                {serviceNameLower.startsWith("same-day")
+                  ? `Same-day removalists ${suburb.name}`
+                  : `Removalists ${suburb.name}`}
+              </Link>
+            ))}
+          </div>
+          <p className="text-muted-foreground mt-3 text-sm">
+            We cover all of {business.serviceAreaDescription}.{" "}
+            <Link href="/removalists" className="text-primary hover:underline">
+              See the suburbs we move
+            </Link>
+            .
+          </p>
+        </section>
       )}
     </div>
   );

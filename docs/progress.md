@@ -90,7 +90,7 @@ Current-state facts from the code map that shape the plan:
   delay from CSS + font swap. Hero, fonts and the a11y issues (contrast, `<dl>` in why-us) are
   rebuilt in design D5/D6; re-measure live in Speed Insights and in D7.
 
-## SEO PHASE S2: Structured data (done 27 Sep 2026)
+## SEO PHASE S2: Structured data (done 26 Sep 2026)
 
 - [x] S2.1 Full `MovingCompany` node with `@id` (`src/components/seo/moving-company-json-ld.tsx`):
       name, url, logo, image, telephone, priceRange, taxID, suburb-level address (Cranbourne 3977),
@@ -108,7 +108,7 @@ Current-state facts from the code map that shape the plan:
 - [x] S2.7 Validated with validator.schema.org on 8 pages (home, service, guide, suburb, faq,
       privacy, pricing, quote): 0 errors, 0 warnings.
 
-## SEO PHASE S3: Local pages that are not doorway pages (done 27 Sep 2026)
+## SEO PHASE S3: Local pages that are not doorway pages (done 26 Sep 2026)
 
 - [x] S3.1 One typed file per suburb in `src/content/suburbs/<slug>.ts` exporting `suburbData`
       (`types.ts` has the owner's interface plus two optional fields the template needs: `intro` and
@@ -128,22 +128,29 @@ Current-state facts from the code map that shape the plan:
   content per published suburb, valid nearby slugs, 2+ published neighbours, no em dashes. It
   caught a real bug: Cranbourne West listed a non-existent `cranbourne-south` neighbour (fixed).
 
-## SEO PHASE S4: New pages and internal links
+## SEO PHASE S4: New pages and internal links (done 26 Sep 2026)
 
-- [ ] S4.1 New service pages, 600-900 words, $120/hr worked price example, FAQ, 3 suburb
-      links: marketplace pickups, end-of-lease moves. (Piano and pool table cut, decision D-1.)
-      Files: `src/config/services.ts`, `src/config/service-content.ts`, `faq.ts`
-- [ ] S4.2 Rewrite the cost guide (`/guides/how-much-does-a-removalist-cost`): example-job table
-      by home size and truck (from the real pricing engine), embedded calculator, price drivers,
-      hourly vs fixed. Files: `src/content/guides/cost-guide.tsx`, new calculator component
-- [ ] S4.3 `/crew` page + crew content type (name, role, photo, bio). Data empty; page renders
-      an honest holding state or is excluded from nav and sitemap until filled.
-      Files: `src/content/crew.ts`, `src/app/(marketing)/crew/page.tsx`
-- [!] S4.4 Real guide publish dates + real author name and bio. **Owner input.**
-- [ ] S4.5 Internal links: suburb → 2-3 services + 3-5 neighbours; service → quote + 4 closest
-      suburbs; guide → quote + one service. Descriptive anchors.
-- [ ] S4.6 Reviews page: "Review us on Google" CTA with GBP review link instead of the empty
-      state (falls back to quote CTA while the link is unset).
+- [x] S4.1 New service pages `/services/marketplace-pickups` (734 words) and
+      `/services/end-of-lease-moves` (611 words): long-form sections, a worked price example
+      calculated live by the pricing engine with the maths line by line
+      (`src/components/marketing/worked-price-example.tsx`), FAQ, links to the 4 published suburbs
+      closest to the depot. Piano and pool table cut (decision D-1).
+- [x] S4.2 Cost guide rewritten: example estimates table by home size and truck (engine output,
+      labelled "not past jobs", TODO for real job prices), embedded calculator
+      (`src/components/marketing/price-calculator.tsx`, reusable for the design-phase hero), price
+      drivers, hourly vs fixed, cost-saving tips. Date = day it went live.
+- [x] S4.3 `/crew` page + `src/content/crew.ts` (name, role, bio in their own words, photo). Data
+      empty; the page 404s and stays out of the sitemap until the first real profile is added.
+- [x] S4.4 Guide dates are go-live dates; author "Vic Cameleers crew" with TODO (done in S2).
+- [x] S4.5 Internal links: suburb pages link 3 services + published neighbours; every service
+      page links the quote page, the pricing page and the 4 closest published suburbs; every guide
+      links the quote page and one related service (`relatedService` on each guide). Descriptive
+      anchors throughout.
+- [x] S4.6 Reviews page: "Reviews coming soon, we're new" + quote CTA; a "Review us on Google"
+      button appears once `business.googleReviewUrl` is set (TODO).
+- Fixed along the way: two guides printed a literal `&apos;` inside list items; guide dates were
+  parsed as UTC and showed the previous day in timezones behind UTC (now `parseISO`); the cost
+  table hid its price column behind a sideways scroll on mobile.
 
 ## SEO PHASE S5: Measurement
 
@@ -239,11 +246,11 @@ Answered decisions get recorded here with the date.
 
 Open:
 
-- Stock photos vs labelled placeholders (see "Answered 27 Sep" below, conflicts with 26 Sep answer).
+- Stock photos vs labelled placeholders (see the later answers below; conflicts with the first 26 Sep answer).
 - Vercel Preview builds have failed since at least 22 Sep 2026 (every Preview deployment, before
   S1 too); Production builds succeed. Needs the build log (Vercel login) to fix.
 
-Answered 27 Sep 2026:
+Answered 26 Sep 2026:
 
 - Always-on preview: one long-lived branch `site-rebuild`, every commit pushed there, reviews on
   its Vercel branch URL; production deploy (merge to main) only on owner approval.
