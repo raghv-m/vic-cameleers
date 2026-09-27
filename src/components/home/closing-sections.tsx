@@ -6,6 +6,7 @@ import { CamelMark } from "@/components/brand/camel-mark";
 import { CoverageMap } from "@/components/brand/coverage-map";
 import { RouteArrow, SignPlate } from "@/components/brand/signage";
 import { StoryPanel } from "@/components/brand/story-panel";
+import { UseSuburbButton } from "@/components/home/use-suburb-button";
 import { Container, SectionHeader } from "@/components/site/layout-primitives";
 import { buttonVariants } from "@/components/ui/button";
 import { business } from "@/config/business";
@@ -27,10 +28,10 @@ export function CoverageSection() {
           />
           <ul className="border-navy-900 mt-8 grid grid-cols-2 border-t-2">
             {publishedSuburbs.map((suburb) => (
-              <li key={suburb.slug} className="border-navy-900/20 border-b">
+              <li key={suburb.slug} className="border-navy-900/20 flex items-center border-b">
                 <Link
                   href={`/removalists/${suburb.slug}`}
-                  className="group text-navy-900 hover:text-terracotta-600 flex min-h-12 items-center justify-between gap-2 pr-3 font-semibold"
+                  className="group text-navy-900 hover:text-terracotta-600 flex min-h-12 min-w-0 flex-1 items-center justify-between gap-2 pr-1 font-semibold"
                 >
                   <span>
                     {suburb.name}
@@ -42,11 +43,18 @@ export function CoverageSection() {
                   </span>
                   <RouteArrow className="w-5 shrink-0 transition-transform duration-150 group-hover:translate-x-1 motion-reduce:transition-none" />
                 </Link>
+                <UseSuburbButton suburb={suburb.name} />
               </li>
             ))}
           </ul>
+          <p className="text-muted-600 mt-3 flex items-center gap-1.5 text-sm">
+            <span aria-hidden="true">&uarr;</span>
+            Tap the arrow next to a suburb to start your estimate from there.
+          </p>
           <div className="mt-6 flex flex-wrap items-center gap-3">
-            <SignPlate tone="amber">Victoria only</SignPlate>
+            <SignPlate tone="amber" className="vc-glow">
+              Victoria only
+            </SignPlate>
             <Link
               href="/removalists"
               className="text-navy-900 inline-flex min-h-11 items-center font-semibold underline decoration-2 underline-offset-4"

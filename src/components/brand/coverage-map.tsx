@@ -191,10 +191,44 @@ export function CoverageMap({ className }: { className?: string }) {
             >
               {suburb.name}
             </text>
+            {/* drive-time tag on hover and focus (from the suburb's own page data) */}
+            {suburb.driveTimeFromCranbourneMins ? (
+              <g
+                aria-hidden="true"
+                className="pointer-events-none opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100"
+              >
+                <rect
+                  x={pos.x - 38}
+                  y={pos.y - 34}
+                  width="76"
+                  height="20"
+                  rx="2"
+                  fill="var(--color-navy-900)"
+                />
+                <text
+                  x={pos.x}
+                  y={pos.y - 20}
+                  textAnchor="middle"
+                  className="fill-sand-50 text-[10.5px] font-bold"
+                >
+                  ~{suburb.driveTimeFromCranbourneMins} min drive
+                </text>
+              </g>
+            ) : null}
           </Link>
         ))}
 
-        {/* the depot */}
+        {/* the depot, with a slow ping */}
+        <circle
+          cx={DEPOT.x}
+          cy={DEPOT.y - 15}
+          r="22"
+          fill="none"
+          stroke="var(--color-signal-400)"
+          strokeWidth="3"
+          className="vc-ping"
+          aria-hidden="true"
+        />
         <g transform={`translate(${DEPOT.x - 16} ${DEPOT.y - 30})`}>
           <rect x="-4" y="-4" width="40" height="30" rx="3" fill="var(--color-navy-900)" />
           <path
@@ -221,8 +255,9 @@ export function CoverageMap({ className }: { className?: string }) {
         </g>
       </svg>
       <figcaption className="text-muted-600 mt-3 text-sm">
-        Schematic, not to scale. Rings show straight-line distance from our Cranbourne base. We move
-        across all of Greater Melbourne; the named suburbs have their own local pages.
+        Schematic, not to scale. Rings show straight-line distance from our Cranbourne base; hover a
+        suburb for a typical drive from the depot. We move across all of Greater Melbourne; the
+        named suburbs have their own local pages.
       </figcaption>
     </figure>
   );
