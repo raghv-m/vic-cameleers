@@ -10,6 +10,7 @@ import { sendEmail } from "@/lib/email/client";
 import { NewLeadAlertEmail } from "@/lib/email/templates/new-lead-alert";
 import { QuoteReceivedEmail } from "@/lib/email/templates/quote-received";
 import { calculateQuote } from "@/lib/pricing";
+import { toPricingInput } from "@/lib/quote-pricing";
 import { getPricingSettings } from "@/lib/pricing-settings";
 import { checkPublicFormRateLimit } from "@/lib/rate-limit";
 import { generateReferenceNumber } from "@/lib/reference-number";
@@ -23,10 +24,8 @@ const truckLabel: Record<"SIX_TONNE" | "TEN_TONNE", string> = {
   TEN_TONNE: "10 tonne truck",
 };
 
-// TODO(owner): replace with a real Distance Matrix / Routes API call once
-// GOOGLE_MAPS_SERVER_KEY is set (see TODO-OWNER.md). Every estimate assumes
-// this typical Melbourne trip length until then.
-const FALLBACK_TRAVEL_MINUTES = 20;
+/** A repeat of the same request inside this window returns the first one instead of a new lead. */
+const DUPLICATE_WINDOW_MS = 10 * 60 * 1000;
 
 function getClientIp(request: NextRequest): string | undefined {
   return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
@@ -81,33 +80,45 @@ export async function POST(request: NextRequest) {
   }
 
   const phoneE164 = toE164AuMobile(data.contactPhone);
-  const pickupFlights = data.pickupAccess.hasLift ? 0 : data.pickupAccess.stairsCount;
-  const dropoffFlights = data.dropoffAccess.hasLift ? 0 : data.dropoffAccess.stairsCount;
-  const hasHeavyItem =
-    data.specialItems.piano || data.specialItems.safe || data.specialItems.poolTable;
-
   const pricingSettings = await getPricingSettings();
-  const estimate = calculateQuote(
-    {
-      propertySize: data.propertySize,
-      pickupAccess: {
-        flightsOfStairsNoLift: pickupFlights,
-        longCarry: data.pickupAccess.longCarry,
+  const estimate = calculateQuote(toPricingInput(data), pricingSettings);
+
+  // Duplicate submission (double tap, back-and-resend, a retry after a slow response): the same
+  // mobile, pickup and date within a few minutes gets the first request's reference back rather
+  // than a second lead and a second round of emails.
+  try {
+    const recent = await db.lead.findFirst({
+      where: {
+        source: "QUOTE_FORM",
+        createdAt: { gte: new Date(Date.now() - DUPLICATE_WINDOW_MS) },
+        customer: { phone: phoneE164 },
+        quoteDraft: { pickupAddress: data.pickupAddress, moveDate: new Date(data.moveDate) },
       },
-      dropoffAccess: {
-        flightsOfStairsNoLift: dropoffFlights,
-        longCarry: data.dropoffAccess.longCarry,
+      orderBy: { createdAt: "desc" },
+      select: {
+        referenceNumber: true,
+        quotes: { orderBy: { createdAt: "desc" }, take: 1 },
       },
-      travelMinutes: FALLBACK_TRAVEL_MINUTES,
-      extras: {
-        packingBedrooms: data.extras.packing ? (data.extras.packingBedrooms ?? 0) : 0,
-        unpackingBedrooms: data.extras.unpacking ? (data.extras.unpackingBedrooms ?? 0) : 0,
-        disassemblyItems: data.extras.disassembly ? (data.extras.disassemblyItems ?? 0) : 0,
-      },
-      hasHeavyItem,
-    },
-    pricingSettings,
-  );
+    });
+    const recentQuote = recent?.quotes[0];
+    if (recent && recentQuote) {
+      return NextResponse.json({
+        referenceNumber: recent.referenceNumber,
+        duplicate: true,
+        estimate: {
+          lowHours: recentQuote.estimatedLowHours,
+          highHours: recentQuote.estimatedHighHours,
+          priceLowCents: recentQuote.estimateLowCents,
+          priceHighCents: recentQuote.estimateHighCents,
+          recommendedTruck: recentQuote.recommendedTruck,
+          recommendedCrewCount: recentQuote.recommendedCrewCount,
+        },
+      });
+    }
+  } catch (error) {
+    // The check is a nicety. If it fails, save the lead anyway: never lose a lead.
+    console.error("Duplicate quote check failed", error);
+  }
 
   const referenceNumber = generateReferenceNumber();
 
@@ -125,7 +136,7 @@ export async function POST(request: NextRequest) {
 
       const quoteDraft = await tx.quoteDraft.create({
         data: {
-          step: 5,
+          step: 3,
           pickupAddress: data.pickupAddress,
           dropoffAddress: data.dropoffAddress,
           additionalStopAddress: data.additionalStopAddress,

@@ -29,10 +29,18 @@ const DEV_BYPASS_TOKEN = "dev-bypass-token";
 export function TurnstileWidget({ onVerify }: { onVerify: (token: string) => void }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const siteKey = clientEnv.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  // The latest callback, kept in a ref so the widget renders once per mount. Depending on
+  // onVerify directly re-ran the effect (and re-rendered the widget) whenever a parent passed a
+  // new inline function, which looped when the callback itself caused a re-render.
+  const onVerifyRef = useRef(onVerify);
+  useEffect(() => {
+    onVerifyRef.current = onVerify;
+  });
 
   useEffect(() => {
+    const verify = (token: string) => onVerifyRef.current(token);
     if (!siteKey) {
-      onVerify(DEV_BYPASS_TOKEN);
+      verify(DEV_BYPASS_TOKEN);
       return;
     }
 
@@ -42,7 +50,7 @@ export function TurnstileWidget({ onVerify }: { onVerify: (token: string) => voi
       if (containerRef.current && window.turnstile && siteKey) {
         widgetId = window.turnstile.render(containerRef.current, {
           sitekey: siteKey,
-          callback: onVerify,
+          callback: verify,
         });
       }
     }
@@ -60,7 +68,7 @@ export function TurnstileWidget({ onVerify }: { onVerify: (token: string) => voi
     return () => {
       if (widgetId && window.turnstile) window.turnstile.remove(widgetId);
     };
-  }, [siteKey, onVerify]);
+  }, [siteKey]);
 
   // No placeholder copy on the public site: without a site key there's simply nothing to show.
   if (!siteKey) return null;

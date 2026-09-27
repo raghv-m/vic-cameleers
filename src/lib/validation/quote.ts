@@ -2,6 +2,50 @@ import { z } from "zod";
 
 import { isValidAuMobile } from "@/lib/au-phone";
 
+/**
+ * A move date must be a real YYYY-MM-DD date, today or later, and within 18 months. "Today" is the
+ * caller's local date, so the same check works in the browser and on the server.
+ */
+export function moveDateProblem(value: string, today: Date = new Date()): string | null {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return "Pick a moving date";
+  const [y, m, d] = value.split("-").map(Number) as [number, number, number];
+  const date = new Date(y, m - 1, d);
+  if (date.getFullYear() !== y || date.getMonth() !== m - 1 || date.getDate() !== d) {
+    return "That date doesn't exist";
+  }
+  const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  if (date < start) return "Pick today or a later date";
+  const limit = new Date(start);
+  limit.setMonth(limit.getMonth() + 18);
+  if (date > limit) return "We book up to 18 months ahead. Call us for later dates";
+  return null;
+}
+
+/**
+ * Addresses must be long enough to find, and anything with a postcode outside Victoria (3xxx
+ * and 8xxx are Victorian) is flagged, because we only move within Victoria.
+ */
+export function addressProblem(value: string): string | null {
+  const trimmed = value.trim();
+  if (trimmed.length < 5) return "Enter the street and suburb";
+  // The last standalone 4-digit number is the postcode, so a long street number is ignored.
+  const postcode = trimmed.match(/\b(\d{4})\b(?!.*\b\d{4}\b)/)?.[1];
+  if (postcode && !/^[38]\d{3}$/.test(postcode)) {
+    return "That postcode is outside Victoria. We only move within Victoria";
+  }
+  return null;
+}
+
+function address(label: string) {
+  return z
+    .string()
+    .max(200, `${label} is too long`)
+    .superRefine((value, ctx) => {
+      const problem = addressProblem(value);
+      if (problem) ctx.addIssue({ code: "custom", message: problem });
+    });
+}
+
 export const propertySizeSchema = z.enum([
   "studio",
   "1bed",
@@ -53,10 +97,21 @@ export const extrasSchema = z.object({
 });
 
 export const stepLocationDateSchema = z.object({
-  pickupAddress: z.string().min(5, "Enter a pickup address"),
-  dropoffAddress: z.string().min(5, "Enter a drop-off address"),
-  additionalStopAddress: z.string().max(200).optional(),
-  moveDate: z.string().min(1, "Pick a date"),
+  pickupAddress: address("Pickup address"),
+  dropoffAddress: address("Drop-off address"),
+  additionalStopAddress: z
+    .string()
+    .max(200)
+    .optional()
+    .superRefine((value, ctx) => {
+      if (!value?.trim()) return;
+      const problem = addressProblem(value);
+      if (problem) ctx.addIssue({ code: "custom", message: problem });
+    }),
+  moveDate: z.string().superRefine((value, ctx) => {
+    const problem = moveDateProblem(value);
+    if (problem) ctx.addIssue({ code: "custom", message: problem });
+  }),
   dateFlexibility: dateFlexibilitySchema,
   preferredTime: preferredTimeSchema,
 });
@@ -108,14 +163,13 @@ export type QuoteSubmissionInput = z.input<typeof quoteSubmissionSchema>;
 export type QuoteSubmission = z.output<typeof quoteSubmissionSchema>;
 
 // Each step is validated against its own sub-schema rather than via RHF's
-// trigger(fieldNames) — with a merged Zod object schema, trigger() doesn't
+// trigger(fieldNames): with a merged Zod object schema, trigger() doesn't
 // reliably scope resulting errors to just the requested fields, so it was
 // leaking validation errors for not-yet-visited steps onto the screen the
-// moment the user arrived there.
+// moment the user arrived there. Three steps (owner decision, 26 Sep 2026):
+// the move, what's moving (property, access, special items, extras), the person.
 export const stepSchemas = {
   1: stepLocationDateSchema,
-  2: stepPropertySchema,
-  3: stepInventorySchema,
-  4: stepExtrasSchema,
-  5: stepContactSchema,
+  2: stepPropertySchema.merge(stepInventorySchema).merge(stepExtrasSchema),
+  3: stepContactSchema,
 } as const;
