@@ -7,7 +7,15 @@ import type { EmailType } from "@prisma/client";
 import { serverEnv } from "@/env.server";
 import { db } from "@/lib/db";
 
-const resend = serverEnv.RESEND_API_KEY ? new Resend(serverEnv.RESEND_API_KEY) : null;
+// Created on first send, not at import, so `next build` never reads RESEND_API_KEY.
+let resendClient: Resend | null | undefined;
+
+function getResend(): Resend | null {
+  if (resendClient === undefined) {
+    resendClient = serverEnv.RESEND_API_KEY ? new Resend(serverEnv.RESEND_API_KEY) : null;
+  }
+  return resendClient;
+}
 
 interface SendEmailOptions {
   type: EmailType;
@@ -26,6 +34,7 @@ interface SendEmailOptions {
  * instead of actually sending, so nothing crashes in development.
  */
 export async function sendEmail(options: SendEmailOptions): Promise<void> {
+  const resend = getResend();
   if (!resend || !serverEnv.EMAIL_FROM) {
     console.warn(
       `RESEND_API_KEY/EMAIL_FROM not set, skipping email send (dev only): ${options.type} -> ${options.to}`,

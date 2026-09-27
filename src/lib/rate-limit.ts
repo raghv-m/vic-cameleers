@@ -11,19 +11,29 @@ import { serverEnv } from "@/env.server";
  * allows every request through rather than blocking all public forms
  * during development.
  */
-const publicFormLimiter =
-  serverEnv.UPSTASH_REDIS_REST_URL && serverEnv.UPSTASH_REDIS_REST_TOKEN
-    ? new Ratelimit({
-        redis: new Redis({
-          url: serverEnv.UPSTASH_REDIS_REST_URL,
-          token: serverEnv.UPSTASH_REDIS_REST_TOKEN,
-        }),
-        limiter: Ratelimit.slidingWindow(5, "10 m"),
-        prefix: "ratelimit:public-form",
-      })
-    : null;
+function createLimiter(
+  window: Parameters<typeof Ratelimit.slidingWindow>[1],
+  prefix: string,
+): Ratelimit | null {
+  if (!serverEnv.UPSTASH_REDIS_REST_URL || !serverEnv.UPSTASH_REDIS_REST_TOKEN) return null;
+  return new Ratelimit({
+    redis: new Redis({
+      url: serverEnv.UPSTASH_REDIS_REST_URL,
+      token: serverEnv.UPSTASH_REDIS_REST_TOKEN,
+    }),
+    limiter: Ratelimit.slidingWindow(5, window),
+    prefix,
+  });
+}
+
+// Created on first use, not at import, so `next build` never reads the Upstash env vars.
+let publicFormLimiter: Ratelimit | null | undefined;
+let adminLoginLimiter: Ratelimit | null | undefined;
 
 export async function checkPublicFormRateLimit(identifier: string): Promise<{ success: boolean }> {
+  if (publicFormLimiter === undefined) {
+    publicFormLimiter = createLimiter("10 m", "ratelimit:public-form");
+  }
   if (!publicFormLimiter) {
     console.warn("Upstash not configured, skipping rate limiting (dev only).");
     return { success: true };
@@ -39,19 +49,10 @@ export async function checkPublicFormRateLimit(identifier: string): Promise<{ su
  * layer; the twoFactor plugin's own accountLockout (src/lib/auth.ts) adds a
  * second, account-scoped lockout for failed 2FA verification specifically.
  */
-const adminLoginLimiter =
-  serverEnv.UPSTASH_REDIS_REST_URL && serverEnv.UPSTASH_REDIS_REST_TOKEN
-    ? new Ratelimit({
-        redis: new Redis({
-          url: serverEnv.UPSTASH_REDIS_REST_URL,
-          token: serverEnv.UPSTASH_REDIS_REST_TOKEN,
-        }),
-        limiter: Ratelimit.slidingWindow(5, "15 m"),
-        prefix: "ratelimit:admin-login",
-      })
-    : null;
-
 export async function checkAdminLoginRateLimit(identifier: string): Promise<{ success: boolean }> {
+  if (adminLoginLimiter === undefined) {
+    adminLoginLimiter = createLimiter("15 m", "ratelimit:admin-login");
+  }
   if (!adminLoginLimiter) {
     console.warn("Upstash not configured, skipping admin login rate limiting (dev only).");
     return { success: true };

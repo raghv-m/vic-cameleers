@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-import { serverEnv } from "@/env.server";
 
 /**
  * Security headers applied to every response (CLAUDE.md section 11).
@@ -18,7 +17,7 @@ function withSecurityHeaders(
   isAdmin: boolean,
 ): NextResponse {
   const scriptSrc =
-    serverEnv.NODE_ENV === "production"
+    process.env.NODE_ENV === "production"
       ? `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'`
       : `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-eval'`;
 
@@ -54,6 +53,17 @@ function withSecurityHeaders(
   return response;
 }
 
+/**
+ * The admin path, read straight from the environment. Middleware runs before every page, so it
+ * must not depend on the full server env check (src/env.server.ts), which also requires
+ * DATABASE_URL: a missing database setting would otherwise turn every page into a 500.
+ * Unset or blank means no admin rewrite, and /admin stays a 404.
+ */
+function adminPathFromEnv(): string | undefined {
+  const value = process.env.ADMIN_PATH?.trim();
+  return value ? value : undefined;
+}
+
 export function middleware(request: NextRequest) {
   // btoa/crypto are Web-standard globals available in the Edge runtime that
   // middleware executes in; Node's Buffer is not guaranteed there.
@@ -62,7 +72,7 @@ export function middleware(request: NextRequest) {
   requestHeaders.set("x-nonce", nonce);
 
   const { pathname } = request.nextUrl;
-  const adminPath = serverEnv.ADMIN_PATH;
+  const adminPath = adminPathFromEnv();
   const isDirectAdminGuess = pathname === "/admin" || pathname.startsWith("/admin/");
   const adminRewriteMatch =
     adminPath && (pathname === `/${adminPath}` || pathname.startsWith(`/${adminPath}/`));
