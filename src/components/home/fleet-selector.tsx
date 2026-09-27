@@ -160,8 +160,35 @@ export function FleetSelector({ tiers }: { tiers: FleetTier[] }) {
         <div className="lg:col-span-7">
           <LoadDiagram key={active.id} tier={active} />
           <p className="text-muted-600 mt-2 text-xs">Typical load, illustrated. Not to scale.</p>
+          <label htmlFor={`${baseId}-slider`} className="mt-5 block">
+            <span className="manifest-index text-muted-600">Drag to size the job</span>
+            <input
+              id={`${baseId}-slider`}
+              type="range"
+              min={0}
+              max={tiers.length - 1}
+              step={1}
+              value={activeIndex}
+              onChange={(event) => setActiveIndex(Number(event.target.value))}
+              aria-valuetext={active.title}
+              className="accent-terracotta-600 mt-2 h-11 w-full cursor-pointer"
+            />
+          </label>
+          <div
+            className="text-muted-600 flex justify-between text-xs font-semibold"
+            aria-hidden="true"
+          >
+            {tiers.map((tier, index) => (
+              <span
+                key={tier.id}
+                className={cn(index === activeIndex && "text-navy-900 font-bold")}
+              >
+                {tier.typical.split(",")[0]}
+              </span>
+            ))}
+          </div>
         </div>
-        <div className="lg:col-span-5">
+        <div key={`detail-${active.id}`} className="vc-panel-in lg:col-span-5">
           <dl className="divide-navy-900/20 divide-y">
             {[
               { term: "Truck", detail: active.truckLabel },
