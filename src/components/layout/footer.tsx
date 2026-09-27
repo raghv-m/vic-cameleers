@@ -29,7 +29,7 @@ export function Footer() {
         <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-10 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
           <div className="flex items-center gap-5">
             <CamelSign className="size-16 shrink-0" />
-            <p className="font-stencil text-sand-50 display-md">Moving soon? Get your price.</p>
+            <p className="font-headline text-sand-50 display-md">Moving soon? Get your price.</p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">
             <Link
@@ -54,7 +54,9 @@ export function Footer() {
         <div className="space-y-4">
           <Link href="/" className="text-sand-50 inline-flex items-center gap-2.5">
             <CamelMark className="text-terracotta-400 h-7 w-auto" />
-            <span className="font-stencil text-2xl leading-none">VIC CAMELEERS</span>
+            <span className="font-headline text-2xl leading-none tracking-[0.04em]">
+              VIC CAMELEERS
+            </span>
           </Link>
           <p className="max-w-sm text-[0.9375rem]">
             A Cranbourne removals crew with a 6 tonne and a 10 tonne truck, moving homes and

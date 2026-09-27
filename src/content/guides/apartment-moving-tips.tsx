@@ -44,11 +44,8 @@ function Body() {
       />
 
       <GuideP>
-        Include all of this when you{" "}
-        <Link href="/quote" className="text-primary hover:underline">
-          get your estimate
-        </Link>
-        , it directly affects how accurate your quote range is.
+        Include all of this when you <Link href="/quote">get your estimate</Link>, it directly
+        affects how accurate your quote range is.
       </GuideP>
     </>
   );

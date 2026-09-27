@@ -1,7 +1,7 @@
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
-import { Barlow, Big_Shoulders_Stencil } from "next/font/google";
+import { Barlow, Barlow_Condensed, Big_Shoulders_Stencil } from "next/font/google";
 
 import { Toaster } from "@/components/ui/sonner";
 import { business } from "@/config/business";
@@ -19,7 +19,17 @@ const barlow = Barlow({
   display: "swap",
 });
 
-// Big Shoulders Stencil: major display headlines and big numbers only. Variable weight, one file.
+// Barlow Condensed ExtraBold: every headline. Same road-signage family as the body text, so it
+// reads cleanly at any size (the stencil face broke letters apart in long headlines).
+const condensed = Barlow_Condensed({
+  variable: "--font-condensed",
+  subsets: ["latin"],
+  weight: ["700", "800"],
+  display: "swap",
+});
+
+// Big Shoulders Stencil: accents only (wordmark, manifest numbers, step markers, the RECEIVED
+// stamp). Never full headlines or sentences.
 const stencil = Big_Shoulders_Stencil({
   variable: "--font-stencil",
   subsets: ["latin"],
@@ -48,7 +58,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en-AU" className={`${barlow.variable} ${stencil.variable} h-full antialiased`}>
+    <html
+      lang="en-AU"
+      className={`${barlow.variable} ${condensed.variable} ${stencil.variable} h-full antialiased`}
+    >
       <body className="bg-background text-foreground flex min-h-full flex-col">
         <a
           href="#main-content"

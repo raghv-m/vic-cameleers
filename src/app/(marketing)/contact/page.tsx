@@ -1,9 +1,11 @@
-import { Mail, MapPin, Phone } from "lucide-react";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { connection } from "next/server";
 
-import { Breadcrumbs } from "@/components/seo/breadcrumbs";
+import { SignPlate } from "@/components/brand/signage";
 import { ContactForm } from "@/components/contact/contact-form";
+import { Container } from "@/components/site/layout-primitives";
+import { PageHeader } from "@/components/site/page-header";
 import { business } from "@/config/business";
 import { pageMetadata } from "@/lib/seo";
 
@@ -18,59 +20,83 @@ export default async function ContactPage() {
   await connection();
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
-      <Breadcrumbs items={[{ name: "Contact", path: "/contact" }]} />
-      <div className="mb-10 text-center">
-        <h1 className="text-4xl font-semibold tracking-tight">Get in touch</h1>
-        <p className="text-muted-foreground mt-2">
-          Call us direct, or send a message and we&apos;ll get back to you.
-        </p>
-      </div>
-
-      <div className="grid gap-10 lg:grid-cols-[1fr_1.2fr]">
-        <div className="space-y-6">
-          <div className="flex items-start gap-3">
-            <Phone className="text-primary mt-0.5 h-5 w-5 shrink-0" />
-            <div>
-              <p className="text-foreground font-medium">Phone</p>
-              <a
-                href={`tel:${business.phoneE164}`}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                {business.phoneDisplay}
-              </a>
-            </div>
-          </div>
-
-          {/* TODO(owner): shows automatically once business.publicEmail is set. */}
-          {business.publicEmail && (
-            <div className="flex items-start gap-3">
-              <Mail className="text-primary mt-0.5 h-5 w-5 shrink-0" />
-              <div>
-                <p className="text-foreground font-medium">Email</p>
+    <div data-hides-mobile-bar>
+      <PageHeader
+        breadcrumbs={[{ name: "Contact", path: "/contact" }]}
+        label="Contact"
+        title="Call us, or leave a message."
+        lede={
+          <p>
+            Want a price? The{" "}
+            <Link
+              href="/quote"
+              className="text-navy-900 font-semibold underline decoration-2 underline-offset-4"
+            >
+              quote form
+            </Link>{" "}
+            is quickest. For anything else, call or write below.
+          </p>
+        }
+      />
+      <Container className="grid gap-10 py-12 sm:py-16 lg:grid-cols-12 lg:gap-12">
+        <div className="lg:col-span-5">
+          <dl className="border-navy-900 border-t-2">
+            <div className="border-navy-900/20 border-b py-5">
+              <dt className="manifest-index text-terracotta-600">Phone</dt>
+              <dd>
                 <a
-                  href={`mailto:${business.publicEmail}`}
-                  className="text-muted-foreground hover:text-foreground"
+                  href={`tel:${business.phoneE164}`}
+                  className="font-headline text-navy-900 hover:text-terracotta-600 tabular mt-1 inline-flex min-h-11 items-center text-4xl"
                 >
-                  {business.publicEmail}
+                  {business.phoneDisplay}
                 </a>
+              </dd>
+            </div>
+            {/* TODO(owner): shows automatically once business.publicEmail is set. */}
+            {business.publicEmail && (
+              <div className="border-navy-900/20 border-b py-5">
+                <dt className="manifest-index text-terracotta-600">Email</dt>
+                <dd>
+                  <a
+                    href={`mailto:${business.publicEmail}`}
+                    className="text-navy-900 mt-1 inline-flex min-h-11 items-center text-xl font-bold underline underline-offset-4"
+                  >
+                    {business.publicEmail}
+                  </a>
+                </dd>
               </div>
+            )}
+            <div className="border-navy-900/20 border-b py-5">
+              <dt className="manifest-index text-terracotta-600">Base</dt>
+              <dd className="text-ink-900 mt-1 text-lg">{business.baseSuburb}</dd>
             </div>
-          )}
-
-          <div className="flex items-start gap-3">
-            <MapPin className="text-primary mt-0.5 h-5 w-5 shrink-0" />
-            <div>
-              <p className="text-foreground font-medium">Service area</p>
-              <p className="text-muted-foreground">
-                Based in {business.baseSuburb}, covering {business.serviceAreaDescription}.
-              </p>
+            <div className="border-navy-900/20 border-b py-5">
+              <dt className="manifest-index text-terracotta-600">Service area</dt>
+              <dd className="text-ink-900 mt-1 text-lg">
+                {business.serviceAreaDescription}.{" "}
+                <Link
+                  href="/removalists"
+                  className="text-navy-900 font-semibold underline decoration-2 underline-offset-4"
+                >
+                  See suburbs
+                </Link>
+              </dd>
             </div>
-          </div>
+            <div className="py-5">
+              <dt className="manifest-index text-terracotta-600">Business</dt>
+              <dd className="text-ink-900 tabular mt-1">
+                ABN {business.abn} &middot; ACN {business.acn}
+              </dd>
+            </div>
+          </dl>
+          <SignPlate tone="amber" className="mt-2">
+            Victoria only
+          </SignPlate>
         </div>
-
-        <ContactForm />
-      </div>
+        <div className="lg:col-span-7">
+          <ContactForm />
+        </div>
+      </Container>
     </div>
   );
 }

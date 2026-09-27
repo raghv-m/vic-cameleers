@@ -113,7 +113,7 @@ export function TrustSection() {
               className={`border-navy-900 flex flex-col-reverse p-4 ${index % 2 === 0 ? "border-r-2" : ""} ${index < 2 ? "border-b-2" : ""}`}
             >
               <dt className="text-muted-600 mt-2 text-sm font-semibold">{metric.label}</dt>
-              <dd className="font-stencil text-navy-900 text-5xl leading-none">{metric.value}</dd>
+              <dd className="font-headline text-navy-900 text-5xl leading-none">{metric.value}</dd>
             </div>
           ))}
         </dl>

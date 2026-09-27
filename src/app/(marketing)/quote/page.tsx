@@ -31,7 +31,7 @@ export default async function QuotePage({ searchParams }: PageProps<"/quote">) {
       <Container className="pt-4 pb-16 sm:pb-24">
         <Breadcrumbs items={[{ name: "Get a quote", path: "/quote" }]} />
         <header className="mb-8 max-w-[60ch]">
-          <h1 className="font-stencil text-navy-900 display-lg">Get your moving quote</h1>
+          <h1 className="font-headline text-navy-900 display-lg">Get your moving quote</h1>
           <p className="text-ink-900 mt-3 text-lg">
             Three short steps. You&apos;ll see an estimated price as you go, and we confirm the real
             quote with you before anything is booked.

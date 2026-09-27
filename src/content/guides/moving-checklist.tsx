@@ -53,14 +53,8 @@ function Body() {
 
       <GuideP>
         Want a hand with the packing itself? See our{" "}
-        <Link href="/guides/how-to-pack-for-a-move" className="text-primary hover:underline">
-          packing guide
-        </Link>
-        , or{" "}
-        <Link href="/quote" className="text-primary hover:underline">
-          get an estimate
-        </Link>{" "}
-        for your move.
+        <Link href="/guides/how-to-pack-for-a-move">packing guide</Link>, or{" "}
+        <Link href="/quote">get an estimate</Link> for your move.
       </GuideP>
     </>
   );

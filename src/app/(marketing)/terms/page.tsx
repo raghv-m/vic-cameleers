@@ -13,7 +13,7 @@ export const metadata: Metadata = pageMetadata({
 export default function TermsPage() {
   return (
     <LegalPage title="Terms and Conditions" path="/terms" updated="2026">
-      <p className="text-muted-foreground">
+      <p className="text-lg">
         These terms apply to your use of this website and to any move you book with{" "}
         {business.tradingName} (ABN {business.abn}, ACN {business.acn}). By using this site or
         booking with us, you agree to them.
@@ -44,10 +44,8 @@ export default function TermsPage() {
       <h2>Bookings and cancellations</h2>
       <p>
         Bookings are confirmed by phone or SMS after you submit a quote. See our{" "}
-        <a href="/cancellation-policy" className="text-primary hover:underline">
-          cancellation policy
-        </a>{" "}
-        for details on changing or cancelling a booked move.
+        <a href="/cancellation-policy">cancellation policy</a> for details on changing or cancelling
+        a booked move.
       </p>
 
       <h2>Your responsibilities</h2>
@@ -78,10 +76,7 @@ export default function TermsPage() {
       <h2>Contact us</h2>
       <p>
         Questions about these terms? Call {business.phoneDisplay} or use our{" "}
-        <a href="/contact" className="text-primary hover:underline">
-          contact form
-        </a>
-        .
+        <a href="/contact">contact form</a>.
       </p>
     </LegalPage>
   );

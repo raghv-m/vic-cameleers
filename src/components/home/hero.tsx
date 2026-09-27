@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import Link from "next/link";
 import { ArrowRight, Phone } from "lucide-react";
 import { cn } from "cn";
@@ -54,25 +55,27 @@ export function Hero({ settings }: { settings: PricingSettings }) {
             </p>
           </div>
 
-          <h1 id="hero-title" className="font-stencil text-navy-900 display-xl mt-6">
+          <h1 id="hero-title" className="font-headline text-navy-900 display-xl mt-6">
+            {/* Real spaces between the stamped words (not margins), so the headline copies,
+                reads aloud and indexes as a sentence. */}
             {HEADLINE.map((word, i) => (
-              <span
-                key={word}
-                className="vc-stamp-word mr-[0.22em]"
-                style={{ ["--i" as string]: i }}
-              >
-                {word}
-              </span>
-            ))}{" "}
-            <span className="text-terracotta-600">
-              {PUNCHLINE.map((word, i) => (
-                <span
-                  key={word}
-                  className="vc-stamp-word mr-[0.22em]"
-                  style={{ ["--i" as string]: HEADLINE.length + i }}
-                >
+              <Fragment key={word}>
+                <span className="vc-stamp-word" style={{ ["--i" as string]: i }}>
                   {word}
-                </span>
+                </span>{" "}
+              </Fragment>
+            ))}
+            <span className="text-terracotta-600 block">
+              {PUNCHLINE.map((word, i) => (
+                <Fragment key={word}>
+                  {i > 0 && " "}
+                  <span
+                    className="vc-stamp-word"
+                    style={{ ["--i" as string]: HEADLINE.length + i }}
+                  >
+                    {word}
+                  </span>
+                </Fragment>
               ))}
             </span>
           </h1>

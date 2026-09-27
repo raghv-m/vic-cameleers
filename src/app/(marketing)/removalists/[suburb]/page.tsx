@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Phone, Star } from "lucide-react";
+import { ArrowRight, Phone } from "lucide-react";
+import { cn } from "cn";
 
-import { Breadcrumbs } from "@/components/seo/breadcrumbs";
+import { RouteArrow } from "@/components/brand/signage";
 import { JsonLd } from "@/components/seo/json-ld";
 import {
   Accordion,
@@ -12,7 +13,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
+import { InlineCta } from "@/components/site/inline-cta";
+import { Container } from "@/components/site/layout-primitives";
+import { PageHeader } from "@/components/site/page-header";
+import { buttonVariants } from "@/components/ui/button";
 import { business } from "@/config/business";
 import { faqs } from "@/config/faq";
 import { getServiceBySlug } from "@/config/services";
@@ -92,178 +96,206 @@ export default async function SuburbPage({ params }: PageProps<"/removalists/[su
   const photo = suburb.photos?.[0];
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
-      <Breadcrumbs
-        items={[
+    <>
+      {faqJsonLd && <JsonLd data={faqJsonLd} />}
+      <PageHeader
+        breadcrumbs={[
           { name: "Service areas", path: "/removalists" },
           { name: suburb.name, path: `/removalists/${suburb.slug}` },
         ]}
+        label={distance ?? suburb.council}
+        title={`Removalists in ${suburb.name}`}
+        lede={
+          <>
+            {suburb.intro && <p>{suburb.intro}</p>}
+            <p className="text-muted-600 tabular mt-3 text-base">
+              VIC {suburb.postcode} &middot; {suburb.council} &middot; {business.hourlyRateShort},{" "}
+              {business.minimumHours} hour minimum
+            </p>
+          </>
+        }
+        actions={
+          <>
+            <Link
+              href={quoteHref}
+              className={cn(buttonVariants({ size: "lg" }), "tracking-[0.08em] uppercase")}
+            >
+              Get a {suburb.name} quote
+              <ArrowRight data-icon="inline-end" />
+            </Link>
+            <a
+              href={`tel:${business.phoneE164}`}
+              className={cn(buttonVariants({ variant: "secondary", size: "lg" }), "tabular")}
+            >
+              <Phone />
+              {business.phoneDisplay}
+            </a>
+          </>
+        }
+        aside={
+          photo ? (
+            <Image
+              src={photo.src}
+              alt={photo.alt}
+              width={photo.width}
+              height={photo.height}
+              sizes="(min-width: 1024px) 40vw, 100vw"
+              className="border-navy-900 w-full rounded-sm border-2 object-cover"
+            />
+          ) : undefined
+        }
       />
-      {faqJsonLd && <JsonLd data={faqJsonLd} />}
 
-      <header>
-        {distance && (
-          <p className="text-primary text-xs font-semibold tracking-[0.14em] uppercase">
-            {distance}
-          </p>
-        )}
-        <h1 className="mt-2 text-4xl font-semibold tracking-tight">Removalists in {suburb.name}</h1>
-        <p className="text-muted-foreground mt-2">
-          VIC {suburb.postcode} &middot; {suburb.council} &middot; {business.hourlyRateDisplay},{" "}
-          {business.minimumHours} hour minimum
-        </p>
-      </header>
+      <Container className="grid gap-12 py-12 sm:py-16 lg:grid-cols-12 lg:gap-12">
+        <div className="space-y-14 lg:col-span-8">
+          {localNotes.length > 0 && (
+            <section aria-labelledby="local-title">
+              <h2 id="local-title" className="font-headline text-navy-900 display-md">
+                What moves in {suburb.name} are usually like
+              </h2>
+              <dl className="border-navy-900 bg-navy-900 mt-6 grid gap-px overflow-hidden rounded-sm border-2 md:grid-cols-3">
+                {localNotes.map((note) => (
+                  <div key={note.heading} className="bg-sand-50 p-5">
+                    <dt className="manifest-index text-terracotta-600">{note.heading}</dt>
+                    <dd className="text-ink-900 mt-2">{note.body}</dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+          )}
 
-      {suburb.intro && <p className="text-foreground mt-8 text-lg">{suburb.intro}</p>}
+          {suburb.featuredJobs && suburb.featuredJobs.length > 0 && (
+            <section aria-labelledby="jobs-title">
+              <h2 id="jobs-title" className="font-headline text-navy-900 display-md">
+                Recent jobs in {suburb.name}
+              </h2>
+              <ul className="mt-6 grid gap-4 md:grid-cols-2">
+                {suburb.featuredJobs.map((job) => (
+                  <li
+                    key={`${job.date}-${job.title}`}
+                    className="border-navy-900 bg-sand-50 rounded-sm border-2 p-5"
+                  >
+                    <p className="font-headline text-navy-900 text-xl">{job.title}</p>
+                    <p className="text-ink-900 mt-2">{job.story}</p>
+                    <p className="text-muted-600 tabular mt-3 text-sm">
+                      {truckLabel[job.truck]}, {job.crewCount} movers, {job.hours} hours, $
+                      {job.priceAud.toLocaleString("en-AU")}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
-      <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-        <Button size="lg" render={<Link href={quoteHref} />} nativeButton={false}>
-          Get a free {suburb.name} quote
-        </Button>
-        <Button
-          size="lg"
-          variant="secondary"
-          render={<a href={`tel:${business.phoneE164}`} />}
-          nativeButton={false}
-        >
-          <Phone className="h-4 w-4" />
-          Call {business.phoneDisplay}
-        </Button>
-      </div>
+          {suburb.reviews && suburb.reviews.length > 0 && (
+            <section aria-labelledby="reviews-title">
+              <h2 id="reviews-title" className="font-headline text-navy-900 display-md">
+                What {suburb.name} customers said
+              </h2>
+              <ul className="mt-6 grid gap-4 md:grid-cols-2">
+                {suburb.reviews.map((review) => (
+                  <li
+                    key={`${review.date}-${review.authorName}`}
+                    className="border-navy-900 bg-sand-50 rounded-sm border-2 p-5"
+                  >
+                    <p
+                      className="text-terracotta-600 tracking-[0.2em]"
+                      aria-label={`${review.rating} out of 5`}
+                    >
+                      {"\u2605".repeat(review.rating)}
+                      <span className="text-kraft-400">{"\u2605".repeat(5 - review.rating)}</span>
+                    </p>
+                    <blockquote className="text-ink-900 mt-3">{review.body}</blockquote>
+                    <p className="text-navy-900 mt-3 font-bold">{review.authorName}</p>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
-      {photo && (
-        <Image
-          src={photo.src}
-          alt={photo.alt}
-          width={photo.width}
-          height={photo.height}
-          sizes="(min-width: 768px) 768px, 100vw"
-          className="mt-10 w-full rounded-lg object-cover"
-        />
-      )}
+          {pageFaqs.length > 0 && (
+            <section aria-labelledby="faq-title">
+              <h2 id="faq-title" className="font-headline text-navy-900 display-md">
+                Questions about moving in {suburb.name}
+              </h2>
+              <Accordion className="border-navy-900 mt-6 border-t-2">
+                {pageFaqs.map((faq, index) => (
+                  <AccordionItem key={faq.question} value={`faq-${index}`}>
+                    <AccordionTrigger>{faq.question}</AccordionTrigger>
+                    <AccordionContent>{faq.answer}</AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </section>
+          )}
 
-      {localNotes.length > 0 && (
-        <section className="mt-12">
-          <h2 className="font-heading text-2xl font-medium">
-            What moves in {suburb.name} are usually like
-          </h2>
-          <dl className="mt-4 space-y-4">
-            {localNotes.map((note) => (
-              <div key={note.heading}>
-                <dt className="text-foreground font-medium">{note.heading}</dt>
-                <dd className="text-muted-foreground mt-1">{note.body}</dd>
-              </div>
-            ))}
-          </dl>
-        </section>
-      )}
-
-      {suburb.featuredJobs && suburb.featuredJobs.length > 0 && (
-        <section className="mt-12">
-          <h2 className="font-heading text-2xl font-medium">Recent jobs in {suburb.name}</h2>
-          <ul className="mt-4 space-y-4">
-            {suburb.featuredJobs.map((job) => (
-              <li key={`${job.date}-${job.title}`} className="rounded-lg border p-5">
-                <p className="text-foreground font-medium">{job.title}</p>
-                <p className="text-muted-foreground mt-2">{job.story}</p>
-                <p className="text-muted-foreground mt-3 text-sm tabular-nums">
-                  {truckLabel[job.truck]}, {job.crewCount} movers, {job.hours} hours, $
-                  {job.priceAud.toLocaleString("en-AU")}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      {suburb.reviews && suburb.reviews.length > 0 && (
-        <section className="mt-12">
-          <h2 className="font-heading text-2xl font-medium">What {suburb.name} customers said</h2>
-          <ul className="mt-4 space-y-4">
-            {suburb.reviews.map((review) => (
-              <li key={`${review.date}-${review.authorName}`} className="rounded-lg border p-5">
-                <div className="flex items-center gap-0.5" aria-label={`${review.rating} out of 5`}>
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star
-                      key={i}
-                      aria-hidden="true"
-                      className={`h-4 w-4 ${i < review.rating ? "fill-current text-amber-500" : "text-muted-foreground"}`}
-                    />
-                  ))}
-                </div>
-                <p className="text-foreground mt-3">{review.body}</p>
-                <p className="text-muted-foreground mt-2 text-sm">{review.authorName}</p>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      {services.length > 0 && (
-        <section className="mt-12">
-          <h2 className="font-heading text-2xl font-medium">Moves we do in {suburb.name}</h2>
-          <ul className="mt-4 space-y-2">
-            {services.map((service) => (
-              <li key={service.slug}>
-                <Link
-                  href={`/services/${service.slug}`}
-                  className="text-primary font-medium hover:underline"
-                >
-                  {service.name} in {suburb.name}
-                </Link>
-                <span className="text-muted-foreground"> &middot; {service.shortDescription}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      {pageFaqs.length > 0 && (
-        <section className="mt-12">
-          <h2 className="font-heading text-2xl font-medium">
-            Questions about moving in {suburb.name}
-          </h2>
-          <Accordion className="mt-3">
-            {pageFaqs.map((faq, index) => (
-              <AccordionItem key={faq.question} value={`faq-${index}`}>
-                <AccordionTrigger>{faq.question}</AccordionTrigger>
-                <AccordionContent>{faq.answer}</AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </section>
-      )}
-
-      {nearby.length > 0 && (
-        <section className="mt-12">
-          <h2 className="font-heading text-2xl font-medium">Nearby suburbs we move</h2>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {nearby.map((neighbour) => (
+          <div>
+            <InlineCta
+              title={`Moving in or out of ${suburb.name}?`}
+              href={quoteHref}
+              body="See an estimate in a couple of minutes. Same rate as everywhere else we go."
+            />
+            <p className="mt-4 text-sm">
+              Planning ahead?{" "}
               <Link
-                key={neighbour.slug}
-                href={`/removalists/${neighbour.slug}`}
-                className="border-border bg-card hover:border-primary/40 rounded-full border px-3 py-1 text-sm"
+                href="/guides/moving-checklist"
+                className="text-navy-900 font-semibold underline decoration-2 underline-offset-4"
               >
-                Removalists {neighbour.name}
+                Read the moving checklist
               </Link>
-            ))}
+            </p>
           </div>
-        </section>
-      )}
+        </div>
 
-      <div className="mt-16 rounded-lg border p-6 text-center">
-        <h2 className="font-heading text-xl font-medium">Moving in or out of {suburb.name}?</h2>
-        <p className="text-muted-foreground mt-2 text-sm">
-          Get a real price range in a couple of minutes, or read our{" "}
-          <Link href="/guides/moving-checklist" className="text-primary hover:underline">
-            moving checklist
-          </Link>{" "}
-          first.
-        </p>
-        <Button className="mt-4" render={<Link href={quoteHref} />} nativeButton={false}>
-          Get a free {suburb.name} quote
-        </Button>
-      </div>
-    </div>
+        <aside className="space-y-10 lg:col-span-4">
+          {services.length > 0 && (
+            <nav aria-labelledby="services-title">
+              <h2 id="services-title" className="manifest-index text-terracotta-600">
+                Moves we do in {suburb.name}
+              </h2>
+              <ul className="border-navy-900 mt-3 border-t-2">
+                {services.map((service) => (
+                  <li key={service.slug} className="border-navy-900/20 border-b">
+                    <Link
+                      href={`/services/${service.slug}`}
+                      className="group text-navy-900 hover:text-terracotta-600 flex min-h-12 items-center justify-between gap-3 py-2"
+                    >
+                      <span>
+                        <span className="block font-bold">{service.name}</span>
+                        <span className="text-muted-600 block text-sm">
+                          {service.shortDescription}
+                        </span>
+                      </span>
+                      <RouteArrow className="w-5 shrink-0 transition-transform duration-150 group-hover:translate-x-1 motion-reduce:transition-none" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
+
+          {nearby.length > 0 && (
+            <nav aria-labelledby="nearby-title">
+              <h2 id="nearby-title" className="manifest-index text-terracotta-600">
+                Nearby suburbs we move
+              </h2>
+              <ul className="border-navy-900 mt-3 border-t-2">
+                {nearby.map((neighbour) => (
+                  <li key={neighbour.slug} className="border-navy-900/20 border-b">
+                    <Link
+                      href={`/removalists/${neighbour.slug}`}
+                      className="group text-navy-900 hover:text-terracotta-600 flex min-h-12 items-center justify-between gap-3 font-semibold"
+                    >
+                      Removalists {neighbour.name}
+                      <RouteArrow className="w-5 shrink-0 transition-transform duration-150 group-hover:translate-x-1 motion-reduce:transition-none" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
+        </aside>
+      </Container>
+    </>
   );
 }

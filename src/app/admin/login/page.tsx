@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminLoginPage() {
-  // Rendered per request so its scripts carry the admin CSP nonce (src/proxy.ts).
+  // Rendered per request so its scripts carry the admin CSP nonce (sSrc/proxy.ts).
   await connection();
 
   return (

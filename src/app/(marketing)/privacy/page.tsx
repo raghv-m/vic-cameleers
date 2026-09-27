@@ -13,7 +13,7 @@ export const metadata: Metadata = pageMetadata({
 export default function PrivacyPage() {
   return (
     <LegalPage title="Privacy Policy" path="/privacy" updated="2026">
-      <p className="text-muted-foreground">
+      <p className="text-lg">
         {business.tradingName} (ABN {business.abn}) respects your privacy. This policy explains what
         personal information we collect, why we collect it, and what we do with it, in line with the
         Australian Privacy Principles under the Privacy Act 1988 (Cth).
@@ -86,11 +86,7 @@ export default function PrivacyPage() {
 
       <h2>Contact us</h2>
       <p>
-        Call {business.phoneDisplay} or use our{" "}
-        <a href="/contact" className="text-primary hover:underline">
-          contact form
-        </a>
-        .
+        Call {business.phoneDisplay} or use our <a href="/contact">contact form</a>.
       </p>
     </LegalPage>
   );

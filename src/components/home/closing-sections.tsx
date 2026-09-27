@@ -95,7 +95,9 @@ export function StorySection() {
               modern crew with modern trucks. We took the name because we like the job they did:
               turn up, carry the load, get it there in one piece.
             </p>
-            <p className="font-stencil text-terracotta-400 display-md">Same idea. Bigger trucks.</p>
+            <p className="font-headline text-terracotta-400 display-md">
+              Same idea. Bigger trucks.
+            </p>
           </div>
           <Link
             href="/about"
@@ -178,7 +180,7 @@ export function FinalCta({ index }: { index: string }) {
             />
             {index} / End of the route
           </p>
-          <h2 id="final-cta-title" className="font-stencil text-navy-900 display-lg max-w-[14ch]">
+          <h2 id="final-cta-title" className="font-headline text-navy-900 display-lg max-w-[14ch]">
             Moving day starts with a plan.
           </h2>
           <p className="text-ink-900 mt-4 max-w-[46ch] text-lg">

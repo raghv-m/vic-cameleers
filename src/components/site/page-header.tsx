@@ -39,7 +39,7 @@ export function PageHeader({
                 {label}
               </p>
             )}
-            <h1 className="font-stencil text-navy-900 display-lg max-w-[18ch]">{title}</h1>
+            <h1 className="font-headline text-navy-900 display-lg max-w-[18ch]">{title}</h1>
             {lede && (
               <div className="text-ink-900 mt-5 max-w-[60ch] text-lg leading-relaxed">{lede}</div>
             )}

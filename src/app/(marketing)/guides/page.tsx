@@ -4,9 +4,11 @@ import Link from "next/link";
 // midnight and show the previous day in timezones behind UTC.
 import { format, parseISO } from "date-fns";
 
-import { Breadcrumbs } from "@/components/seo/breadcrumbs";
-import { pageMetadata } from "@/lib/seo";
+import { RouteArrow } from "@/components/brand/signage";
+import { Container } from "@/components/site/layout-primitives";
+import { PageHeader } from "@/components/site/page-header";
 import { guides } from "@/content/guides";
+import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
   title: "Moving guides",
@@ -16,28 +18,47 @@ export const metadata: Metadata = pageMetadata({
 
 export default function GuidesIndexPage() {
   return (
-    <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
-      <Breadcrumbs items={[{ name: "Guides", path: "/guides" }]} />
-      <div className="mb-10 text-center">
-        <h1 className="text-4xl font-semibold tracking-tight">Moving guides</h1>
-        <p className="text-muted-foreground mt-2">Practical advice for your move, no fluff.</p>
-      </div>
-
-      <ul className="space-y-6">
-        {guides.map((guide) => (
-          <li key={guide.slug} className="border-b pb-6 last:border-0">
-            <Link href={`/guides/${guide.slug}`} className="group">
-              <h2 className="font-heading group-hover:text-primary text-xl font-medium">
-                {guide.title}
-              </h2>
-              <p className="text-muted-foreground mt-1">{guide.description}</p>
-              <p className="text-muted-foreground mt-2 text-xs">
-                {format(parseISO(guide.publishedAt), "d MMMM yyyy")}
-              </p>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <>
+      <PageHeader
+        breadcrumbs={[{ name: "Guides", path: "/guides" }]}
+        label="Moving guides"
+        title="Plan the move before the truck turns up."
+        lede={
+          <p>
+            Practical advice from the crew. What it costs, what to pack first, and what to sort out
+            with your building.
+          </p>
+        }
+      />
+      <Container className="py-12 sm:py-16">
+        <ol className="border-navy-900 border-t-2">
+          {guides.map((guide, index) => (
+            <li key={guide.slug} className="border-navy-900/20 border-b">
+              <Link
+                href={`/guides/${guide.slug}`}
+                className="group grid grid-cols-[3rem_1fr] gap-x-4 gap-y-2 py-7 sm:grid-cols-[4.5rem_1fr_auto] sm:items-center"
+              >
+                <span className="font-stencil text-terracotta-600 text-3xl leading-none sm:text-4xl">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <span>
+                  <span className="font-headline text-navy-900 group-hover:text-terracotta-600 block text-2xl leading-tight transition-colors sm:text-3xl">
+                    {guide.title}
+                  </span>
+                  <span className="text-ink-900 mt-1 block max-w-[60ch]">{guide.description}</span>
+                  <span className="text-muted-600 mt-2 block text-sm">
+                    {format(parseISO(guide.publishedAt), "d MMMM yyyy")}
+                  </span>
+                </span>
+                <span className="text-navy-900 col-start-2 inline-flex items-center gap-2 text-sm font-bold sm:col-start-3">
+                  Read
+                  <RouteArrow className="text-terracotta-600 w-6 transition-transform duration-150 group-hover:translate-x-1 motion-reduce:transition-none" />
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ol>
+      </Container>
+    </>
   );
 }

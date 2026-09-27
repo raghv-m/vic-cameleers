@@ -41,14 +41,8 @@ function Body() {
         We think it&apos;s the fairer model for most household moves. You&apos;re not paying for a
         worst-case buffer you might never need, and you can see exactly what&apos;s driving the
         price, base hours for your property size, access at both ends, and any extras. See our{" "}
-        <Link href="/pricing" className="text-primary hover:underline">
-          pricing page
-        </Link>{" "}
-        for worked examples, or{" "}
-        <Link href="/quote" className="text-primary hover:underline">
-          get your own estimate
-        </Link>
-        .
+        <Link href="/pricing">pricing page</Link> for worked examples, or{" "}
+        <Link href="/quote">get your own estimate</Link>.
       </GuideP>
     </>
   );

@@ -52,10 +52,7 @@ function Body() {
 
       <GuideP>
         Don&apos;t want to pack it all yourself? We offer full or partial packing as part of{" "}
-        <Link href="/services/packing" className="text-primary hover:underline">
-          our packing service
-        </Link>
-        .
+        <Link href="/services/packing">our packing service</Link>.
       </GuideP>
     </>
   );

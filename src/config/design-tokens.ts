@@ -50,6 +50,7 @@ export const approvedPairs: { fg: PaletteToken; bg: PaletteToken; min: 3 | 4.5; 
   { fg: "sand-50", bg: "terracotta-700", min: 4.5, use: "Primary CTA hover" },
   { fg: "sand-50", bg: "navy-900", min: 4.5, use: "Text on navy sections" },
   { fg: "sand-200", bg: "navy-900", min: 4.5, use: "Secondary text on navy" },
+  { fg: "sand-100", bg: "navy-900", min: 4.5, use: "Body text in navy panels" },
   { fg: "sand-200", bg: "navy-950", min: 4.5, use: "Footer text" },
   { fg: "signal-400", bg: "navy-900", min: 4.5, use: "Amber labels on navy" },
   { fg: "navy-900", bg: "signal-400", min: 4.5, use: "Navy text on amber sign" },

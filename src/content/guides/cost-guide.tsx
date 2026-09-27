@@ -1,8 +1,9 @@
 import Link from "next/link";
 
 import { GuideH2, GuideList, GuideP } from "@/components/guides/guide-elements";
-import { PriceCalculator } from "@/components/marketing/price-calculator";
+import { QuoteEstimator } from "@/components/quote/quote-estimator";
 import { business } from "@/config/business";
+import { allSuburbs } from "@/content/suburbs";
 import { defaultPricingSettings } from "@/config/pricing-defaults";
 import { calculateQuote } from "@/lib/pricing";
 import type { PropertySize } from "@/types/pricing";
@@ -129,7 +130,10 @@ function Body() {
         our quote form uses, just without your addresses.
       </GuideP>
       <div className="mt-4">
-        <PriceCalculator id="cost-guide-calculator" />
+        <QuoteEstimator
+          settings={defaultPricingSettings}
+          suburbNames={allSuburbs.map((suburb) => suburb.name)}
+        />
       </div>
 
       <GuideH2>What changes the price</GuideH2>
@@ -151,13 +155,7 @@ function Body() {
         rate you pay for the time the job actually takes. If it goes smoothly, it costs less. The
         trade-off is less certainty, which is why we always give you a range worked out from your
         real move. We&apos;ve written more about this in{" "}
-        <Link
-          href="/guides/hourly-vs-fixed-price-removalists"
-          className="text-primary hover:underline"
-        >
-          hourly rate vs fixed price
-        </Link>
-        .
+        <Link href="/guides/hourly-vs-fixed-price-removalists">hourly rate vs fixed price</Link>.
       </GuideP>
 
       <GuideH2>How to keep the cost down</GuideH2>
@@ -173,18 +171,9 @@ function Body() {
 
       <GuideP>
         For a real range based on your addresses and access, get a{" "}
-        <Link href="/quote" className="text-primary hover:underline">
-          free quote
-        </Link>{" "}
-        in a couple of minutes, or see what&apos;s included in our{" "}
-        <Link href="/services/house-removals" className="text-primary hover:underline">
-          house removals
-        </Link>{" "}
-        and full{" "}
-        <Link href="/pricing" className="text-primary hover:underline">
-          pricing breakdown
-        </Link>
-        .
+        <Link href="/quote">free quote</Link> in a couple of minutes, or see what&apos;s included in
+        our <Link href="/services/house-removals">house removals</Link> and full{" "}
+        <Link href="/pricing">pricing breakdown</Link>.
       </GuideP>
     </>
   );

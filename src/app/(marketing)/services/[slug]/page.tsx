@@ -225,7 +225,7 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
       <Container className="py-14 sm:py-20">
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-14">
           <section aria-labelledby="included-title" className="lg:col-span-7">
-            <h2 id="included-title" className="font-stencil text-navy-900 display-md">
+            <h2 id="included-title" className="font-headline text-navy-900 display-md">
               What&apos;s included
             </h2>
             <ol className="border-navy-900 mt-6 border-t-2">
@@ -261,7 +261,7 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
 
         {content.sections?.map((section) => (
           <section key={section.heading} className="mt-14 max-w-3xl">
-            <h2 className="font-stencil text-navy-900 display-md">{section.heading}</h2>
+            <h2 className="font-headline text-navy-900 display-md">{section.heading}</h2>
             {section.paragraphs.map((paragraph) => (
               <p key={paragraph} className="text-ink-900 mt-4 leading-relaxed">
                 {paragraph}
@@ -291,7 +291,7 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
       <Container className="py-14 sm:py-20">
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-14">
           <section aria-labelledby="price-title" className="lg:col-span-6">
-            <h2 id="price-title" className="font-stencil text-navy-900 display-md">
+            <h2 id="price-title" className="font-headline text-navy-900 display-md">
               What affects the price
             </h2>
             <dl className="border-navy-900 mt-6 border-t-2">
@@ -325,7 +325,7 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
       <section aria-labelledby="area-title" className="kraft-band py-14 sm:py-16">
         <Container className="grid gap-8 lg:grid-cols-12 lg:items-center">
           <div className="lg:col-span-5">
-            <h2 id="area-title" className="font-stencil text-navy-900 display-md">
+            <h2 id="area-title" className="font-headline text-navy-900 display-md">
               Where we do it
             </h2>
             <p className="text-ink-900 mt-3">
@@ -357,7 +357,7 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-14">
           {content.faqs.length > 0 && (
             <section aria-labelledby="faq-title" className="lg:col-span-7">
-              <h2 id="faq-title" className="font-stencil text-navy-900 display-md">
+              <h2 id="faq-title" className="font-headline text-navy-900 display-md">
                 Questions about {service.name.toLowerCase()}
               </h2>
               <Accordion className="border-navy-900 mt-6 border-t-2">

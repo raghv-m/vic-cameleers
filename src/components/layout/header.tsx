@@ -53,7 +53,7 @@ export function Header() {
             aria-label={`${business.tradingName}, home`}
           >
             <CamelMark className="text-terracotta-600 h-7 w-auto" />
-            <span className="font-stencil text-[1.6rem] leading-none tracking-[0.02em]">
+            <span className="font-headline text-[1.6rem] leading-none tracking-[0.04em] uppercase">
               VIC CAMELEERS
             </span>
           </Link>
@@ -113,7 +113,9 @@ export function Header() {
               <div className="border-navy-900 flex h-16 items-center justify-between border-b-2 px-4">
                 <SheetTitle className="text-navy-900 flex items-center gap-2">
                   <CamelMark className="text-terracotta-600 h-6 w-auto" />
-                  <span className="font-stencil text-2xl leading-none">VIC CAMELEERS</span>
+                  <span className="font-headline text-2xl leading-none tracking-[0.04em]">
+                    VIC CAMELEERS
+                  </span>
                 </SheetTitle>
                 <SheetClose
                   render={

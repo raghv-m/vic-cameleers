@@ -70,7 +70,7 @@ export function ResultScreen({ result }: { result: QuoteResult }) {
           <h2
             ref={headingRef}
             tabIndex={-1}
-            className="font-stencil text-navy-900 display-md outline-none"
+            className="font-headline text-navy-900 display-md outline-none"
           >
             Thanks. We&apos;ve got it.
           </h2>
@@ -82,7 +82,7 @@ export function ResultScreen({ result }: { result: QuoteResult }) {
           )}
 
           <p className="manifest-index text-muted-600 mt-6">Estimated price</p>
-          <p className="font-stencil text-terracotta-600 mt-1 text-5xl leading-none sm:text-6xl">
+          <p className="font-headline text-terracotta-600 mt-1 text-5xl leading-none sm:text-6xl">
             <Odometer value={price} />
           </p>
           <p className="text-ink-900 mt-3 max-w-[52ch]">

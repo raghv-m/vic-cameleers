@@ -237,7 +237,10 @@ export function QuoteEstimator({
         <p className="text-muted-600 text-[0.75rem] font-bold tracking-[0.14em] uppercase">
           Estimated price
         </p>
-        <p className="text-navy-900 mt-1 text-[2.5rem] font-bold sm:text-5xl" aria-live="polite">
+        <p
+          className="font-headline text-navy-900 mt-1 text-[2.75rem] leading-none sm:text-5xl"
+          aria-live="polite"
+        >
           <Odometer value={priceText} />
         </p>
         <p className="text-ink-900 mt-2 text-sm">

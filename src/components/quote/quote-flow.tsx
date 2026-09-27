@@ -96,7 +96,7 @@ function LiveEstimate({ settings, compact }: { settings: PricingSettings; compac
     return (
       <div className="flex items-baseline justify-between gap-3">
         <span className="manifest-index text-muted-600">Estimate</span>
-        <span className="font-stencil text-terracotta-600 text-2xl leading-none">
+        <span className="font-headline text-terracotta-600 text-2xl leading-none">
           <Odometer value={price} />
         </span>
       </div>
@@ -117,7 +117,7 @@ function LiveEstimate({ settings, compact }: { settings: PricingSettings; compac
         </h2>
       </div>
       <div className="space-y-4 p-4">
-        <p className="font-stencil text-terracotta-600 text-4xl leading-none" aria-live="polite">
+        <p className="font-headline text-terracotta-600 text-4xl leading-none" aria-live="polite">
           <Odometer value={price} />
         </p>
         <dl className="text-ink-900 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-sm">
@@ -306,7 +306,7 @@ export function QuoteFlow({
                 <h2
                   ref={stepHeadingRef}
                   tabIndex={-1}
-                  className="font-stencil text-navy-900 display-md mt-1 outline-none"
+                  className="font-headline text-navy-900 display-md mt-1 outline-none"
                 >
                   {QUOTE_STEPS[step - 1]}
                 </h2>

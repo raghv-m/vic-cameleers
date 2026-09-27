@@ -12,8 +12,8 @@ test("fills and submits the contact form", async ({ page }) => {
 
   // Without a live database (see TODO-OWNER.md) the API can't save the
   // submission, so the success state never shows. Assert the request was
-  // at least made and handled, not left hanging.
-  await expect(page.getByRole("button", { name: /Sending|Send message/ })).toBeEnabled({
+  // at least made and answered: either the failure state or the sent state.
+  await expect(page.getByText(/didn.t go through|got it/)).toBeVisible({
     timeout: 15000,
   });
 });

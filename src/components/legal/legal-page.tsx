@@ -1,5 +1,11 @@
-import { Breadcrumbs } from "@/components/seo/breadcrumbs";
+import { PageHeader } from "@/components/site/page-header";
+import { Container } from "@/components/site/layout-primitives";
+import { business } from "@/config/business";
 
+/**
+ * Shared shell for the legal pages: the standard page header, then the text at reading width,
+ * with the business identifiers alongside so it's always clear who the policy belongs to.
+ */
 export function LegalPage({
   title,
   path,
@@ -13,14 +19,35 @@ export function LegalPage({
   children: React.ReactNode;
 }) {
   return (
-    <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
-      <Breadcrumbs items={[{ name: title, path }]} />
-      <h1 className="text-4xl font-semibold tracking-tight">{title}</h1>
-      <p className="text-muted-foreground mt-2 text-sm">Last updated {updated}</p>
-
-      <div className="prose-legal text-foreground [&_h2]:font-heading [&_p]:text-muted-foreground [&_ul]:text-muted-foreground mt-10 space-y-6 text-sm leading-relaxed [&_h2]:mt-10 [&_h2]:mb-3 [&_h2]:text-xl [&_h2]:font-medium [&_h2]:tracking-tight [&_li]:mt-1 [&_ol]:list-decimal [&_ol]:space-y-2 [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:space-y-2 [&_ul]:pl-5">
-        {children}
-      </div>
-    </div>
+    <>
+      <PageHeader
+        breadcrumbs={[{ name: title, path }]}
+        label="The fine print"
+        title={title}
+        lede={<p>Last updated {updated}. Plain English where we can manage it.</p>}
+      />
+      <Container className="grid gap-10 py-12 sm:py-16 lg:grid-cols-12">
+        <div className="prose-vc lg:col-span-8">{children}</div>
+        <aside className="lg:col-span-4">
+          <dl className="border-navy-900 text-ink-900 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 border-t-2 pt-4 text-sm lg:sticky lg:top-24">
+            <dt className="text-muted-600">Business</dt>
+            <dd className="font-semibold">{business.tradingName}</dd>
+            <dt className="text-muted-600">ABN</dt>
+            <dd className="tabular font-semibold">{business.abn}</dd>
+            <dt className="text-muted-600">ACN</dt>
+            <dd className="tabular font-semibold">{business.acn}</dd>
+            <dt className="text-muted-600">Phone</dt>
+            <dd>
+              <a
+                href={`tel:${business.phoneE164}`}
+                className="tabular text-navy-900 font-semibold underline underline-offset-4"
+              >
+                {business.phoneDisplay}
+              </a>
+            </dd>
+          </dl>
+        </aside>
+      </Container>
+    </>
   );
 }

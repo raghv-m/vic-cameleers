@@ -90,7 +90,7 @@ export default function ServicesPage() {
                   <p className="manifest-index text-muted-600 mt-3">{category.label}</p>
                   <h2
                     id={`${category.id}-title`}
-                    className="font-stencil text-navy-900 display-md mt-2"
+                    className="font-headline text-navy-900 display-md mt-2"
                   >
                     {category.title}
                   </h2>

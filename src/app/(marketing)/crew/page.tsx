@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { Breadcrumbs } from "@/components/seo/breadcrumbs";
-import { Button } from "@/components/ui/button";
+import { InlineCta } from "@/components/site/inline-cta";
+import { Container } from "@/components/site/layout-primitives";
+import { PageHeader } from "@/components/site/page-header";
 import { business } from "@/config/business";
-import { ctaCopy } from "@/config/copy";
 import { crew, hasCrewProfiles } from "@/content/crew";
 import { pageMetadata } from "@/lib/seo";
 
@@ -21,44 +20,40 @@ export default function CrewPage() {
   if (!hasCrewProfiles()) notFound();
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
-      <Breadcrumbs
-        items={[
+    <>
+      <PageHeader
+        breadcrumbs={[
           { name: "About", path: "/about" },
           { name: "Meet the crew", path: "/crew" },
         ]}
+        label="The crew"
+        title="The people who turn up on moving day."
+        lede={<p>Based in {business.baseSuburb.replace(" VIC", "")}, in their own words.</p>}
       />
-      <h1 className="text-4xl font-semibold tracking-tight">Meet the crew</h1>
-      <p className="text-muted-foreground mt-2">
-        The people who&apos;ll turn up on your moving day, based in{" "}
-        {business.baseSuburb.replace(" VIC", "")}.
-      </p>
-
-      <ul className="mt-10 grid gap-8 sm:grid-cols-2">
-        {crew.map((member) => (
-          <li key={member.name}>
-            {member.photo && (
-              <Image
-                src={member.photo.src}
-                alt={member.photo.alt}
-                width={member.photo.width}
-                height={member.photo.height}
-                sizes="(min-width: 640px) 50vw, 100vw"
-                className="aspect-[4/5] w-full rounded-lg object-cover"
-              />
-            )}
-            <h2 className="font-heading mt-4 text-xl font-medium">{member.name}</h2>
-            <p className="text-primary text-sm font-medium">{member.role}</p>
-            <p className="text-muted-foreground mt-2">{member.bio}</p>
-          </li>
-        ))}
-      </ul>
-
-      <div className="mt-12 text-center">
-        <Button size="lg" render={<Link href="/quote" />} nativeButton={false}>
-          {ctaCopy.primary}
-        </Button>
-      </div>
-    </div>
+      <Container className="py-12 sm:py-16">
+        <ul className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+          {crew.map((member) => (
+            <li key={member.name}>
+              {member.photo && (
+                <Image
+                  src={member.photo.src}
+                  alt={member.photo.alt}
+                  width={member.photo.width}
+                  height={member.photo.height}
+                  sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                  className="border-navy-900 aspect-[4/5] w-full rounded-sm border-2 object-cover"
+                />
+              )}
+              <h2 className="font-headline text-navy-900 mt-4 text-3xl">{member.name}</h2>
+              <p className="manifest-index text-terracotta-600 mt-1">{member.role}</p>
+              <p className="text-ink-900 mt-3">{member.bio}</p>
+            </li>
+          ))}
+        </ul>
+      </Container>
+      <Container className="pb-16 sm:pb-24">
+        <InlineCta />
+      </Container>
+    </>
   );
 }

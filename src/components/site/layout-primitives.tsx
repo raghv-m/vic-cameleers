@@ -68,7 +68,7 @@ export function SectionHeader({
       <Heading
         id={id}
         className={cn(
-          "font-stencil",
+          "font-headline",
           size === "xl" && "display-xl",
           size === "lg" && "display-lg",
           size === "md" && "display-md",

@@ -5,11 +5,12 @@ import { notFound } from "next/navigation";
 // midnight and show the previous day in timezones behind UTC.
 import { format, parseISO } from "date-fns";
 
-import { Breadcrumbs } from "@/components/seo/breadcrumbs";
-import { Button } from "@/components/ui/button";
+import { RouteArrow } from "@/components/brand/signage";
+import { GuideToc } from "@/components/guides/guide-toc";
 import { JsonLd } from "@/components/seo/json-ld";
-import { business } from "@/config/business";
-import { ctaCopy } from "@/config/copy";
+import { InlineCta } from "@/components/site/inline-cta";
+import { Container } from "@/components/site/layout-primitives";
+import { PageHeader } from "@/components/site/page-header";
 import { getServiceBySlug } from "@/config/services";
 import { absoluteUrl } from "@/config/site-url";
 import { getGuideBySlug, GUIDE_AUTHOR, guides } from "@/content/guides";
@@ -58,44 +59,57 @@ export default async function GuidePage({ params }: PageProps<"/guides/[slug]">)
     url,
   };
 
+  const articleId = "guide-body";
+
   return (
-    <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:px-8">
-      <Breadcrumbs
-        items={[
+    <>
+      <JsonLd data={articleJsonLd} />
+      <PageHeader
+        breadcrumbs={[
           { name: "Guides", path: "/guides" },
           { name: guide.title, path: `/guides/${guide.slug}` },
         ]}
+        label="Moving guide"
+        title={guide.title}
+        lede={
+          <>
+            <p>{guide.description}</p>
+            <p className="text-muted-600 mt-3 text-sm">
+              By the {GUIDE_AUTHOR.name} &middot;{" "}
+              <time dateTime={guide.publishedAt}>
+                {format(parseISO(guide.publishedAt), "d MMMM yyyy")}
+              </time>
+            </p>
+          </>
+        }
       />
-      <JsonLd data={articleJsonLd} />
 
-      <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">{guide.title}</h1>
-      <p className="text-muted-foreground mt-2 text-sm">
-        By the {GUIDE_AUTHOR.name} &middot;{" "}
-        <time dateTime={guide.publishedAt}>
-          {format(parseISO(guide.publishedAt), "d MMMM yyyy")}
-        </time>
-      </p>
+      <Container className="grid gap-10 py-12 sm:py-16 lg:grid-cols-12 lg:gap-12">
+        <aside className="lg:order-last lg:col-span-4">
+          <div className="space-y-8 lg:sticky lg:top-24">
+            <GuideToc articleId={articleId} />
+            {relatedService && (
+              <div className="border-navy-900 border-t-2 pt-4">
+                <p className="manifest-index text-muted-600">Related service</p>
+                <Link
+                  href={`/services/${relatedService.slug}`}
+                  className="text-navy-900 hover:text-terracotta-600 mt-2 inline-flex min-h-11 items-center gap-2 text-lg font-bold"
+                >
+                  {relatedService.name}
+                  <RouteArrow className="text-terracotta-600 w-6" />
+                </Link>
+              </div>
+            )}
+          </div>
+        </aside>
 
-      <div className="mt-8">
-        <guide.Body />
-      </div>
-
-      <div className="mt-12 border-t pt-8 text-center">
-        {relatedService && (
-          <p className="text-muted-foreground mb-4 text-sm">
-            Related:{" "}
-            <Link
-              href={`/services/${relatedService.slug}`}
-              className="text-primary font-medium hover:underline"
-            >
-              {relatedService.name} with {business.tradingName}
-            </Link>
-          </p>
-        )}
-        <Button size="lg" render={<Link href="/quote" />} nativeButton={false}>
-          {ctaCopy.primary}
-        </Button>
-      </div>
-    </div>
+        <div className="lg:col-span-8">
+          <article id={articleId} className="prose-vc">
+            <guide.Body />
+          </article>
+          <InlineCta className="mt-12 max-w-[68ch]" />
+        </div>
+      </Container>
+    </>
   );
 }

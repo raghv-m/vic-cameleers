@@ -17,12 +17,12 @@
   --color-sand-100: #f3e9d6;
   --color-sand-200: #e8d5b5;
   --color-kraft-400: #d4b98c;
-  --color-terracotta-400: #d5673f;
-  --color-terracotta-600: #b34628;
+  --color-terracotta-400: #c19a55;
+  --color-terracotta-600: #9a7438;
   --color-terracotta-700: #963a20;
-  --color-navy-700: #2c3f5c;
-  --color-navy-900: #1b2a41;
-  --color-navy-950: #111b2b;
+  --color-navy-700: #36513b;
+  --color-navy-900: #18352a;
+  --color-navy-950: #0d1c14;
   --color-ink-900: #22262d;
   --color-muted-600: #5a5244;
   --color-signal-400: #f2a900;
@@ -67,7 +67,7 @@
   /* Type: Big Shoulders Stencil for major display only, Barlow for everything else */
   --font-sans: var(--font-barlow);
   --font-heading: var(--font-barlow);
-  --font-display: var(--font-stencil);
+  --font-display: var(--font-condensed);
   --font-mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
 
   --text-label: 0.75rem;
@@ -103,32 +103,32 @@
   --card-foreground: #22262d;
   --popover: #fffdf8;
   --popover-foreground: #22262d;
-  --primary: #b34628;
+  --primary: #9a7438;
   --primary-foreground: #faf6ee;
   --secondary: #e8d5b5;
-  --secondary-foreground: #1b2a41;
+  --secondary-foreground: #18352a;
   --muted: #f3e9d6;
   --muted-foreground: #5a5244;
   --accent: #f3e9d6;
-  --accent-foreground: #1b2a41;
+  --accent-foreground: #18352a;
   --destructive: #a3261a;
   --border: #d9c7a4;
   --input: #7d6c50;
-  --ring: #1b2a41;
+  --ring: #18352a;
 
-  --brand-navy: #1b2a41;
+  --brand-navy: #18352a;
   --brand-navy-foreground: #faf6ee;
 
-  --chart-1: #1b2a41;
-  --chart-2: #b34628;
+  --chart-1: #18352a;
+  --chart-2: #9a7438;
   --chart-3: #d4b98c;
   --chart-4: #5a5244;
   --chart-5: #22262d;
-  --sidebar: #1b2a41;
+  --sidebar: #18352a;
   --sidebar-foreground: #faf6ee;
-  --sidebar-primary: #b34628;
+  --sidebar-primary: #9a7438;
   --sidebar-primary-foreground: #faf6ee;
-  --sidebar-accent: #2c3f5c;
+  --sidebar-accent: #36513b;
   --sidebar-accent-foreground: #faf6ee;
   --sidebar-border: rgb(250 246 238 / 12%);
   --sidebar-ring: #d4b98c;
@@ -172,19 +172,30 @@
 
 /* Display sizes. Not "text-*" names on purpose: class merging would treat those as colours. */
 @utility display-xl {
-  font-size: clamp(2.75rem, 6.2vw + 1rem, 6.25rem);
-  line-height: 0.94;
+  font-size: clamp(3.25rem, 6.4vw + 1rem, 6.75rem);
+  line-height: 0.95;
+  text-wrap: balance;
 }
 @utility display-lg {
-  font-size: clamp(2.25rem, 3.4vw + 1rem, 4rem);
+  font-size: clamp(2.5rem, 3.6vw + 1rem, 4.25rem);
   line-height: 0.98;
+  text-wrap: balance;
 }
 @utility display-md {
-  font-size: clamp(1.75rem, 2vw + 1rem, 2.75rem);
-  line-height: 1;
+  font-size: clamp(1.9rem, 2vw + 1rem, 3rem);
+  line-height: 1.02;
+  text-wrap: balance;
 }
 
-/* Stencil display type: headlines and big numbers only, never paragraphs or buttons. */
+/* Headline type: Barlow Condensed ExtraBold for every heading and big price. */
+@utility font-headline {
+  font-family: var(--font-condensed), "Arial Narrow", sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.005em;
+  text-transform: none;
+}
+
+/* Stencil accent type: wordmark, manifest numbers, step markers, stamps. Never sentences. */
 @utility font-stencil {
   font-family: var(--font-stencil), "Arial Narrow", sans-serif;
   font-weight: 800;
@@ -458,5 +469,86 @@
 @media (hover: hover) {
   .vc-hazard:hover::after {
     opacity: 1;
+  }
+}
+
+/* ---------------------------------------------------------------------------------------------
+ * Long-form reading (guides, legal pages). One style so every article reads the same: headline
+ * sub-heads, a comfortable 68ch line, terracotta square bullets, and links that look like links.
+ * ------------------------------------------------------------------------------------------- */
+@layer components {
+  .prose-vc {
+    max-width: 68ch;
+    color: var(--color-ink-900);
+    font-size: 1.0625rem;
+    line-height: 1.7;
+  }
+  .prose-vc > * + * {
+    margin-top: 1rem;
+  }
+  .prose-vc h2 {
+    margin-top: 2.75rem;
+    scroll-margin-top: 6rem;
+    font-family: var(--font-condensed), "Arial Narrow", sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.6rem, 1.2vw + 1.2rem, 2.1rem);
+    line-height: 1.05;
+    color: var(--color-navy-900);
+    text-wrap: balance;
+  }
+  .prose-vc h3 {
+    margin-top: 2rem;
+    font-weight: 700;
+    font-size: 1.125rem;
+    color: var(--color-navy-900);
+  }
+  .prose-vc ul:not([class]),
+  .prose-vc ol:not([class]) {
+    padding-left: 1.25rem;
+  }
+  .prose-vc li + li {
+    margin-top: 0.5rem;
+  }
+  .prose-vc ul:not([class]) > li {
+    list-style: none;
+    position: relative;
+  }
+  .prose-vc ul:not([class]) > li::before {
+    content: "";
+    position: absolute;
+    left: -1.1rem;
+    top: 0.68em;
+    width: 0.45rem;
+    height: 0.45rem;
+    background: var(--color-terracotta-600);
+  }
+  .prose-vc ol:not([class]) {
+    list-style: decimal;
+  }
+  .prose-vc ol:not([class]) > li::marker {
+    color: var(--color-terracotta-600);
+    font-weight: 700;
+  }
+  .prose-vc a:not([class]) {
+    color: var(--color-navy-900);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: var(--color-terracotta-600);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+  }
+  .prose-vc a:not([class]):hover {
+    color: var(--color-terracotta-600);
+  }
+  .prose-vc strong {
+    color: var(--color-navy-900);
+  }
+  .prose-vc table {
+    width: 100%;
+    border-top: 2px solid var(--color-navy-900);
+    font-size: 0.9375rem;
+  }
+  .prose-vc th {
+    color: var(--color-navy-900);
   }
 }

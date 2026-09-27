@@ -16,7 +16,7 @@ export const metadata: Metadata = pageMetadata({
 export default function CancellationPolicyPage() {
   return (
     <LegalPage title="Cancellation Policy" path="/cancellation-policy" updated="2026">
-      <p className="text-muted-foreground">
+      <p className="text-lg">
         Plans change, we get it. Here&apos;s how rescheduling and cancelling works with{" "}
         {business.tradingName}.
       </p>
@@ -43,10 +43,7 @@ export default function CancellationPolicyPage() {
       <h2>Questions</h2>
       <p>
         If anything here is unclear, just ask. Call {business.phoneDisplay} or use our{" "}
-        <a href="/contact" className="text-primary hover:underline">
-          contact form
-        </a>
-        .
+        <a href="/contact">contact form</a>.
       </p>
     </LegalPage>
   );
