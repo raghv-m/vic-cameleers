@@ -8,6 +8,10 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { business } from "@/config/business";
 import { ctaCopy } from "@/config/copy";
 import { getGuideBySlug, guides } from "@/content/guides";
+import { pageMetadata } from "@/lib/seo";
+
+// Only the guides that exist are ever built; any other slug is a plain 404.
+export const dynamicParams = false;
 
 export function generateStaticParams() {
   return guides.map((guide) => ({ slug: guide.slug }));
@@ -18,7 +22,13 @@ export async function generateMetadata({ params }: PageProps<"/guides/[slug]">):
   const guide = getGuideBySlug(slug);
   if (!guide) return {};
 
-  return { title: guide.title, description: guide.description };
+  return pageMetadata({
+    title: guide.title,
+    path: `/guides/${guide.slug}`,
+    description: guide.description,
+    type: "article",
+    publishedTime: guide.publishedAt,
+  });
 }
 
 export default async function GuidePage({ params }: PageProps<"/guides/[slug]">) {

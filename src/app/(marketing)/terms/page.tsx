@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 
 import { LegalPage } from "@/components/legal/legal-page";
 import { business } from "@/config/business";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Terms and Conditions",
-  description: `Terms for using the ${business.tradingName} website and booking a move.`,
-};
+export const metadata: Metadata = pageMetadata({
+  title: "Terms and conditions",
+  path: "/terms",
+  description: `Terms for using the ${business.tradingName} website and booking a move: estimates, hourly pricing, bookings, cancellations and your rights under Australian Consumer Law.`,
+});
 
 export default function TermsPage() {
   return (

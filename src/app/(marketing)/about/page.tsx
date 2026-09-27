@@ -4,11 +4,13 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { business } from "@/config/business";
 import { ctaCopy } from "@/config/copy";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "About us",
-  description: `${business.tradingName} is a ${business.baseSuburb} based removalist crew. Here's our story and how we work.`,
-};
+export const metadata: Metadata = pageMetadata({
+  title: "About our Cranbourne removalists",
+  path: "/about",
+  description: `${business.tradingName} is a Cranbourne removalist crew named after the cameleers who carried Australia's freight from 1860. Here's our story and how we work. ${business.hourlyRateShort}.`,
+});
 
 export default function AboutPage() {
   return (
@@ -49,9 +51,8 @@ export default function AboutPage() {
       <div className="mt-12 rounded-lg border p-6 text-center">
         <h2 className="font-heading text-xl font-medium">Our crew</h2>
         <p className="text-muted-foreground mt-2 text-sm">
-          {business.crewSize} movers, {business.fleet.map((truck) => truck.label).join(" and ")}.
-          Real photos of the truck and crew are going up as we get them, this section will fill in
-          as the site grows.
+          {business.crewSize} movers, {business.fleet.map((truck) => truck.label).join(" and ")},
+          all working out of {business.baseSuburb.replace(" VIC", "")}.
         </p>
       </div>
 

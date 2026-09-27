@@ -65,6 +65,6 @@ export const packingGuide: Guide = {
   slug: "how-to-pack-for-a-move",
   title: "How to pack for a move: a room-by-room guide",
   description: "Practical packing tips, from choosing the right boxes to protecting fragile items.",
-  publishedAt: "2026-01-22",
+  publishedAt: "2026-09-26",
   Body,
 };

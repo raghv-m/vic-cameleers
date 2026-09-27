@@ -2,12 +2,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { business } from "@/config/business";
+import { pageMetadata } from "@/lib/seo";
 import { suburbs } from "@/content/suburbs";
 
-export const metadata: Metadata = {
-  title: "Service areas",
-  description: `Suburbs ${business.tradingName} covers across ${business.serviceAreaDescription}, based in ${business.baseSuburb}.`,
-};
+export const metadata: Metadata = pageMetadata({
+  title: "Removalists south-east Melbourne",
+  price: true,
+  path: "/removalists",
+  description: `Suburbs we move across Casey, Cardinia and south-east Melbourne from our Cranbourne base. ${business.hourlyRateShort}, ${business.minimumHours} hour minimum. Get a free quote.`,
+});
 
 export default function ServiceAreasPage() {
   return (

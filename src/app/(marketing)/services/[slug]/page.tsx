@@ -15,6 +15,10 @@ import { business } from "@/config/business";
 import { ctaCopy } from "@/config/copy";
 import { serviceContent } from "@/config/service-content";
 import { getEnabledServices, getServiceBySlug } from "@/config/services";
+import { pageMetadata } from "@/lib/seo";
+
+// Only enabled services are ever built; a disabled or unknown slug is a plain 404.
+export const dynamicParams = false;
 
 export function generateStaticParams() {
   return getEnabledServices().map((service) => ({ slug: service.slug }));
@@ -27,10 +31,12 @@ export async function generateMetadata({
   const service = getServiceBySlug(slug);
   if (!service) return {};
 
-  return {
-    title: `${service.name} | ${business.hourlyRateDisplay}`,
-    description: `${service.shortDescription} Serving ${business.serviceAreaDescription}.`,
-  };
+  return pageMetadata({
+    title: service.seoKeyword,
+    price: true,
+    path: `/services/${service.slug}`,
+    description: `${service.shortDescription} From ${business.hourlyRateShort}, ${business.minimumHours} hour minimum, based in Cranbourne. Get a free quote.`,
+  });
 }
 
 export default async function ServicePage({ params }: PageProps<"/services/[slug]">) {

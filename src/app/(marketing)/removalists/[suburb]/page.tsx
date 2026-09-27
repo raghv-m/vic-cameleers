@@ -9,12 +9,15 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { DraftContentNotice } from "@/components/seo/draft-content-notice";
 import { JsonLd } from "@/components/seo/json-ld";
 import { business } from "@/config/business";
+import { pageMetadata } from "@/lib/seo";
 import { faqs } from "@/config/faq";
 import { getEnabledServices } from "@/config/services";
 import { getSuburbBySlug, suburbs } from "@/content/suburbs";
+
+// Only listed suburbs are ever built; any other slug is a plain 404.
+export const dynamicParams = false;
 
 export function generateStaticParams() {
   return suburbs.map((suburb) => ({ suburb: suburb.slug }));
@@ -27,10 +30,12 @@ export async function generateMetadata({
   const suburb = getSuburbBySlug(slug);
   if (!suburb) return {};
 
-  return {
-    title: `Removalists ${suburb.name} | ${business.hourlyRateDisplay} | ${business.tradingName}`,
-    description: `Local removalists covering ${suburb.name} VIC ${suburb.postcode}. Transparent hourly pricing, no surprises. Get a free estimate.`,
-  };
+  return pageMetadata({
+    title: `Removalists ${suburb.name}`,
+    price: true,
+    path: `/removalists/${suburb.slug}`,
+    description: `Local removalists for ${suburb.name} VIC ${suburb.postcode}, based in Cranbourne. ${business.hourlyRateShort}, ${business.minimumHours} hour minimum. Get a free quote for your ${suburb.name} move.`,
+  });
 }
 
 export default async function SuburbPage({ params }: PageProps<"/removalists/[suburb]">) {
@@ -62,7 +67,6 @@ export default async function SuburbPage({ params }: PageProps<"/removalists/[su
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
       <JsonLd data={faqJsonLd} />
-      <DraftContentNotice />
 
       <div className="mb-10 text-center">
         <h1 className="text-4xl font-semibold tracking-tight">Removalists in {suburb.name}</h1>

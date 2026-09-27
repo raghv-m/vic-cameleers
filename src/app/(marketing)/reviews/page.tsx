@@ -4,13 +4,15 @@ import { MapPin, MessageCircle, Star, Truck, Wallet } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { business } from "@/config/business";
+import { pageMetadata } from "@/lib/seo";
 import { ctaCopy } from "@/config/copy";
 import { db } from "@/lib/db";
 
-export const metadata: Metadata = {
-  title: "Reviews",
-  description: `Real reviews from ${business.tradingName} customers.`,
-};
+export const metadata: Metadata = pageMetadata({
+  title: "Customer reviews",
+  path: "/reviews",
+  description: `Reviews from ${business.tradingName} customers, a Cranbourne removalist crew moving homes across Melbourne from ${business.hourlyRateShort}.`,
+});
 
 const trustSignals = [
   {

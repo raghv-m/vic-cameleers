@@ -4,7 +4,7 @@ export interface Guide {
   slug: string;
   title: string;
   description: string;
-  /** ISO date the guide was published, used for JSON-LD and sitemap lastModified. */
+  /** ISO date the guide went live in its current form (never backdated). Used for the visible date, JSON-LD, and sitemap lastModified. */
   publishedAt: string;
   Body: ComponentType;
 }

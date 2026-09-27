@@ -8,12 +8,14 @@ import {
 } from "@/components/ui/accordion";
 import { JsonLd } from "@/components/seo/json-ld";
 import { business } from "@/config/business";
+import { pageMetadata } from "@/lib/seo";
 import { faqs } from "@/config/faq";
 
-export const metadata: Metadata = {
-  title: "FAQ",
-  description: `Common questions about moving with ${business.tradingName}: pricing, call-out fees, access, and what we don't move.`,
-};
+export const metadata: Metadata = pageMetadata({
+  title: "Removalist FAQs",
+  path: "/faq",
+  description: `Straight answers on minimum charges, the call-out fee, stairs, parking, cancellations and payment. ${business.hourlyRateShort}, ${business.minimumHours} hour minimum. Call ${business.phoneDisplay}.`,
+});
 
 export default function FaqPage() {
   const faqPageJsonLd = {

@@ -59,6 +59,6 @@ export const hourlyVsFixedPrice: Guide = {
   title: "Hourly rate vs fixed price: which is better for your move?",
   description:
     "The real difference between hourly and fixed-price removalist quotes, and why it matters.",
-  publishedAt: "2026-01-29",
+  publishedAt: "2026-09-26",
   Body,
 };

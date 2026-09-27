@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 
 import { LegalPage } from "@/components/legal/legal-page";
 import { business } from "@/config/business";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Cancellation Policy",
-  description: `How to reschedule or cancel a booking with ${business.tradingName}.`,
-};
+export const metadata: Metadata = pageMetadata({
+  title: "Cancellation policy",
+  path: "/cancellation-policy",
+  description: `How to reschedule or cancel a booked move with ${business.tradingName}. Call ${business.phoneDisplay} as early as you can and we'll sort out a new date.`,
+});
 
 // TODO(owner): the specific notice period and any cancellation fee are not
 // confirmed yet (see TODO-OWNER.md). This page intentionally states the

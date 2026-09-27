@@ -62,13 +62,8 @@ export function TurnstileWidget({ onVerify }: { onVerify: (token: string) => voi
     };
   }, [siteKey, onVerify]);
 
-  if (!siteKey) {
-    return (
-      <p className="text-muted-foreground text-xs">
-        Verification widget will appear here once configured.
-      </p>
-    );
-  }
+  // No placeholder copy on the public site: without a site key there's simply nothing to show.
+  if (!siteKey) return null;
 
   return <div ref={containerRef} />;
 }

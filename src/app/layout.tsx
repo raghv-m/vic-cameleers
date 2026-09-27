@@ -6,6 +6,8 @@ import { Inter, Oswald } from "next/font/google";
 import { MotionProvider } from "@/components/motion-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { business } from "@/config/business";
+import { SITE_URL } from "@/config/site-url";
+import { DEFAULT_OG_IMAGE, seoTitle } from "@/lib/seo";
 
 import "./globals.css";
 
@@ -22,19 +24,29 @@ const oswald = Oswald({
   display: "swap",
 });
 
+const siteDescription = `Removalists based in ${business.baseSuburb.replace(" VIC", "")}, moving homes and businesses across ${business.serviceAreaDescription}. ${business.hourlyRateShort}, ${business.minimumHours} hour minimum. Get a free quote.`;
+
+// Defaults for anything without its own metadata (admin, 404). Public pages set their own
+// title, canonical and share tags through pageMetadata() in src/lib/seo.ts.
 export const metadata: Metadata = {
-  metadataBase: new URL(business.siteUrl),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: `${business.tradingName} | Melbourne Removalists`,
+    default: seoTitle("Removalists Melbourne", { price: true }),
     template: `%s | ${business.tradingName}`,
   },
-  description:
-    "Vic Cameleers is a Cranbourne based removalist crew moving homes and businesses across Greater Melbourne. Transparent hourly pricing, no surprises.",
+  description: siteDescription,
+  openGraph: {
+    type: "website",
+    siteName: business.tradingName,
+    locale: "en_AU",
+    images: [DEFAULT_OG_IMAGE],
+  },
+  twitter: { card: "summary_large_image", images: [DEFAULT_OG_IMAGE.url] },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${inter.variable} ${oswald.variable} h-full antialiased`}>
+    <html lang="en-AU" className={`${inter.variable} ${oswald.variable} h-full antialiased`}>
       <body className="bg-background text-foreground flex min-h-full flex-col">
         <a
           href="#main-content"

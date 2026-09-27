@@ -1,15 +1,21 @@
 import { Mail, MapPin, Phone } from "lucide-react";
 import type { Metadata } from "next";
+import { connection } from "next/server";
 
 import { ContactForm } from "@/components/contact/contact-form";
 import { business } from "@/config/business";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Contact us",
-  description: `Call, email, or send us a message. Vic Cameleers is based in ${business.baseSuburb} and covers ${business.serviceAreaDescription}.`,
-};
+export const metadata: Metadata = pageMetadata({
+  title: "Contact our removalists",
+  path: "/contact",
+  description: `Call ${business.phoneDisplay} or send us a message. ${business.tradingName} is based in Cranbourne and moves homes and businesses across ${business.serviceAreaDescription}.`,
+});
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  // Rendered per request: the form loads Turnstile under the nonce CSP (src/proxy.ts).
+  await connection();
+
   return (
     <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
       <div className="mb-10 text-center">
@@ -34,24 +40,21 @@ export default function ContactPage() {
             </div>
           </div>
 
-          <div className="flex items-start gap-3">
-            <Mail className="text-primary mt-0.5 h-5 w-5 shrink-0" />
-            <div>
-              <p className="text-foreground font-medium">Email</p>
-              {business.publicEmail ? (
+          {/* TODO(owner): shows automatically once business.publicEmail is set. */}
+          {business.publicEmail && (
+            <div className="flex items-start gap-3">
+              <Mail className="text-primary mt-0.5 h-5 w-5 shrink-0" />
+              <div>
+                <p className="text-foreground font-medium">Email</p>
                 <a
                   href={`mailto:${business.publicEmail}`}
                   className="text-muted-foreground hover:text-foreground"
                 >
                   {business.publicEmail}
                 </a>
-              ) : (
-                <p className="text-muted-foreground">
-                  Use the form, or call us, our email goes live with the new site.
-                </p>
-              )}
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="flex items-start gap-3">
             <MapPin className="text-primary mt-0.5 h-5 w-5 shrink-0" />

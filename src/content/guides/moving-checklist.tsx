@@ -71,6 +71,6 @@ export const movingChecklist: Guide = {
   title: "The complete moving house checklist",
   description:
     "A week-by-week timeline to keep your move organised, from 8 weeks out to moving day.",
-  publishedAt: "2026-01-08",
+  publishedAt: "2026-09-26",
   Body,
 };

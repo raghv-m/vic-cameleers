@@ -58,6 +58,6 @@ export const apartmentMovingTips: Guide = {
   slug: "apartment-moving-tips",
   title: "Moving out of an apartment: what to plan for",
   description: "Lift bookings, building rules, and access tips for a smoother apartment move.",
-  publishedAt: "2026-01-15",
+  publishedAt: "2026-09-26",
   Body,
 };

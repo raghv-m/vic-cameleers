@@ -4,6 +4,9 @@
  * See CLAUDE.md section 1 for the source brief and open questions.
  */
 
+// Explicit .ts extension: prisma/seed.ts loads this file through Node's type stripping.
+import { SITE_URL } from "./site-url.ts";
+
 export const business = {
   tradingName: "Vic Cameleers",
   // TODO(owner): confirm legal entity name before launch (likely "Vic Cameleers Pty Ltd").
@@ -20,8 +23,8 @@ export const business = {
   // TODO(owner): set the public inbox once the domain is live.
   publicEmail: null as string | null,
 
-  // Read from env so it can be set once the domain is purchased.
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  // From NEXT_PUBLIC_SITE_URL, see src/config/site-url.ts.
+  siteUrl: SITE_URL,
 
   fleet: [
     { label: "6 tonne truck", size: "SIX_TONNE" as const },
@@ -30,6 +33,8 @@ export const business = {
   crewSize: 10,
 
   hourlyRateDisplay: "$120/hour",
+  /** Short form for page titles, which have a 60 character budget. */
+  hourlyRateShort: "$120/hr",
   minimumHours: 2,
   calloutMinutes: 45,
 

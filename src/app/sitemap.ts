@@ -1,49 +1,50 @@
 import type { MetadataRoute } from "next";
 
-import { business } from "@/config/business";
 import { getEnabledServices } from "@/config/services";
-import { suburbs } from "@/content/suburbs";
+import { absoluteUrl } from "@/config/site-url";
 import { guides } from "@/content/guides";
+import { suburbs } from "@/content/suburbs";
 
-// Only routes that actually exist go here. More are added as later
-// milestones build them (customer portal, etc).
-const staticRoutes = [
-  "",
-  "/about",
-  "/how-it-works",
-  "/services",
-  "/pricing",
-  "/quote",
-  "/removalists",
-  "/reviews",
-  "/faq",
-  "/guides",
-  "/contact",
-  "/privacy",
-  "/terms",
-  "/cancellation-policy",
+/**
+ * Indexable public pages only: no admin, API, or noindexed routes. lastModified is the date the
+ * page's content last actually changed, not the build time, so search engines can trust it.
+ * Bump a date here when that page's copy changes. Guides carry their own date.
+ */
+const PAGES: { path: string; updated: string }[] = [
+  { path: "/", updated: "2026-09-26" },
+  { path: "/about", updated: "2026-09-26" },
+  { path: "/how-it-works", updated: "2026-09-26" },
+  { path: "/services", updated: "2026-09-26" },
+  { path: "/pricing", updated: "2026-09-26" },
+  { path: "/quote", updated: "2026-09-26" },
+  { path: "/removalists", updated: "2026-09-26" },
+  { path: "/reviews", updated: "2026-09-26" },
+  { path: "/faq", updated: "2026-09-26" },
+  { path: "/guides", updated: "2026-09-26" },
+  { path: "/contact", updated: "2026-09-26" },
+  { path: "/privacy", updated: "2026-09-26" },
+  { path: "/terms", updated: "2026-09-26" },
+  { path: "/cancellation-policy", updated: "2026-09-26" },
 ];
 
+/** Service and suburb page copy last changed on this date. Per-suburb dates arrive with SEO phase S3. */
+const SERVICES_UPDATED = "2026-09-26";
+const SUBURBS_UPDATED = "2026-09-26";
+
 export default function sitemap(): MetadataRoute.Sitemap {
-  const staticEntries = staticRoutes.map((path) => ({
-    url: `${business.siteUrl}${path}`,
-    lastModified: new Date(),
-  }));
-
-  const serviceEntries = getEnabledServices().map((service) => ({
-    url: `${business.siteUrl}/services/${service.slug}`,
-    lastModified: new Date(),
-  }));
-
-  const suburbEntries = suburbs.map((suburb) => ({
-    url: `${business.siteUrl}/removalists/${suburb.slug}`,
-    lastModified: new Date(),
-  }));
-
-  const guideEntries = guides.map((guide) => ({
-    url: `${business.siteUrl}/guides/${guide.slug}`,
-    lastModified: new Date(),
-  }));
-
-  return [...staticEntries, ...serviceEntries, ...suburbEntries, ...guideEntries];
+  return [
+    ...PAGES.map(({ path, updated }) => ({ url: absoluteUrl(path), lastModified: updated })),
+    ...getEnabledServices().map((service) => ({
+      url: absoluteUrl(`/services/${service.slug}`),
+      lastModified: SERVICES_UPDATED,
+    })),
+    ...suburbs.map((suburb) => ({
+      url: absoluteUrl(`/removalists/${suburb.slug}`),
+      lastModified: SUBURBS_UPDATED,
+    })),
+    ...guides.map((guide) => ({
+      url: absoluteUrl(`/guides/${guide.slug}`),
+      lastModified: guide.publishedAt,
+    })),
+  ];
 }

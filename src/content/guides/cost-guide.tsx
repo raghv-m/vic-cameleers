@@ -59,6 +59,6 @@ export const costGuide: Guide = {
   title: "How much does a removalist cost in Melbourne?",
   description:
     "What actually drives removalist pricing, and how to get an accurate estimate instead of a guess.",
-  publishedAt: "2026-01-01",
+  publishedAt: "2026-09-26",
   Body,
 };

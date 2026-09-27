@@ -4,14 +4,17 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { business } from "@/config/business";
+import { pageMetadata } from "@/lib/seo";
 import { calculateQuote } from "@/lib/pricing";
 import { getPricingSettings } from "@/lib/pricing-settings";
 import type { PricingInput } from "@/types/pricing";
 
-export const metadata: Metadata = {
-  title: "Pricing",
-  description: `${business.tradingName} pricing: ${business.hourlyRateDisplay}, ${business.minimumHours} hour minimum, no surprises. See worked examples.`,
-};
+export const metadata: Metadata = pageMetadata({
+  title: "Removalist prices Melbourne",
+  price: true,
+  path: "/pricing",
+  description: `${business.hourlyRateShort}, ${business.minimumHours} hour minimum, ${business.calloutMinutes} minute call-out. Worked examples for real Melbourne moves using our actual rates. Get your free quote.`,
+});
 
 function formatCents(cents: number): string {
   return `$${Math.round(cents / 100)}`;

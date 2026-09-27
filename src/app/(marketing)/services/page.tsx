@@ -3,12 +3,15 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 import { business } from "@/config/business";
+import { pageMetadata } from "@/lib/seo";
 import { getEnabledServices } from "@/config/services";
 
-export const metadata: Metadata = {
-  title: "Services",
-  description: `Everything ${business.tradingName} moves: houses, apartments, offices, single items, and packing, all at one transparent hourly rate.`,
-};
+export const metadata: Metadata = pageMetadata({
+  title: "Removal services Melbourne",
+  price: true,
+  path: "/services",
+  description: `House, apartment, office and furniture removals plus packing across Melbourne, from ${business.hourlyRateShort}. Pick your service and get a free quote.`,
+});
 
 export default function ServicesPage() {
   const services = getEnabledServices();

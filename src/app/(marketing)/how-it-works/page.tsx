@@ -4,12 +4,14 @@ import { Calendar, ClipboardList, MapPin, Truck } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { business } from "@/config/business";
+import { pageMetadata } from "@/lib/seo";
 import { ctaCopy } from "@/config/copy";
 
-export const metadata: Metadata = {
-  title: "How it works",
-  description: `How a move with ${business.tradingName} works, from your first estimate to moving day.`,
-};
+export const metadata: Metadata = pageMetadata({
+  title: "How a move with us works",
+  path: "/how-it-works",
+  description: `From a free online quote to moving day: how a move with ${business.tradingName} works. ${business.hourlyRateShort}, ${business.minimumHours} hour minimum, you pay for actual time.`,
+});
 
 const steps = [
   {

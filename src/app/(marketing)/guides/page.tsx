@@ -2,13 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { format } from "date-fns";
 
-import { business } from "@/config/business";
+import { pageMetadata } from "@/lib/seo";
 import { guides } from "@/content/guides";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Moving guides",
-  description: `Practical moving advice from ${business.tradingName}: costs, checklists, packing, and more.`,
-};
+  path: "/guides",
+  description: `Practical moving advice from a Cranbourne removalist crew: what a move costs, packing, apartment moves and a week-by-week checklist.`,
+});
 
 export default function GuidesIndexPage() {
   return (
