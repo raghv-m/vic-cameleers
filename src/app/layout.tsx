@@ -1,9 +1,8 @@
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
-import { Inter, Oswald } from "next/font/google";
+import { Barlow, Big_Shoulders_Stencil } from "next/font/google";
 
-import { MotionProvider } from "@/components/motion-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { business } from "@/config/business";
 import { SITE_URL } from "@/config/site-url";
@@ -11,16 +10,19 @@ import { DEFAULT_OG_IMAGE, seoTitle } from "@/lib/seo";
 
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-sans",
+// Barlow: body, UI, navigation, buttons, prices (tabular figures). Drawn from road and signage
+// lettering, so it pairs with the freight theme.
+const barlow = Barlow({
+  variable: "--font-barlow",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
-const oswald = Oswald({
-  variable: "--font-heading",
+// Big Shoulders Stencil: major display headlines and big numbers only. Variable weight, one file.
+const stencil = Big_Shoulders_Stencil({
+  variable: "--font-stencil",
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
   display: "swap",
 });
 
@@ -46,15 +48,16 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en-AU" className={`${inter.variable} ${oswald.variable} h-full antialiased`}>
+    <html lang="en-AU" className={`${barlow.variable} ${stencil.variable} h-full antialiased`}>
       <body className="bg-background text-foreground flex min-h-full flex-col">
         <a
           href="#main-content"
-          className="bg-background text-foreground focus-visible:ring-ring sr-only rounded-md border px-4 py-2 text-sm font-medium focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus-visible:ring-2 focus-visible:outline-none"
+          className="bg-navy-900 text-sand-50 sr-only rounded-sm px-4 py-3 text-sm font-semibold focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[70]"
         >
           Skip to content
         </a>
-        <MotionProvider>{children}</MotionProvider>
+        {children}
+        <div aria-hidden="true" className="grain-overlay" />
         <Toaster />
         <Analytics />
         <SpeedInsights />

@@ -4,149 +4,459 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/*
+ * Vic Cameleers design system, "The Caravan Route".
+ * Values mirror src/config/design-tokens.ts; tests/unit/design-tokens.test.ts keeps them in sync
+ * and checks every approved text/background pair against WCAG 2.2 AA.
+ * Light only by design: a printed-freight world. Navy sections give it its dark notes.
+ */
+
 @theme inline {
+  /* Brand palette */
+  --color-sand-50: #faf6ee;
+  --color-sand-100: #f3e9d6;
+  --color-sand-200: #e8d5b5;
+  --color-kraft-400: #d4b98c;
+  --color-terracotta-400: #d5673f;
+  --color-terracotta-600: #b34628;
+  --color-terracotta-700: #963a20;
+  --color-navy-700: #2c3f5c;
+  --color-navy-900: #1b2a41;
+  --color-navy-950: #111b2b;
+  --color-ink-900: #22262d;
+  --color-muted-600: #5a5244;
+  --color-signal-400: #f2a900;
+  --color-success-700: #2f6b3a;
+  --color-danger-700: #a3261a;
+
+  /* Semantic roles used by shadcn/ui components and the admin console */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: ui-monospace, monospace;
-  --font-heading: var(--font-heading);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
   --color-navy: var(--brand-navy);
   --color-navy-foreground: var(--brand-navy-foreground);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Type: Big Shoulders Stencil for major display only, Barlow for everything else */
+  --font-sans: var(--font-barlow);
+  --font-heading: var(--font-barlow);
+  --font-display: var(--font-stencil);
+  --font-mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+
+  --text-label: 0.75rem;
+  --text-label--line-height: 1;
+  --text-label--letter-spacing: 0.14em;
+
+  /* Shape: crates, not bubbles */
+  --radius-sm: 2px;
+  --radius-md: 3px;
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-xl: 6px;
+  --radius-2xl: 8px;
+  --radius-3xl: 10px;
+  --radius-4xl: 12px;
+
+  /* Elevation: almost none. Hard rules instead of shadows. */
+  --shadow-crate: 0 1px 0 rgb(27 42 65 / 0.12), 0 8px 24px -12px rgb(27 42 65 / 0.35);
+
+  /* Motion */
+  --ease-haul: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-route: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-quick: 150ms;
+  --duration-base: 400ms;
+  --duration-hero: 700ms;
 }
 
-/*
- * Vic Cameleers brand palette (CLAUDE.md section 2):
- * deep navy (primary structural colour), desert sand (surface accent),
- * terracotta (CTAs and highlights), off-white, charcoal text.
- * Terracotta is the single CTA colour in both themes so "Get an instant
- * estimate" always reads the same way.
- */
 :root {
-  --background: #faf7f0;
-  --foreground: #232323;
-  --card: #ffffff;
-  --card-foreground: #232323;
-  --popover: #ffffff;
-  --popover-foreground: #232323;
-  --primary: #c1502e;
-  --primary-foreground: #faf7f0;
-  --secondary: #e9dcbb;
-  --secondary-foreground: #232323;
-  --muted: #f0ead9;
-  --muted-foreground: #6b6459;
-  --accent: #e9dcbb;
-  --accent-foreground: #232323;
-  --destructive: #b3261e;
-  --border: #e4dcc9;
-  --input: #e4dcc9;
-  --ring: #c1502e;
-  --chart-1: #0e2a47;
-  --chart-2: #c1502e;
-  --chart-3: #e9dcbb;
-  --chart-4: #6b6459;
-  --chart-5: #232323;
-  --radius: 0.75rem;
-  --sidebar: #0e2a47;
-  --sidebar-foreground: #faf7f0;
-  --sidebar-primary: #c1502e;
-  --sidebar-primary-foreground: #faf7f0;
-  --sidebar-accent: #1b3a5c;
-  --sidebar-accent-foreground: #faf7f0;
-  --sidebar-border: rgb(250 247 240 / 12%);
-  --sidebar-ring: #c1502e;
-  /* Deep navy band, used for a small number of deliberately dark sections
-     to break up the page rhythm (CLAUDE.md section 2's "deep navy" primary
-     structural colour), independent of the light/dark theme toggle. */
-  --brand-navy: #0e2a47;
-  --brand-navy-foreground: #faf7f0;
-}
+  --radius: 4px;
 
-.dark {
-  --background: #0b1b2e;
-  --foreground: #f5efdd;
-  --card: #122540;
-  --card-foreground: #f5efdd;
-  --popover: #122540;
-  --popover-foreground: #f5efdd;
-  --primary: #d5673f;
-  --primary-foreground: #0b1b2e;
-  --secondary: #1b3a5c;
-  --secondary-foreground: #f5efdd;
-  --muted: #132a46;
-  --muted-foreground: #9fb0c4;
-  --accent: #1b3a5c;
-  --accent-foreground: #f5efdd;
-  --destructive: #e5484d;
-  --border: rgb(245 239 221 / 12%);
-  --input: rgb(245 239 221 / 15%);
-  --ring: #d5673f;
-  --chart-1: #e9dcbb;
-  --chart-2: #d5673f;
-  --chart-3: #9fb0c4;
-  --chart-4: #f5efdd;
-  --chart-5: #6b6459;
-  --sidebar: #0e2138;
-  --sidebar-foreground: #f5efdd;
-  --sidebar-primary: #d5673f;
-  --sidebar-primary-foreground: #0b1b2e;
-  --sidebar-accent: #1b3a5c;
-  --sidebar-accent-foreground: #f5efdd;
-  --sidebar-border: rgb(245 239 221 / 10%);
-  --sidebar-ring: #d5673f;
-  --brand-navy: #0e2138;
-  --brand-navy-foreground: #f5efdd;
+  --background: #faf6ee;
+  --foreground: #22262d;
+  --card: #fffdf8;
+  --card-foreground: #22262d;
+  --popover: #fffdf8;
+  --popover-foreground: #22262d;
+  --primary: #b34628;
+  --primary-foreground: #faf6ee;
+  --secondary: #e8d5b5;
+  --secondary-foreground: #1b2a41;
+  --muted: #f3e9d6;
+  --muted-foreground: #5a5244;
+  --accent: #f3e9d6;
+  --accent-foreground: #1b2a41;
+  --destructive: #a3261a;
+  --border: #d9c7a4;
+  --input: #7d6c50;
+  --ring: #1b2a41;
+
+  --brand-navy: #1b2a41;
+  --brand-navy-foreground: #faf6ee;
+
+  --chart-1: #1b2a41;
+  --chart-2: #b34628;
+  --chart-3: #d4b98c;
+  --chart-4: #5a5244;
+  --chart-5: #22262d;
+  --sidebar: #1b2a41;
+  --sidebar-foreground: #faf6ee;
+  --sidebar-primary: #b34628;
+  --sidebar-primary-foreground: #faf6ee;
+  --sidebar-accent: #2c3f5c;
+  --sidebar-accent-foreground: #faf6ee;
+  --sidebar-border: rgb(250 246 238 / 12%);
+  --sidebar-ring: #d4b98c;
+
+  /* Paper grain, inline so it costs no request (about 1 KB). */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .1 0 0 0 0 .1 0 0 0 0 .15 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
   html {
     @apply font-sans;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    text-rendering: optimizeLegibility;
   }
   h1,
   h2,
   h3,
   h4 {
-    @apply font-heading tracking-tight;
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  /* Brand focus ring: 2px navy with a sand gap, visible on every ground. */
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid var(--color-navy-900);
+    outline-offset: 3px;
+  }
+  .on-navy :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline-color: var(--color-signal-400);
+  }
+}
+
+/* Display sizes. Not "text-*" names on purpose: class merging would treat those as colours. */
+@utility display-xl {
+  font-size: clamp(2.75rem, 6.2vw + 1rem, 6.25rem);
+  line-height: 0.94;
+}
+@utility display-lg {
+  font-size: clamp(2.25rem, 3.4vw + 1rem, 4rem);
+  line-height: 0.98;
+}
+@utility display-md {
+  font-size: clamp(1.75rem, 2vw + 1rem, 2.75rem);
+  line-height: 1;
+}
+
+/* Stencil display type: headlines and big numbers only, never paragraphs or buttons. */
+@utility font-stencil {
+  font-family: var(--font-stencil), "Arial Narrow", sans-serif;
+  font-weight: 800;
+  letter-spacing: 0.005em;
+  text-transform: none;
+}
+
+/* Freight label: small, tracked, boxed. Used sparingly as section markers. */
+@utility freight-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font-size: var(--text-label);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0.45em 0.6em 0.4em;
+  border: 2px solid currentColor;
+  border-radius: 2px;
+}
+
+/* Manifest number: "01 / RESIDENTIAL" style index text. */
+@utility manifest-index {
+  font-size: var(--text-label);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Fixed paper grain over the whole page. Never on scrolling containers. */
+@utility grain-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+  opacity: 0.045;
+  background-image: var(--grain);
+  mix-blend-mode: multiply;
+}
+
+/* Kraft cardboard band: corrugation lines plus grain. */
+@utility kraft-band {
+  background-color: var(--color-sand-200);
+  background-image:
+    var(--grain), repeating-linear-gradient(90deg, rgb(27 42 65 / 0.035) 0 2px, transparent 2px 9px);
+}
+
+/* Measured grid for technical panels. */
+@utility blueprint-grid {
+  background-image:
+    linear-gradient(rgb(27 42 65 / 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(27 42 65 / 0.07) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* ---------------------------------------------------------------------------------------------
+ * Motion. Content is never hidden: reveals only move or partially clip, so a screenshot, a
+ * crawler, or a browser without scroll-driven animations always sees the finished page.
+ * Everything here is CSS (no JS scroll listeners) and switches off under reduced motion.
+ * ------------------------------------------------------------------------------------------- */
+
+@keyframes vc-settle {
+  from {
+    transform: translateY(20px);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes vc-roller {
+  from {
+    clip-path: inset(0 0 28% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes vc-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes vc-ride {
+  from {
+    offset-distance: 0%;
+  }
+  to {
+    offset-distance: 100%;
+  }
+}
+
+@keyframes vc-stamp {
+  0% {
+    transform: scale(1.14) rotate(-2.5deg);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes vc-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes vc-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-3%, 0, 0);
+  }
+}
+
+@keyframes vc-hazard {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(19.8px);
+  }
+}
+
+@keyframes vc-wheel {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes vc-drop {
+  from {
+    transform: translateY(-18px);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes vc-convoy {
+  from {
+    transform: translateX(-10%);
+  }
+  to {
+    transform: translateX(110%);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Headline words stamp in like a freight stamp. Opacity stays 1 so the LCP isn't delayed. */
+  .vc-stamp-word {
+    display: inline-block;
+    animation: vc-stamp var(--duration-hero) var(--ease-haul) both;
+    animation-delay: calc(var(--i, 0) * 60ms + 80ms);
+    transform-origin: 30% 70%;
+  }
+
+  /* A stamp landing on paper: the quote-received confirmation. */
+  .vc-stamp {
+    animation: vc-stamp 520ms var(--ease-haul) both;
+  }
+
+  .vc-hero-media {
+    animation: vc-settle var(--duration-hero) var(--ease-haul) both;
+  }
+
+  .vc-drift {
+    animation: vc-drift 40s linear infinite alternate;
+  }
+
+  /* One-shot route draw on load (hero). */
+  .vc-draw-once {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: vc-draw 1.6s var(--ease-route) 0.3s both;
+  }
+
+  .vc-wheel {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: vc-wheel 0.9s linear infinite;
+  }
+
+  .vc-convoy {
+    animation: vc-convoy 1.8s var(--ease-route) infinite;
+  }
+
+  /* Load-diagram items dropping into the truck. Never hidden, only moved. */
+  .vc-drop {
+    transform-box: fill-box;
+    animation: vc-drop 360ms var(--ease-haul) both;
+  }
+
+  @supports (animation-timeline: view()) {
+    .vc-reveal {
+      animation: vc-settle linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 45%;
+    }
+    .vc-roller {
+      animation: vc-roller linear both;
+      animation-timeline: view();
+      animation-range: entry 5% cover 35%;
+    }
+    /* Route connectors draw as they cross the viewport. */
+    .vc-route-draw {
+      stroke-dasharray: 1;
+      animation: vc-draw linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 55%;
+    }
+    .vc-route-truck {
+      animation: vc-ride linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 55%;
+    }
+  }
+
+  /* Primary CTA: a hazard-stripe sheen travels across on hover. */
+  .vc-hazard:hover::after {
+    animation: vc-hazard 0.6s linear infinite;
+  }
+}
+
+/* Route truck only exists where it can actually ride the line. */
+.vc-route-truck {
+  display: none;
+}
+@supports (animation-timeline: view()) and (offset-path: path("M0 0")) {
+  @media (prefers-reduced-motion: no-preference) {
+    .vc-route-truck {
+      display: block;
+    }
+  }
+}
+
+/* Primary CTA: hazard-stripe sheen (a nod to road-work signage) slides across on hover. */
+.vc-hazard {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.vc-hazard::after {
+  content: "";
+  position: absolute;
+  inset: 0 -40px;
+  z-index: -1;
+  opacity: 0;
+  background: repeating-linear-gradient(
+    135deg,
+    rgb(250 246 238 / 0.13) 0 7px,
+    transparent 7px 14px
+  );
+  transition: opacity var(--duration-quick) var(--ease-haul);
+}
+@media (hover: hover) {
+  .vc-hazard:hover::after {
+    opacity: 1;
   }
 }

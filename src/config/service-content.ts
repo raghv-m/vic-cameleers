@@ -16,6 +16,8 @@ export interface ServicePriceExample {
 
 export interface ServiceContent {
   intro: string;
+  /** Who this service suits, in plain words. */
+  whoFor: string[];
   included: string[];
   /** Longer-form sections for the fuller service pages. */
   sections?: ServiceSection[];
@@ -32,6 +34,11 @@ export const serviceContent: Record<ServiceSlug, ServiceContent> = {
   "house-removals": {
     intro:
       "Moving a house is the big one, and it's where a properly run crew matters most. Whatever the size, from a one-bedroom to a four-plus bedroom family home, we send the right truck and enough movers to get it done in one trip where possible.",
+    whoFor: [
+      "Families moving between houses anywhere in Greater Melbourne",
+      "Anyone moving into a new-build estate, including double-storey homes",
+      "People who want packing or furniture assembly handled too",
+    ],
     included: [
       "Careful loading and unloading of furniture, boxes, and appliances",
       "Furniture blankets and basic protection for your things in transit",
@@ -54,6 +61,11 @@ export const serviceContent: Record<ServiceSlug, ServiceContent> = {
   "apartment-removals": {
     intro:
       "Apartments and units come with their own challenges: lift bookings, building access rules, and tight stairwells. We handle it regularly and factor access into your estimate so there's no surprise on the day.",
+    whoFor: [
+      "Units, flats and apartments with stairs or a lift",
+      "Buildings with loading bays, lift bookings or move-in time windows",
+      "Studio to three-bedroom apartments",
+    ],
     included: [
       "Careful navigation of stairs, lifts, and tight corridors",
       "Coordination around lift booking windows if your building requires one",
@@ -76,6 +88,11 @@ export const serviceContent: Record<ServiceSlug, ServiceContent> = {
   "office-removals": {
     intro:
       "Office moves need to happen with minimal disruption to your business. We move desks, chairs, filing cabinets, and equipment, and work with you on timing so you're back up and running fast.",
+    whoFor: [
+      "Small offices and studios moving across Melbourne",
+      "Businesses that need an after-hours or weekend move",
+      "Teams moving desks, chairs, filing and equipment",
+    ],
     included: [
       "Desks, chairs, filing cabinets, and standard office equipment",
       "Careful handling of computers and monitors (pack your own drives and sensitive data first)",
@@ -98,6 +115,11 @@ export const serviceContent: Record<ServiceSlug, ServiceContent> = {
   "furniture-removals": {
     intro:
       "Not every move is a full house. If you just need a couch, a bed, or a single piece delivered, including marketplace pickups, we can send a crew without booking a full move.",
+    whoFor: [
+      "One item or a small load, without booking a full move",
+      "Furniture going to a family member, storage or a new flat",
+      "Anyone who doesn't have a ute or a spare set of hands",
+    ],
     included: [
       "Single item or small load pickup and delivery",
       "Marketplace and second-hand furniture pickups",
@@ -120,6 +142,11 @@ export const serviceContent: Record<ServiceSlug, ServiceContent> = {
   packing: {
     intro:
       "Packing takes longer than most people expect. We offer full or partial packing before your move and unpacking at the other end, with boxes and materials supplied.",
+    whoFor: [
+      "People short on time before moving day",
+      "Kitchens, wardrobes and fragile items you'd rather not pack yourself",
+      "Anyone who wants unpacking done at the other end",
+    ],
     included: [
       "Full or partial packing of your belongings before the move",
       "Boxes, tape, and packing paper supplied",
@@ -141,6 +168,7 @@ export const serviceContent: Record<ServiceSlug, ServiceContent> = {
   "heavy-items": {
     intro:
       "Pianos, safes, pool tables, and other heavy or awkward items need specific handling and equipment. Talk to us before booking so we can plan the right approach.",
+    whoFor: ["Owners of pianos, safes and other heavy items (currently not offered)"],
     included: [
       "Careful assessment of access and equipment needed before the job",
       "Appropriate moving equipment for heavy or awkward items",
@@ -157,6 +185,11 @@ export const serviceContent: Record<ServiceSlug, ServiceContent> = {
   "same-day-removals": {
     intro:
       "Mover cancelled on you, or plans changed last minute? We can often get a crew and truck out the same day. Call us directly rather than using the online quote form for same-day requests.",
+    whoFor: [
+      "People whose mover cancelled at the last minute",
+      "Urgent moves inside Greater Melbourne",
+      "Small same-day jobs, subject to a truck and crew being free",
+    ],
     included: [
       "Fast response for last-minute moves, subject to crew and truck availability",
       "The same transparent hourly rate as any other job",
@@ -178,6 +211,11 @@ export const serviceContent: Record<ServiceSlug, ServiceContent> = {
   "marketplace-pickups": {
     intro:
       "Found a couch on Facebook Marketplace or a fridge on Gumtree, and now you need to get it home? We pick up second-hand furniture from the seller's place and bring it to yours, anywhere in Greater Melbourne. For one or two items, the 6 tonne truck with two movers is usually the right fit.",
+    whoFor: [
+      "Facebook Marketplace and Gumtree buyers",
+      "Anyone collecting from one or two sellers in one trip",
+      "Buyers without a ute, trailer or helper",
+    ],
     included: [
       "Pickup from the seller's home and delivery to the room you choose",
       "Furniture blankets and straps to protect the item in the truck",
@@ -250,6 +288,11 @@ export const serviceContent: Record<ServiceSlug, ServiceContent> = {
   "end-of-lease-moves": {
     intro:
       "Renting means your move has a hard deadline: the lease ends, the keys go back, and the final inspection happens whether you're packed or not. We help renters across Melbourne get out on time, at an hourly rate you can see before you book.",
+    whoFor: [
+      "Renters moving out on a fixed lease end date",
+      "Anyone working around a key handover or final inspection",
+      "Sharehouses and units moving out together",
+    ],
     included: [
       "Loading, transport and unloading of your furniture and boxes",
       "Furniture blankets to protect your things on the way out",

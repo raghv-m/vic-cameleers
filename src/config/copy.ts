@@ -1,10 +1,11 @@
 /**
- * Shared CTA wording. One consistent primary CTA everywhere it appears,
- * rather than "Get an instant estimate" / "Get your free estimate" / "Get
- * a free quote" scattered across different pages meaning the same thing.
+ * Shared CTA wording: one label per intent, used everywhere that intent appears.
+ * "Estimated price" (the instant calculator) and "Request a confirmed quote" (the form) are
+ * deliberately different words, because one is an estimate and the other is a real quote.
  */
 export const ctaCopy = {
-  primary: "Get a free quote",
-  primaryShort: "Get quote",
-  call: "Call the crew",
+  primary: "Get a quote",
+  primaryShort: "Get a quote",
+  confirmed: "Request a confirmed quote",
+  call: "Call",
 } as const;

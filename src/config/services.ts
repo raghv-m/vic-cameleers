@@ -9,12 +9,16 @@ export type ServiceSlug =
   | "marketplace-pickups"
   | "end-of-lease-moves";
 
+import type { ImageId } from "./images.ts";
+
 export interface ServiceConfig {
   slug: ServiceSlug;
   name: string;
   /** Primary search phrase for the page title, e.g. "House removals Melbourne". */
   seoKeyword: string;
   shortDescription: string;
+  /** Photo slot for this service (src/config/images.ts). */
+  image: ImageId;
   enabled: boolean;
 }
 
@@ -28,6 +32,7 @@ export const services: ServiceConfig[] = [
     name: "House removals",
     seoKeyword: "House removals Melbourne",
     shortDescription: "Full home moves, any number of bedrooms, anywhere in Melbourne.",
+    image: "serviceHouse",
     enabled: true,
   },
   {
@@ -35,6 +40,7 @@ export const services: ServiceConfig[] = [
     name: "Apartment removals",
     seoKeyword: "Apartment removals Melbourne",
     shortDescription: "Units and apartments, including lift bookings and tight access.",
+    image: "serviceApartment",
     enabled: true,
   },
   {
@@ -42,6 +48,7 @@ export const services: ServiceConfig[] = [
     name: "Office removals",
     seoKeyword: "Office removals Melbourne",
     shortDescription: "Desks, equipment, and files moved with minimal downtime.",
+    image: "serviceOffice",
     enabled: true,
   },
   {
@@ -49,6 +56,7 @@ export const services: ServiceConfig[] = [
     name: "Furniture removals",
     seoKeyword: "Furniture removals Melbourne",
     shortDescription: "Single items or marketplace pickups, no full move required.",
+    image: "serviceFurniture",
     enabled: true,
   },
   {
@@ -56,6 +64,7 @@ export const services: ServiceConfig[] = [
     name: "Packing",
     seoKeyword: "Packing services Melbourne",
     shortDescription: "Full or partial packing and unpacking, boxes and materials supplied.",
+    image: "servicePacking",
     enabled: true,
   },
   {
@@ -65,6 +74,7 @@ export const services: ServiceConfig[] = [
     // TODO(owner): confirm which heavy items the crew actually handles (piano, safe, pool table)
     // and update this description and the flag below before launch.
     shortDescription: "Pianos, safes, and other heavy or awkward items, handled carefully.",
+    image: "serviceFurniture",
     enabled: false,
   },
   {
@@ -72,6 +82,7 @@ export const services: ServiceConfig[] = [
     name: "Same-day removals",
     seoKeyword: "Same-day removals Melbourne",
     shortDescription: "Mover cancelled on you? We can often get a crew out today.",
+    image: "serviceSameDay",
     enabled: true,
   },
   {
@@ -79,6 +90,7 @@ export const services: ServiceConfig[] = [
     name: "Marketplace pickups",
     seoKeyword: "Marketplace pickups Melbourne",
     shortDescription: "Facebook Marketplace and Gumtree furniture, picked up and brought home.",
+    image: "serviceMarketplace",
     enabled: true,
   },
   {
@@ -86,6 +98,7 @@ export const services: ServiceConfig[] = [
     name: "End-of-lease moves",
     seoKeyword: "End of lease removalists Melbourne",
     shortDescription: "Renters moving out on a deadline, planned around your key handover.",
+    image: "serviceEndOfLease",
     enabled: true,
   },
 ];
