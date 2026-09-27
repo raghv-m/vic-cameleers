@@ -306,7 +306,9 @@ Full flow at `/quote`, compact version embeddable on home, service and suburb pa
 ### Checklist
 
 - [x] Multi-step form with progress indicator, back/next, validation per step
-- [ ] State persisted in URL or local state so refresh doesn't lose progress (currently in-memory only, lost on refresh)
+- [x] State persisted in URL or local state so refresh doesn't lose progress (move details and step
+      saved to localStorage with a "Pick up where you left off?" prompt; contact details, notes,
+      consent and the Turnstile token are never stored; the hero estimator remembers its inputs too)
 - [!] Places autocomplete AU-only for all addresses (plain text inputs for now) **OWNER for Google Maps API key**
 - [!] Travel time lookup server-side (key never exposed), cached (every estimate assumes a fixed 20 minute trip until this exists) **OWNER for Google Maps API key**
 - [ ] Service-area check with friendly message if outside Melbourne
