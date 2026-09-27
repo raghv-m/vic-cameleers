@@ -1,7 +1,7 @@
 import "server-only";
 
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import type { Role } from "@prisma/client";
 
 import { serverEnv } from "@/env.server";
@@ -34,14 +34,15 @@ export async function getAdminSession(): Promise<Session | null> {
 }
 
 /**
- * Requires a signed-in, active, 2FA-enrolled session. Redirects to login if
- * signed out, or to /setup-2fa if 2FA hasn't been enrolled yet (mandatory
- * for all staff per CLAUDE.md section 11).
+ * Requires a signed-in, active, 2FA-enrolled session. A signed-out or
+ * deactivated visitor gets a plain 404, not a redirect to the login page, so
+ * a protected admin URL never confirms that an admin console exists there.
+ * Staff sign in at the login page directly. A signed-in session without 2FA
+ * goes to /setup-2fa (mandatory for all staff per CLAUDE.md section 11).
  */
 export async function requireSession(): Promise<Session> {
   const session = await getAdminSession();
-  if (!session) redirect(adminUrl("/login"));
-  if (!session.user.isActive) redirect(adminUrl("/login"));
+  if (!session || !session.user.isActive) notFound();
   if (!session.user.twoFactorEnabled) redirect(adminUrl("/setup-2fa"));
   return session;
 }

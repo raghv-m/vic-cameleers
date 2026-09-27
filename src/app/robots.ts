@@ -1,18 +1,19 @@
 import type { MetadataRoute } from "next";
 
-import { business } from "@/config/business";
-import { serverEnv } from "@/env.server";
+import { absoluteUrl } from "@/config/site-url";
 
+/**
+ * Deliberately never mentions the admin console: listing it here would advertise its path to
+ * anyone who reads this file. The admin routes protect themselves instead (auth, 404 when
+ * signed out, X-Robots-Tag noindex from src/proxy.ts).
+ */
 export default function robots(): MetadataRoute.Robots {
-  const disallow = ["/api/"];
-  if (serverEnv.ADMIN_PATH) disallow.push(`/${serverEnv.ADMIN_PATH}`);
-
   return {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow,
+      disallow: ["/api/"],
     },
-    sitemap: `${business.siteUrl}/sitemap.xml`,
+    sitemap: absoluteUrl("/sitemap.xml"),
   };
 }

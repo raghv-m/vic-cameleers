@@ -18,7 +18,7 @@ test.skip(!process.env.PLAYWRIGHT_SEEDED_DB, "Needs a live, seeded database - se
 test("changing a lead's status writes an audit log entry and updates the badge", async ({
   page,
 }) => {
-  const adminPath = process.env.ADMIN_PATH ?? "ops-dev-7f3k";
+  const adminPath = process.env.ADMIN_PATH;
   const leadId = process.env.PLAYWRIGHT_LEAD_ID;
 
   await page.goto(`/${adminPath}/leads/${leadId}`);

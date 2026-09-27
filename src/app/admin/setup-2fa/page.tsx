@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import { Setup2FAForm } from "@/components/admin/setup-2fa-form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default async function Setup2FAPage() {
   const session = await getAdminSession();
-  if (!session) redirect(adminUrl("/login"));
+  if (!session || !session.user.isActive) notFound();
   if (session.user.twoFactorEnabled) redirect(adminUrl("/"));
 
   return (

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 
 import { LoginForm } from "@/components/admin/login-form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,7 +10,10 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function AdminLoginPage() {
+export default async function AdminLoginPage() {
+  // Rendered per request so its scripts carry the admin CSP nonce (src/proxy.ts).
+  await connection();
+
   return (
     <div className="flex min-h-svh items-center justify-center px-4 py-16">
       <Card className="w-full max-w-sm">
