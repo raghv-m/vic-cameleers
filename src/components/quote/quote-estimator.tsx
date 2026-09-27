@@ -105,23 +105,24 @@ interface SavedEstimate {
  * filled, the drive time is still assumed until we check the addresses.
  */
 function completeness(details: { stairsTouched: boolean; from: string; to: string; date: string }) {
+  const missing = [
+    !details.stairsTouched && "stairs",
+    (details.from.trim() === "" || details.to.trim() === "") && "both suburbs",
+    details.date === "" && "a date",
+  ].filter((item): item is string => Boolean(item));
   const known = [
     details.stairsTouched,
     details.from.trim() !== "",
     details.to.trim() !== "",
     details.date !== "",
   ].filter(Boolean).length;
-  if (known >= 4) {
-    return { level: 3, label: "Ready to confirm", hint: "That's what we need to confirm a quote." };
-  }
-  if (known >= 2) {
-    return { level: 2, label: "Getting closer", hint: "Add your suburbs and date to firm it up." };
-  }
-  return {
-    level: 1,
-    label: "Ballpark",
-    hint: "Tell us about stairs, suburbs and a date to firm it up.",
-  };
+  const hint =
+    missing.length === 0
+      ? "That's what we need to confirm a quote."
+      : `Add ${missing.join(missing.length === 3 ? ", " : " and ").replace(/, (?=[^,]*$)/, " and ")} to firm it up.`;
+  if (known >= 4) return { level: 3, label: "Ready to confirm", hint };
+  if (known >= 2) return { level: 2, label: "Getting closer", hint };
+  return { level: 1, label: "Ballpark", hint };
 }
 
 /**

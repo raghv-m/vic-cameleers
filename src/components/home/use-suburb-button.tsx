@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpToLine } from "lucide-react";
+import { Calculator } from "lucide-react";
 
 import { requestEstimatePrefill } from "@/lib/browser-store";
 
@@ -14,7 +14,7 @@ export function UseSuburbButton({ suburb }: { suburb: string }) {
       aria-label={`Use ${suburb} as the pickup in the estimate`}
       title={`Estimate a move from ${suburb}`}
     >
-      <ArrowUpToLine className="size-4" aria-hidden="true" />
+      <Calculator className="size-4" aria-hidden="true" />
     </button>
   );
 }

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, MessageSquare, Phone, PhoneCall, Star } from "lucide-react";
+import { ArrowRight, Calculator, MessageSquare, Phone, PhoneCall, Star } from "lucide-react";
 import { cn } from "cn";
 
 import { CamelMark } from "@/components/brand/camel-mark";
@@ -49,8 +49,8 @@ export function CoverageSection() {
             ))}
           </ul>
           <p className="text-muted-600 mt-3 flex items-center gap-1.5 text-sm">
-            <span aria-hidden="true">&uarr;</span>
-            Tap the arrow next to a suburb to start your estimate from there.
+            <Calculator className="size-4 shrink-0" aria-hidden="true" />
+            Tap the calculator next to a suburb to start your estimate from there.
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <SignPlate tone="amber" className="vc-glow">

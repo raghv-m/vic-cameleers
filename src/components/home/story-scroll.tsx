@@ -148,8 +148,15 @@ function LayeredArt({ era }: { era: number }) {
           ["--vc-parallax-to" as string]: "30px",
         }}
       >
-        <rect x="-40" y="318" width="560" height="60" fill="var(--color-navy-950)" />
-        <line x1="-40" y1="318" x2="520" y2="318" stroke="var(--color-kraft-400)" strokeWidth="2" />
+        <rect x="-240" y="318" width="960" height="60" fill="var(--color-navy-950)" />
+        <line
+          x1="-240"
+          y1="318"
+          x2="720"
+          y2="318"
+          stroke="var(--color-kraft-400)"
+          strokeWidth="2"
+        />
         <g
           className={cn(
             "transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
@@ -176,13 +183,15 @@ function LayeredArt({ era }: { era: number }) {
           <path
             d={CAMEL_PATH}
             fill="var(--color-navy-900)"
-            transform="translate(300 258) scale(0.62)"
+            transform="translate(314 252) scale(0.66)"
           />
           <text
-            x="352"
-            y="302"
-            className="fill-navy-900 font-stencil text-[11px]"
-            textAnchor="start"
+            x="336"
+            y="298"
+            className="fill-navy-900 font-stencil text-[10px]"
+            textAnchor="middle"
+            textLength="100"
+            lengthAdjust="spacingAndGlyphs"
           >
             VIC CAMELEERS
           </text>

@@ -34,8 +34,8 @@ export function TrustQuestions({ questions }: { questions: TrustQuestion[] }) {
 
   return (
     <div>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <label htmlFor={`${id}-search`} className="relative block sm:w-64">
+      <div className="flex flex-col gap-3">
+        <label htmlFor={`${id}-search`} className="relative block sm:max-w-sm">
           <span className="sr-only">Search the questions</span>
           <Search
             className="text-muted-600 pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2"

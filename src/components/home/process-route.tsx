@@ -187,10 +187,12 @@ function RouteStepper() {
       onBlur={() => setPaused(false)}
     >
       <div role="tablist" aria-label="Steps of a move" className="relative grid grid-cols-4 gap-6">
-        {/* the route, filling up to the active stop */}
+        {/* The route, filling up to the active stop. It runs from the first marker's centre to the
+            last one's: with 4 columns and 1.5rem gaps, that's one column width minus 22px short
+            of the right edge. */}
         <div
           aria-hidden="true"
-          className="bg-kraft-400/40 absolute top-[21px] right-[calc(12.5%-22px)] left-[22px] h-[3px]"
+          className="bg-kraft-400/40 absolute top-[21px] right-[calc((100%-4.5rem)/4-22px)] left-[22px] h-[3px]"
         >
           <div
             className="bg-terracotta-600 h-full origin-left transition-transform duration-700 ease-[cubic-bezier(0.65,0,0.35,1)] motion-reduce:transition-none"
