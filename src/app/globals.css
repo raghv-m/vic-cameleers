@@ -18,8 +18,8 @@
   --color-sand-200: #e8d5b5;
   --color-kraft-400: #d4b98c;
   --color-terracotta-400: #c19a55;
-  --color-terracotta-600: #9a7438;
-  --color-terracotta-700: #963a20;
+  --color-terracotta-600: #81612f;
+  --color-terracotta-700: #6a4f26;
   --color-navy-700: #36513b;
   --color-navy-900: #18352a;
   --color-navy-950: #0d1c14;
@@ -103,7 +103,7 @@
   --card-foreground: #22262d;
   --popover: #fffdf8;
   --popover-foreground: #22262d;
-  --primary: #9a7438;
+  --primary: #81612f;
   --primary-foreground: #faf6ee;
   --secondary: #e8d5b5;
   --secondary-foreground: #18352a;
@@ -120,13 +120,13 @@
   --brand-navy-foreground: #faf6ee;
 
   --chart-1: #18352a;
-  --chart-2: #9a7438;
+  --chart-2: #81612f;
   --chart-3: #d4b98c;
   --chart-4: #5a5244;
   --chart-5: #22262d;
   --sidebar: #18352a;
   --sidebar-foreground: #faf6ee;
-  --sidebar-primary: #9a7438;
+  --sidebar-primary: #81612f;
   --sidebar-primary-foreground: #faf6ee;
   --sidebar-accent: #36513b;
   --sidebar-accent-foreground: #faf6ee;

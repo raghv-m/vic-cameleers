@@ -33,12 +33,12 @@ export function CamelSign({ className, title }: { className?: string; title?: st
         rx="4"
         transform="rotate(45 60 60)"
         fill="none"
-        stroke="var(--color-navy-900, #1b2a41)"
+        stroke="var(--color-navy-900, #18352a)"
         strokeWidth="3.5"
       />
       <path
         d={CAMEL_PATH}
-        fill="var(--color-navy-900, #1b2a41)"
+        fill="var(--color-navy-900, #18352a)"
         transform="translate(30.5 40) scale(0.92)"
       />
     </svg>

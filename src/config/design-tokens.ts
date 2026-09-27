@@ -15,14 +15,14 @@ export const palette = {
   /** Kraft: route lines, rules, texture. Never text on light grounds. */
   "kraft-400": "#d4b98c",
   /** Brand terracotta: every primary CTA, links on sand-50/100. */
-  "terracotta-600": "#b34628",
-  "terracotta-700": "#963a20",
+  "terracotta-600": "#81612f",
+  "terracotta-700": "#6a4f26",
   /** Bright terracotta: graphics and large display on navy only. */
-  "terracotta-400": "#d5673f",
+  "terracotta-400": "#c19a55",
   /** Brand navy: headings, rules, dark sections. */
-  "navy-900": "#1b2a41",
-  "navy-950": "#111b2b",
-  "navy-700": "#2c3f5c",
+  "navy-900": "#18352a",
+  "navy-950": "#0d1c14",
+  "navy-700": "#36513b",
   "ink-900": "#22262d",
   "muted-600": "#5a5244",
   /** Road-sign amber: tiny accents on navy only (warning-sign diamond, route markers). */
