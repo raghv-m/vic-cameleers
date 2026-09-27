@@ -5,7 +5,7 @@ import { cn } from "cn";
 import { CamelMark } from "@/components/brand/camel-mark";
 import { CoverageMap } from "@/components/brand/coverage-map";
 import { RouteArrow, SignPlate } from "@/components/brand/signage";
-import { StoryPanel } from "@/components/brand/story-panel";
+import { StoryScroll } from "@/components/home/story-scroll";
 import { UseSuburbButton } from "@/components/home/use-suburb-button";
 import { Container, SectionHeader } from "@/components/site/layout-primitives";
 import { buttonVariants } from "@/components/ui/button";
@@ -78,43 +78,66 @@ export function StorySection() {
   return (
     <section
       aria-labelledby="story-title"
-      className="on-navy bg-navy-900 text-sand-200 relative overflow-hidden py-16 sm:py-24"
+      // overflow-clip, not hidden: hidden would make this a scroll container and break the sticky art.
+      className="vc-story on-navy bg-navy-900 text-sand-200 relative overflow-clip py-16 sm:py-24"
     >
       <CamelMark className="text-navy-700 pointer-events-none absolute -right-16 -bottom-10 h-72 w-auto opacity-60 sm:h-96" />
-      <Container className="relative grid gap-10 lg:grid-cols-12 lg:items-center lg:gap-14">
-        <div className="lg:col-span-6">
-          <StoryPanel className="h-auto w-full" />
-        </div>
-        <div className="lg:col-span-6">
-          <SectionHeader
-            index="07 / The name"
-            id="story-title"
-            tone="dark"
-            title="Why a removals crew is named after camels."
-          />
-          <div className="mt-6 max-w-[58ch] space-y-4 text-[1.0625rem] leading-relaxed">
-            <p>
-              In 1860, camels and their cameleers landed at Port Melbourne to carry supplies for the
-              Burke and Wills expedition. For decades after, cameleers hauled freight across country
-              no wagon could handle.
-            </p>
-            <p>
-              We&apos;re not them, and we don&apos;t pretend to be. {business.tradingName} is a
-              modern crew with modern trucks. We took the name because we like the job they did:
-              turn up, carry the load, get it there in one piece.
-            </p>
-            <p className="font-headline text-terracotta-400 display-md">
-              Same idea. Bigger trucks.
-            </p>
-          </div>
-          <Link
-            href="/about"
-            className={cn(buttonVariants({ variant: "onNavy", size: "lg" }), "mt-8")}
-          >
-            More about us
-            <ArrowRight data-icon="inline-end" />
-          </Link>
-        </div>
+      <Container className="relative">
+        <SectionHeader
+          index="07 / The name"
+          id="story-title"
+          tone="dark"
+          title="Why a removals crew is named after camels."
+          className="mb-10 lg:mb-4"
+        />
+        <StoryScroll
+          beats={[
+            {
+              era: 0,
+              body: (
+                <p className="max-w-[46ch] text-[1.1875rem] leading-relaxed">
+                  In 1860, camels and their cameleers landed at Port Melbourne to carry supplies for
+                  the Burke and Wills expedition.
+                </p>
+              ),
+            },
+            {
+              era: 1,
+              body: (
+                <p className="max-w-[46ch] text-[1.1875rem] leading-relaxed">
+                  For decades after, cameleers hauled freight across country no wagon could handle.
+                </p>
+              ),
+            },
+            {
+              era: 2,
+              body: (
+                <p className="max-w-[46ch] text-[1.1875rem] leading-relaxed">
+                  We&apos;re not them, and we don&apos;t pretend to be. {business.tradingName} is a
+                  modern crew with modern trucks. We took the name because we like the job they did:
+                  turn up, carry the load, get it there in one piece.
+                </p>
+              ),
+            },
+            {
+              era: 2,
+              body: (
+                <div>
+                  <p className="font-headline text-terracotta-400 display-lg">
+                    Same idea. Bigger trucks.
+                  </p>
+                  <Link
+                    href="/about"
+                    className={cn(buttonVariants({ variant: "onNavy", size: "lg" }), "mt-8")}
+                  >
+                    More about us
+                    <ArrowRight data-icon="inline-end" />
+                  </Link>
+                </div>
+              ),
+            },
+          ]}
+        />
       </Container>
     </section>
   );
