@@ -4,6 +4,7 @@ import { ArrowRight, BadgeCheck, Phone } from "lucide-react";
 import { cn } from "cn";
 
 import { HeroRoute } from "@/components/brand/hero-route";
+import { POSITIONS, REFERENCE_TOWNS } from "@/components/brand/map-geometry";
 import { CamelSign, SignPlate } from "@/components/brand/signage";
 import { CountUp } from "@/components/motion/count-up";
 import { Photo } from "@/components/brand/photo";
@@ -172,6 +173,15 @@ export function Hero({ settings }: { settings: PricingSettings }) {
             <QuoteEstimator
               settings={settings}
               suburbNames={allSuburbs.map((suburb) => suburb.name)}
+              mapPlaces={[
+                ...allSuburbs
+                  .filter((suburb) => POSITIONS[suburb.slug])
+                  .map((suburb) => ({ name: suburb.name, point: POSITIONS[suburb.slug]! })),
+                ...REFERENCE_TOWNS.map((town) => ({
+                  name: town.name.replace(" CBD", ""),
+                  point: { x: town.x, y: town.y },
+                })),
+              ]}
             />
           </div>
         </div>

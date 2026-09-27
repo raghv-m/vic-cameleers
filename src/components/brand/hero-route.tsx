@@ -4,7 +4,7 @@ import {
   PORT_PHILLIP,
   REFERENCE_TOWNS,
   WESTERN_PORT,
-} from "@/components/brand/coverage-map";
+} from "@/components/brand/map-geometry";
 
 /**
  * Line-art of Melbourne's south-east (the same projected coastline as the coverage map) with a

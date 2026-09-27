@@ -512,6 +512,31 @@
   }
 }
 
+/* Estimator mini-map: route draws A to B in 800ms, pins pop, then the distance bubble. */
+@keyframes vc-pop {
+  0% {
+    transform: scale(0.4);
+  }
+  70% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .vc-route-once {
+    stroke-dasharray: 1;
+    animation: vc-draw 800ms var(--ease-route) both;
+  }
+  .vc-pin-pop {
+    animation: vc-pop 360ms var(--ease-haul) both;
+  }
+  .vc-bubble-pop {
+    animation: vc-pop 360ms var(--ease-haul) 800ms both;
+  }
+}
+
 /* The depot on the coverage map: a slow radar ping. */
 @keyframes vc-ping {
   0% {

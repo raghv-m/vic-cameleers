@@ -9,6 +9,8 @@ import { buttonVariants } from "@/components/ui/button";
 import { MeasureRule } from "@/components/brand/signage";
 import { ChipGroup } from "@/components/quote/chip-group";
 import { AnimatedRange } from "@/components/quote/animated-range";
+import { EstimateMiniMap, type MapPlace } from "@/components/quote/estimate-mini-map";
+import { findKnownPlace } from "@/lib/geo";
 import { business } from "@/config/business";
 import {
   PREFILL_EVENT,
@@ -133,10 +135,13 @@ function completeness(details: { stairsTouched: boolean; from: string; to: strin
 export function QuoteEstimator({
   settings,
   suburbNames,
+  mapPlaces = [],
   className,
 }: {
   settings: PricingSettings;
   suburbNames: string[];
+  /** Places we can put on the mini-map (name + map position). */
+  mapPlaces?: MapPlace[];
   className?: string;
 }) {
   const id = useId();
@@ -223,6 +228,8 @@ export function QuoteEstimator({
   );
 
   const known = completeness({ stairsTouched, from, to, date });
+  const fromPlace = findKnownPlace(from, mapPlaces);
+  const toPlace = findKnownPlace(to, mapPlaces);
   const a = estimate.assumptions;
   const extraMovers = Math.max(0, estimate.recommendedCrewCount - 2);
   const breakdown: { label: string; value: string }[] = [
@@ -363,6 +370,7 @@ export function QuoteEstimator({
           <p className="text-muted-600 mt-2 text-xs">
             Suburbs and date carry over to your quote request. They don&apos;t change this estimate.
           </p>
+          {fromPlace && toPlace && <EstimateMiniMap from={fromPlace} to={toPlace} />}
         </details>
       </div>
 
