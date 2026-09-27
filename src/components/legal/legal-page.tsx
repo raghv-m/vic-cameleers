@@ -1,14 +1,20 @@
+import { Breadcrumbs } from "@/components/seo/breadcrumbs";
+
 export function LegalPage({
   title,
+  path,
   updated,
   children,
 }: {
   title: string;
+  /** Site-relative path of the page, for its breadcrumb. */
+  path: string;
   updated: string;
   children: React.ReactNode;
 }) {
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
+      <Breadcrumbs items={[{ name: title, path }]} />
       <h1 className="text-4xl font-semibold tracking-tight">{title}</h1>
       <p className="text-muted-foreground mt-2 text-sm">Last updated {updated}</p>
 

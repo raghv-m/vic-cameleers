@@ -15,7 +15,7 @@ export const metadata: Metadata = pageMetadata({
 // general approach without inventing numbers. Update once confirmed.
 export default function CancellationPolicyPage() {
   return (
-    <LegalPage title="Cancellation Policy" updated="2026">
+    <LegalPage title="Cancellation Policy" path="/cancellation-policy" updated="2026">
       <p className="text-muted-foreground">
         Plans change, we get it. Here&apos;s how rescheduling and cancelling works with{" "}
         {business.tradingName}.

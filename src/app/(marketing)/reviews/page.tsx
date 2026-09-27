@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { MapPin, MessageCircle, Star, Truck, Wallet } from "lucide-react";
 
+import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { business } from "@/config/business";
 import { pageMetadata } from "@/lib/seo";
@@ -47,6 +48,7 @@ export default async function ReviewsPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
+      <Breadcrumbs items={[{ name: "Reviews", path: "/reviews" }]} />
       <div className="mb-10 text-center">
         <h1 className="text-4xl font-semibold tracking-tight">Reviews</h1>
         <p className="text-muted-foreground mt-2">

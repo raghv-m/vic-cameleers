@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
+import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 import { business } from "@/config/business";
 import { pageMetadata } from "@/lib/seo";
 import { getEnabledServices } from "@/config/services";
@@ -18,6 +19,7 @@ export default function ServicesPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
+      <Breadcrumbs items={[{ name: "Services", path: "/services" }]} />
       <div className="mb-12 text-center">
         <h1 className="text-4xl font-semibold tracking-tight">What we move</h1>
         <p className="text-muted-foreground mx-auto mt-2 max-w-xl">

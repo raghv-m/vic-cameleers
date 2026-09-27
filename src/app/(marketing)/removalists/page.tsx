@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 import { business } from "@/config/business";
 import { pageMetadata } from "@/lib/seo";
 import { suburbs } from "@/content/suburbs";
@@ -15,6 +16,7 @@ export const metadata: Metadata = pageMetadata({
 export default function ServiceAreasPage() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
+      <Breadcrumbs items={[{ name: "Service areas", path: "/removalists" }]} />
       <div className="mb-10 text-center">
         <h1 className="text-4xl font-semibold tracking-tight">Where we move</h1>
         <p className="text-muted-foreground mt-2">

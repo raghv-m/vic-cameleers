@@ -8,6 +8,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/seo/json-ld";
 import { business } from "@/config/business";
@@ -66,6 +67,12 @@ export default async function SuburbPage({ params }: PageProps<"/removalists/[su
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
+      <Breadcrumbs
+        items={[
+          { name: "Service areas", path: "/removalists" },
+          { name: suburb.name, path: `/removalists/${suburb.slug}` },
+        ]}
+      />
       <JsonLd data={faqJsonLd} />
 
       <div className="mb-10 text-center">

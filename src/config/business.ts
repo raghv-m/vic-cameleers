@@ -15,6 +15,13 @@ export const business = {
   acn: "702 456 988",
 
   baseSuburb: "Cranbourne VIC",
+  basePostcode: "3977",
+  /**
+   * Centre of the suburb of Cranbourne (public gazetteer coordinates), used for schema `geo`.
+   * Deliberately not the depot's street location: this is a service-area business with no
+   * public street address.
+   */
+  baseGeo: { latitude: -38.0996, longitude: 145.2834 },
   serviceAreaDescription: "Greater Melbourne, Victoria",
 
   phoneDisplay: "0481 950 085",
@@ -32,6 +39,8 @@ export const business = {
   ],
   crewSize: 10,
 
+  /** Numeric hourly rate in AUD, for structured data. GST treatment unconfirmed, see TODO-OWNER.md. */
+  hourlyRateAud: 120,
   hourlyRateDisplay: "$120/hour",
   /** Short form for page titles, which have a 60 character budget. */
   hourlyRateShort: "$120/hr",
@@ -51,6 +60,18 @@ export const business = {
   },
 
   googleReviewUrl: null as string | null,
+  // TODO(owner): Google Business Profile URL once the profile exists. Feeds schema `sameAs`.
+  googleBusinessProfileUrl: null as string | null,
+
+  // TODO(owner): business hours aren't confirmed. Until they are, there's no
+  // openingHoursSpecification in the schema and no hours anywhere on the site.
+  openingHours: null,
+
+  /**
+   * TODO(owner): stays false until real, verifiable reviews exist. Only then may the schema
+   * include AggregateRating/Review, and only on pages that visibly show those reviews.
+   */
+  reviewSchemaEnabled: false,
 
   social: {
     // TODO(owner): add once created.

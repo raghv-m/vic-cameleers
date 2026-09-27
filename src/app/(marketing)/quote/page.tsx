@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { connection } from "next/server";
 
 import { QuoteFlow } from "@/components/quote/quote-flow";
+import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 import { business } from "@/config/business";
 import { pageMetadata } from "@/lib/seo";
 
@@ -15,5 +16,12 @@ export const metadata: Metadata = pageMetadata({
 export default async function QuotePage() {
   // Rendered per request: the form loads Turnstile under the nonce CSP (src/proxy.ts).
   await connection();
-  return <QuoteFlow />;
+  return (
+    <>
+      <div className="mx-auto max-w-xl px-4 pt-8 sm:px-6 lg:px-8">
+        <Breadcrumbs items={[{ name: "Get a quote", path: "/quote" }]} className="mb-0" />
+      </div>
+      <QuoteFlow />
+    </>
+  );
 }

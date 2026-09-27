@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { business } from "@/config/business";
@@ -63,6 +64,7 @@ export default async function PricingPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
+      <Breadcrumbs items={[{ name: "Pricing", path: "/pricing" }]} />
       <div className="mb-12 text-center">
         <h1 className="text-4xl font-semibold tracking-tight">Simple, transparent pricing</h1>
         <p className="text-muted-foreground mt-2">

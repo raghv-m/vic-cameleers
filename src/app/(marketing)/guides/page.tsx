@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { format } from "date-fns";
 
+import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 import { pageMetadata } from "@/lib/seo";
 import { guides } from "@/content/guides";
 
@@ -14,6 +15,7 @@ export const metadata: Metadata = pageMetadata({
 export default function GuidesIndexPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
+      <Breadcrumbs items={[{ name: "Guides", path: "/guides" }]} />
       <div className="mb-10 text-center">
         <h1 className="text-4xl font-semibold tracking-tight">Moving guides</h1>
         <p className="text-muted-foreground mt-2">Practical advice for your move, no fluff.</p>

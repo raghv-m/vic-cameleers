@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { business } from "@/config/business";
 import { ctaCopy } from "@/config/copy";
@@ -15,6 +16,7 @@ export const metadata: Metadata = pageMetadata({
 export default function AboutPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
+      <Breadcrumbs items={[{ name: "About", path: "/about" }]} />
       <div className="mb-10 text-center">
         <h1 className="text-4xl font-semibold tracking-tight">Our story</h1>
         <p className="text-muted-foreground mt-2">

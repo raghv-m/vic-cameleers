@@ -90,25 +90,23 @@ Current-state facts from the code map that shape the plan:
   delay from CSS + font swap. Hero, fonts and the a11y issues (contrast, `<dl>` in why-us) are
   rebuilt in design D5/D6; re-measure live in Speed Insights and in D7.
 
-## SEO PHASE S2: Structured data
+## SEO PHASE S2: Structured data (done 27 Sep 2026)
 
-- [ ] S2.1 Full `MovingCompany` JSON-LD with `@id`: name, url, logo, image[] (real photos,
-      empty until they exist), telephone, priceRange, taxID, address (Cranbourne, 3977, VIC,
-      AU, no street), geo, `openingHoursSpecification` (owner hours), `areaServed` = City per
-      published suburb, `hasOfferCatalog` per enabled service with the hourly price,
-      `sameAs` GBP + socials. Files: `src/components/seo/moving-company-json-ld.tsx`,
-      `src/config/business.ts`
-- [ ] S2.2 `BreadcrumbList` JSON-LD + visible breadcrumbs on all inner pages.
-      Files: new `src/components/seo/breadcrumbs.tsx`, inner `page.tsx` files
-- [ ] S2.3 `Service` schema per service page, `provider` = MovingCompany `@id`.
-      Files: `src/app/(marketing)/services/[slug]/page.tsx`
-- [ ] S2.4 `FAQPage` only where Q&A is visible (audit home, /faq, service, suburb).
-- [ ] S2.5 `Article` schema on guides: real `datePublished`, author = real person.
-      Files: `src/app/(marketing)/guides/[slug]/page.tsx`, `src/content/guides/*`
-- [ ] S2.6 No AggregateRating/Review schema. Named flag `business.reviews.showAggregateRating`
-      (false) with a TODO.
-- [ ] S2.7 Validate all JSON-LD (schema.org validator / Rich Results test on rendered HTML),
-      report errors.
+- [x] S2.1 Full `MovingCompany` node with `@id` (`src/components/seo/moving-company-json-ld.tsx`):
+      name, url, logo, image, telephone, priceRange, taxID, suburb-level address (Cranbourne 3977),
+      geo (suburb centre, not the depot), areaServed as City per suburb page, hasOfferCatalog per
+      enabled service at $120/hour. Left out until confirmed: openingHoursSpecification, sameAs,
+      legalName, email (each appears automatically once set in `business.ts`).
+- [x] S2.2 `BreadcrumbList` JSON-LD + visible breadcrumbs on every inner page
+      (`src/components/seo/breadcrumbs.tsx`, one component renders both so they can't drift).
+- [x] S2.3 `Service` schema per service page, `provider` = the MovingCompany `@id`, hourly price.
+- [x] S2.4 `FAQPage` only where the Q&A is visibly rendered (/faq, service pages, suburb pages);
+      a service with no FAQs emits no FAQPage.
+- [x] S2.5 `Article` schema on guides: real datePublished, author "Vic Cameleers crew" (TODO for a
+      real person), publisher = business `@id`; visible byline with `<time>`.
+- [x] S2.6 No AggregateRating/Review: `business.reviewSchemaEnabled = false` with TODO.
+- [x] S2.7 Validated with validator.schema.org on 8 pages (home, service, guide, suburb, faq,
+      privacy, pricing, quote): 0 errors, 0 warnings.
 
 ## SEO PHASE S3: Local pages that are not doorway pages
 

@@ -581,10 +581,12 @@ This is also a cybersecurity portfolio piece, so treat it seriously and document
 - [x] `robots.txt` (blocks `/api/` only; deliberately never names the admin path)
 - [x] Canonical URLs (self-referencing `alternates.canonical` on every public page, resolved
       against `NEXT_PUBLIC_SITE_URL`)
-- [x] JSON-LD `MovingCompany` / LocalBusiness: name, phone, `areaServed`, `priceRange`, `taxID` (geo and opening hours not included — no confirmed address/hours yet)
+- [x] JSON-LD `MovingCompany` / LocalBusiness with `@id`: name, url, logo, phone, `areaServed` per
+      suburb, `priceRange`, `taxID`, suburb-level address, geo (suburb centre), `hasOfferCatalog`;
+      no opening hours or `sameAs` until confirmed. Validated with validator.schema.org
 - [x] JSON-LD `Service` on service pages
 - [x] JSON-LD `FAQPage` where eligible (dedicated FAQ page, every service page, every suburb page)
-- [ ] JSON-LD `BreadcrumbList` + visible breadcrumbs
+- [x] JSON-LD `BreadcrumbList` + visible breadcrumbs (`src/components/seo/breadcrumbs.tsx`)
 - [x] `aggregateRating` only once real reviews exist (currently omitted entirely, correctly)
 - [~] Internal linking: services ↔ suburbs ↔ guides (suburb pages link to services and to
   `/guides`; guide articles link to relevant services and `/pricing`; the services hub doesn't

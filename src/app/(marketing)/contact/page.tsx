@@ -2,6 +2,7 @@ import { Mail, MapPin, Phone } from "lucide-react";
 import type { Metadata } from "next";
 import { connection } from "next/server";
 
+import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 import { ContactForm } from "@/components/contact/contact-form";
 import { business } from "@/config/business";
 import { pageMetadata } from "@/lib/seo";
@@ -18,6 +19,7 @@ export default async function ContactPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
+      <Breadcrumbs items={[{ name: "Contact", path: "/contact" }]} />
       <div className="mb-10 text-center">
         <h1 className="text-4xl font-semibold tracking-tight">Get in touch</h1>
         <p className="text-muted-foreground mt-2">

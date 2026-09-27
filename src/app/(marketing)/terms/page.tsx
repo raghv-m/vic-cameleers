@@ -12,7 +12,7 @@ export const metadata: Metadata = pageMetadata({
 
 export default function TermsPage() {
   return (
-    <LegalPage title="Terms and Conditions" updated="2026">
+    <LegalPage title="Terms and Conditions" path="/terms" updated="2026">
       <p className="text-muted-foreground">
         These terms apply to your use of this website and to any move you book with{" "}
         {business.tradingName} (ABN {business.abn}, ACN {business.acn}). By using this site or

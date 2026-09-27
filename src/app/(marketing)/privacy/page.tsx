@@ -12,7 +12,7 @@ export const metadata: Metadata = pageMetadata({
 
 export default function PrivacyPage() {
   return (
-    <LegalPage title="Privacy Policy" updated="2026">
+    <LegalPage title="Privacy Policy" path="/privacy" updated="2026">
       <p className="text-muted-foreground">
         {business.tradingName} (ABN {business.abn}) respects your privacy. This policy explains what
         personal information we collect, why we collect it, and what we do with it, in line with the

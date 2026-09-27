@@ -9,13 +9,16 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/seo/json-ld";
 import { business } from "@/config/business";
 import { ctaCopy } from "@/config/copy";
 import { serviceContent } from "@/config/service-content";
 import { getEnabledServices, getServiceBySlug } from "@/config/services";
+import { absoluteUrl } from "@/config/site-url";
 import { pageMetadata } from "@/lib/seo";
+import { businessRef, faqPageJsonLd, hourlyPriceSpecification } from "@/lib/structured-data";
 
 // Only enabled services are ever built; a disabled or unknown slug is a plain 404.
 export const dynamicParams = false;
@@ -49,30 +52,32 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
   const serviceJsonLd = {
     "@context": "https://schema.org",
     "@type": "Service",
+    "@id": `${absoluteUrl(`/services/${service.slug}`)}#service`,
+    name: service.name,
     serviceType: service.name,
-    provider: {
-      "@type": "MovingCompany",
-      name: business.tradingName,
-      telephone: business.phoneE164,
-    },
-    areaServed: { "@type": "AdministrativeArea", name: business.serviceAreaDescription },
     description: content.intro,
+    url: absoluteUrl(`/services/${service.slug}`),
+    provider: businessRef,
+    areaServed: { "@type": "AdministrativeArea", name: business.serviceAreaDescription },
+    offers: {
+      "@type": "Offer",
+      priceSpecification: hourlyPriceSpecification(),
+    },
   };
 
-  const faqJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: content.faqs.map((faq) => ({
-      "@type": "Question",
-      name: faq.question,
-      acceptedAnswer: { "@type": "Answer", text: faq.answer },
-    })),
-  };
+  // Only the FAQs rendered below; none rendered means no FAQPage at all.
+  const faqJsonLd = faqPageJsonLd(content.faqs);
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
+      <Breadcrumbs
+        items={[
+          { name: "Services", path: "/services" },
+          { name: service.name, path: `/services/${service.slug}` },
+        ]}
+      />
       <JsonLd data={serviceJsonLd} />
-      <JsonLd data={faqJsonLd} />
+      {faqJsonLd && <JsonLd data={faqJsonLd} />}
 
       <div className="mb-10 text-center">
         <h1 className="text-4xl font-semibold tracking-tight">{service.name}</h1>
