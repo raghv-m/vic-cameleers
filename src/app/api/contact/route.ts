@@ -18,7 +18,7 @@ function getClientIp(request: NextRequest): string | undefined {
   return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
 }
 
-export async function POST(request: NextRequest) {
+async function handlePost(request: NextRequest) {
   const ip = getClientIp(request);
 
   const rateLimit = await checkPublicFormRateLimit(ip ?? "unknown");
@@ -119,6 +119,23 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Failed to save contact submission", error);
+    return NextResponse.json(
+      { error: "Something went wrong sending your message. Please call us instead." },
+      { status: 500 },
+    );
+  }
+}
+
+/**
+ * Last-resort guard: anything that fails outside the handler's own error handling (for example
+ * the server env check when DATABASE_URL isn't configured) is logged and answered with a proper
+ * JSON 500 the form can show, instead of an empty error response.
+ */
+export async function POST(request: NextRequest) {
+  try {
+    return await handlePost(request);
+  } catch (error) {
+    console.error("Unhandled error in contact submission", error);
     return NextResponse.json(
       { error: "Something went wrong sending your message. Please call us instead." },
       { status: 500 },

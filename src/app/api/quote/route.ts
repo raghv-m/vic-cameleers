@@ -49,7 +49,7 @@ function propertySizeToBedroomCount(size: PropertySize): number | null {
   }
 }
 
-export async function POST(request: NextRequest) {
+async function handlePost(request: NextRequest) {
   const ip = getClientIp(request);
 
   const rateLimit = await checkPublicFormRateLimit(ip ?? "unknown");
@@ -256,6 +256,23 @@ export async function POST(request: NextRequest) {
     console.error("Failed to save quote submission", error);
     return NextResponse.json(
       { error: "Something went wrong saving your quote. Please call us instead." },
+      { status: 500 },
+    );
+  }
+}
+
+/**
+ * Last-resort guard: anything that fails outside the handler's own error handling (for example
+ * the server env check when DATABASE_URL isn't configured) is logged and answered with a proper
+ * JSON 500 the form can show, instead of an empty error response.
+ */
+export async function POST(request: NextRequest) {
+  try {
+    return await handlePost(request);
+  } catch (error) {
+    console.error("Unhandled error in quote submission", error);
+    return NextResponse.json(
+      { error: "Something went wrong sending your quote. Please call us instead." },
       { status: 500 },
     );
   }

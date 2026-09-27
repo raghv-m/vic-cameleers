@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-import { serverEnv } from "@/env.server";
-
 /**
  * Security headers on every response (CLAUDE.md section 11), plus the ADMIN_PATH rewrite.
  *
@@ -76,9 +74,20 @@ function isNoncePage(pathname: string): boolean {
   return NONCE_PAGE_PATHS.some((path) => pathname === path || pathname.startsWith(`${path}/`));
 }
 
+/**
+ * The admin path, read straight from the environment. The proxy runs before every page, so it
+ * must not depend on the full server env check (src/env.server.ts): that also requires
+ * DATABASE_URL, and a missing database setting would otherwise turn every page, even the static
+ * marketing ones, into a 500. Unset or blank means no admin rewrite, and /admin stays a 404.
+ */
+function adminPathFromEnv(): string | undefined {
+  const value = process.env.ADMIN_PATH?.trim();
+  return value ? value : undefined;
+}
+
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const adminPath = serverEnv.ADMIN_PATH;
+  const adminPath = adminPathFromEnv();
   const isDirectAdminGuess = pathname === "/admin" || pathname.startsWith("/admin/");
   const adminRewriteMatch =
     adminPath && (pathname === `/${adminPath}` || pathname.startsWith(`/${adminPath}/`));
