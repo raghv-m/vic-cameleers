@@ -131,10 +131,9 @@ Current-state facts from the code map that shape the plan:
 
 ## SEO PHASE S4: New pages and internal links
 
-- [!] S4.1 New service pages, 600-900 words, $120/hr worked price example, FAQ, 3 suburb
-  links: piano removals, pool table removals, marketplace pickups, end-of-lease moves.
-  Piano and pool table are **blocked on owner confirmation** (see Decision D-1).
-  Files: `src/config/services.ts`, `src/config/service-content.ts`, `faq.ts`
+- [ ] S4.1 New service pages, 600-900 words, $120/hr worked price example, FAQ, 3 suburb
+      links: marketplace pickups, end-of-lease moves. (Piano and pool table cut, decision D-1.)
+      Files: `src/config/services.ts`, `src/config/service-content.ts`, `faq.ts`
 - [ ] S4.2 Rewrite the cost guide (`/guides/how-much-does-a-removalist-cost`): example-job table
       by home size and truck (from the real pricing engine), embedded calculator, price drivers,
       hourly vs fixed. Files: `src/content/guides/cost-guide.tsx`, new calculator component
@@ -241,9 +240,24 @@ Answered decisions get recorded here with the date.
 
 Open:
 
-- D-1 Heavy items (piano, pool table): offered or not? Currently the FAQ says no. Blocks S4.1.
-- D-4 Suburb content format: MDX (needs a new toolchain) or typed per-suburb TS files. Needed by S3.
-- D-5 Quote form: keep 5 steps restyled, or cut to the playbook's 3 steps. Needed by D5.
+- Stock photos vs labelled placeholders (see "Answered 27 Sep" below, conflicts with 26 Sep answer).
+- Vercel Preview builds have failed since at least 22 Sep 2026 (every Preview deployment, before
+  S1 too); Production builds succeed. Needs the build log (Vercel login) to fix.
+
+Answered 27 Sep 2026:
+
+- Always-on preview: one long-lived branch `site-rebuild`, every commit pushed there, reviews on
+  its Vercel branch URL; production deploy (merge to main) only on owner approval.
+- D-4 Suburb format: one TypeScript file per suburb (`suburbs/clyde-north.ts`) exporting a typed
+  `suburbData` object (name, postcode, council, driveTimeFromCranbourneMins?, housingNotes?,
+  accessNotes?, parkingNotes?, nearbySuburbs?, featuredJobs?, reviews?, photos?, published).
+  No MDX, no Markdown; featuredJobs and reviews are typed data in the same file.
+- D-1 Heavy items: no piano or pool table pages. Cut from S4; FAQ stays "no pianos".
+- D-5 Quote form: the playbook's 3 steps, each fitting one mobile screen, large tap targets,
+  progress indicator at the top.
+- ADMIN_PATH: not committed to the repo (it's public on GitHub); set as a Vercel env var instead.
+- Stock photos (10-15 royalty-free, no logos, in `public/photos/stock/`) requested, which
+  reverses the 26 Sep "no stock photos" answer. Awaiting confirmation before D5.
 
 Answered 26 Sep 2026:
 
