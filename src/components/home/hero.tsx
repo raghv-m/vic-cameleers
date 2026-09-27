@@ -1,9 +1,10 @@
 import { Fragment } from "react";
 import Link from "next/link";
-import { ArrowRight, Phone } from "lucide-react";
+import { ArrowRight, BadgeCheck, Phone } from "lucide-react";
 import { cn } from "cn";
 
 import { CamelSign, SignPlate } from "@/components/brand/signage";
+import { CountUp } from "@/components/motion/count-up";
 import { Photo } from "@/components/brand/photo";
 import { QuoteEstimator } from "@/components/quote/quote-estimator";
 import { Container } from "@/components/site/layout-primitives";
@@ -103,25 +104,49 @@ export function Hero({ settings }: { settings: PricingSettings }) {
             </a>
           </div>
 
-          <dl className="border-navy-900 mt-10 hidden max-w-xl grid-cols-3 border-t-2 sm:grid">
+          <dl className="border-navy-900 mt-10 hidden max-w-xl grid-cols-4 border-t-2 sm:grid">
             {[
-              { term: "Fleet", detail: "6t and 10t trucks" },
+              { term: "Crew", figure: `${business.crewSize}`, detail: "movers" },
+              { term: "Fleet", figure: "2", detail: "trucks, 6t and 10t" },
               {
                 term: "Rate",
-                detail: `${business.hourlyRateShort}, ${business.minimumHours} hr min`,
+                figure: business.hourlyRateShort.replace("/hr", ""),
+                detail: `per hour, ${business.minimumHours} hr min`,
               },
-              { term: "Crew", detail: `${business.crewSize} movers` },
             ].map((item) => (
               <div
                 key={item.term}
-                className="border-navy-900/20 border-r pt-3 pr-3 last:border-r-0 [&:not(:first-child)]:pl-3"
+                className="border-navy-900/20 border-r pt-3 pr-3 [&:not(:first-child)]:pl-3"
               >
                 <dt className="manifest-index text-muted-600">{item.term}</dt>
-                <dd className="text-navy-900 mt-1 text-[0.9375rem] leading-snug font-bold">
-                  {item.detail}
+                <dd className="text-navy-900 mt-1 leading-tight">
+                  <span className="font-headline block text-4xl leading-none">
+                    <CountUp value={item.figure} />
+                  </span>
+                  <span className="mt-1 block text-[0.8125rem] font-semibold">{item.detail}</span>
                 </dd>
               </div>
             ))}
+            <div className="pt-3 pl-3">
+              <dt className="manifest-index text-muted-600">ABN</dt>
+              <dd className="text-navy-900 mt-1 leading-tight">
+                <a
+                  href={`https://abr.business.gov.au/ABN/View?abn=${business.abn.replace(/\s/g, "")}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:text-terracotta-600 inline-flex flex-col"
+                >
+                  <span className="flex items-center gap-1.5 text-[0.9375rem] font-bold">
+                    <BadgeCheck className="text-success-700 size-5" aria-hidden="true" />
+                    Registered
+                  </span>
+                  <span className="tabular mt-1 text-[0.8125rem] font-semibold underline underline-offset-4">
+                    {business.abn}
+                  </span>
+                  <span className="sr-only">(check on ABN Lookup, opens in a new tab)</span>
+                </a>
+              </dd>
+            </div>
           </dl>
         </div>
 

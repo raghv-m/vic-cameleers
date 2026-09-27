@@ -3,6 +3,8 @@ import { ExternalLink } from "lucide-react";
 
 import { MeasureRule } from "@/components/brand/signage";
 import { Photo } from "@/components/brand/photo";
+import { TrustQuestions, type TrustQuestion } from "@/components/home/trust-questions";
+import { CountUp } from "@/components/motion/count-up";
 import { business } from "@/config/business";
 
 /**
@@ -15,9 +17,11 @@ import { business } from "@/config/business";
 const ABN_LOOKUP = `https://abr.business.gov.au/ABN/View?abn=${business.abn.replace(/\s/g, "")}`;
 
 export function TrustSection() {
-  const questions: { q: string; a: React.ReactNode }[] = [
+  const questions: TrustQuestion[] = [
     {
       q: "Are you a real business?",
+      topic: "Reliability",
+      text: `Registered in Australia ABN ${business.abn} ACN ${business.acn} ${business.baseSuburb} ABN Lookup`,
       a: (
         <>
           Yes. Registered in Australia, ABN {business.abn}, ACN {business.acn}, based in{" "}
@@ -37,10 +41,14 @@ export function TrustSection() {
     },
     {
       q: "Will you actually turn up?",
+      topic: "Reliability",
+      text: "reference number booking confirmation reminders 7 days 1 day truck crew assigned",
       a: "You get a reference number when you ask for a quote, a booking confirmation once we lock in the date, and reminders 7 days and 1 day before. A truck and crew are assigned to your booking.",
     },
     {
       q: "What will it really cost?",
+      topic: "Pricing",
+      text: `${business.hourlyRateDisplay} hourly rate price minimum hours call-out actual time maths estimate`,
       a: (
         <>
           {business.hourlyRateDisplay}, {business.minimumHours} hour minimum, plus a{" "}
@@ -58,13 +66,24 @@ export function TrustSection() {
     },
     {
       q: "Will my furniture be looked after?",
+      topic: "Care",
+      text: "furniture blankets straps beds flat-pack disassembly fragile awkward damage",
       a: "Furniture is wrapped in blankets and strapped in the truck on every job. Beds and flat-pack can be taken apart and rebuilt if you ask. Tell us about anything fragile or awkward before the day.",
     },
     ...(business.claims.isFullyInsured && business.claims.insuranceDetail
-      ? [{ q: "Are you insured?", a: business.claims.insuranceDetail }]
+      ? [
+          {
+            q: "Are you insured?",
+            topic: "Care" as const,
+            text: `insurance insured ${business.claims.insuranceDetail}`,
+            a: business.claims.insuranceDetail,
+          },
+        ]
       : []),
     {
       q: "What if plans change?",
+      topic: "Changes",
+      text: "reschedule new date cancel cancellation policy change plans",
       a: (
         <>
           Call us as early as you can and we&apos;ll find a new date.{" "}
@@ -80,6 +99,8 @@ export function TrustSection() {
     },
     {
       q: "Who do I talk to?",
+      topic: "Contact",
+      text: `phone call crew direct ${business.phoneDisplay} no call centre`,
       a: (
         <>
           The crew, direct, on{" "}
@@ -113,7 +134,9 @@ export function TrustSection() {
               className={`border-navy-900 flex flex-col-reverse p-4 ${index % 2 === 0 ? "border-r-2" : ""} ${index < 2 ? "border-b-2" : ""}`}
             >
               <dt className="text-muted-600 mt-2 text-sm font-semibold">{metric.label}</dt>
-              <dd className="font-headline text-navy-900 text-5xl leading-none">{metric.value}</dd>
+              <dd className="font-headline text-navy-900 text-5xl leading-none">
+                <CountUp value={metric.value} />
+              </dd>
             </div>
           ))}
         </dl>
@@ -127,17 +150,9 @@ export function TrustSection() {
         />
       </div>
 
-      <dl className="divide-navy-900/20 border-navy-900 divide-y border-t-2 lg:col-span-8">
-        {questions.map((item) => (
-          <div
-            key={item.q}
-            className="vc-reveal grid gap-2 py-5 sm:grid-cols-[minmax(0,15rem)_1fr] sm:gap-8"
-          >
-            <dt className="text-navy-900 text-lg font-bold">{item.q}</dt>
-            <dd className="text-ink-900 text-base leading-relaxed">{item.a}</dd>
-          </div>
-        ))}
-      </dl>
+      <div className="lg:col-span-8">
+        <TrustQuestions questions={questions} />
+      </div>
     </div>
   );
 }
