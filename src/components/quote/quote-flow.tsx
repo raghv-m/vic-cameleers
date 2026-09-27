@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { track } from "@vercel/analytics";
 import { useState } from "react";
 import type { FieldPath } from "react-hook-form";
 import { FormProvider, useForm } from "react-hook-form";
@@ -129,6 +130,14 @@ export function QuoteFlow({ initialPickupAddress = "" }: { initialPickupAddress?
         referenceNumber: string;
         estimate: QuoteResult["estimate"];
       };
+
+      // Vercel Analytics custom event. `fromSuburb` is the suburb page the visitor came from
+      // (/quote?suburb=...), so conversions can be traced back to local pages.
+      track("quote_submitted", {
+        path: window.location.pathname,
+        fromSuburb: new URLSearchParams(window.location.search).get("suburb"),
+        propertySize: data.propertySize,
+      });
 
       setResult({
         referenceNumber: body.referenceNumber,

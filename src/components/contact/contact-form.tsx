@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { track } from "@vercel/analytics";
 import { useState } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -58,6 +59,7 @@ export function ContactForm() {
         throw new Error(body?.error ?? "Something went wrong, please try again.");
       }
 
+      track("contact_submitted", { path: window.location.pathname });
       setSubmitted(true);
     } catch (error) {
       setSubmitError(error instanceof Error ? error.message : "Something went wrong.");

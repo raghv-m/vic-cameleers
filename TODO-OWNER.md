@@ -105,3 +105,48 @@ All should be owned by a business Google account with 2FA on.
   replaces it (1200x630, same path).
 - **Heavy items.** The FAQ says pianos and safes aren't handled, but the SEO report wants piano and
   pool table pages. Confirm which is true before SEO phase S4 builds those pages.
+
+## Measurement setup (SEO phase S5)
+
+Do these once the S1 merge is live on `https://vic-cameleers.vercel.app` (swap in the custom
+domain everywhere below once there is one).
+
+**Google Business Profile website link.** Use this exact URL as the profile's website, so visits
+from the profile show up as their own source in Vercel Analytics:
+
+```
+https://vic-cameleers.vercel.app/?utm_source=google&utm_medium=organic&utm_campaign=gbp
+```
+
+**Vercel Analytics events** (already in the code, need a Vercel plan that includes custom events):
+`quote_submitted` (with `fromSuburb` when the visitor came from a suburb page), `contact_submitted`,
+`phone_click` and `email_click` (both with the page path). Check they appear under Analytics →
+Events after the first real clicks.
+
+**Google Search Console**
+
+1. Go to search.google.com/search-console, add a property. For the vercel.app URL use the
+   "URL prefix" type with `https://vic-cameleers.vercel.app/`. (With a custom domain later, add a
+   "Domain" property instead, verified by a DNS TXT record in Vercel DNS.)
+2. Verify with the HTML tag method: send me the `google-site-verification` code and I'll add it to
+   the site metadata, or use a DNS record once there's a custom domain.
+3. Sitemaps → submit `https://vic-cameleers.vercel.app/sitemap.xml`.
+4. URL inspection → "Request indexing" for these 10 pages, one at a time:
+   - `/`
+   - `/pricing`
+   - `/quote`
+   - `/removalists`
+   - `/removalists/cranbourne`
+   - `/removalists/clyde-north`
+   - `/removalists/berwick`
+   - `/services/house-removals`
+   - `/services/end-of-lease-moves`
+   - `/guides/how-much-does-a-removalist-cost`
+5. Check back after a week: Pages report for errors, Performance report for which
+   "removalists [suburb]" searches are getting impressions.
+
+**Bing Webmaster Tools**
+
+1. Go to bing.com/webmasters and choose "Import from Google Search Console" (fastest), or add the
+   site manually and verify with the meta tag (send me the code).
+2. Submit the same sitemap URL.

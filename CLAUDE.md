@@ -559,7 +559,7 @@ This is also a cybersecurity portfolio piece, so treat it seriously and document
 
 - [x] Vercel Web Analytics installed
 - [x] Vercel Speed Insights installed
-- [~] Events: `quote_started`, `quote_step_1..5`, `quote_completed`, `quote_abandoned`, `phone_click`, `email_click`, `contact_submitted`, `review_submitted` (`quote_completed` and `contact_submitted` logged; the rest need client-side instrumentation, not done yet)
+- [~] Events: `quote_started`, `quote_step_1..5`, `quote_completed`, `quote_abandoned`, `phone_click`, `email_click`, `contact_submitted`, `review_submitted` (server-side: `quote_completed`, `contact_submitted`; Vercel custom events: `quote_submitted`, `contact_submitted`, `phone_click`, `email_click` with page path. Step-level quote events wait for the 3-step quote rebuild in the design phase)
 - [ ] Lead source attribution (organic, Google Ads, social, referral, direct, Google Business Profile via UTM on GBP link)
 - [x] Server-side funnel table (`AnalyticsEvent`); the admin funnel chart itself waits on the admin console (Milestone 1C)
 - [ ] Metrics in admin: quote conversion, booking conversion, abandoned forms, phone clicks, revenue, cost per lead (manual ad spend input)

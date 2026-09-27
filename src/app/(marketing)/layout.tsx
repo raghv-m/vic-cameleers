@@ -1,3 +1,4 @@
+import { ContactLinkTracker } from "@/components/analytics/contact-link-tracker";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { StickyMobileBar } from "@/components/layout/sticky-mobile-bar";
@@ -19,6 +20,7 @@ export default function MarketingLayout({ children }: LayoutProps<"/">) {
       </main>
       <Footer />
       <StickyMobileBar />
+      <ContactLinkTracker />
     </>
   );
 }

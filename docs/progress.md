@@ -152,14 +152,15 @@ Current-state facts from the code map that shape the plan:
   parsed as UTC and showed the previous day in timezones behind UTC (now `parseISO`); the cost
   table hid its price column behind a sideways scroll on mobile.
 
-## SEO PHASE S5: Measurement
+## SEO PHASE S5: Measurement (done 26 Sep 2026)
 
-- [ ] S5.1 UTM-tagged GBP website link documented (`?utm_source=google&utm_medium=organic&utm_campaign=gbp`).
-- [ ] S5.2 Vercel Analytics custom events `quote_submitted`, `phone_click` with page path.
-      Files: `src/components/quote/quote-flow.tsx`, new client `PhoneLink` used by header,
-      sticky bar, hero, footer, contact
-- [ ] S5.3 Owner checklist: Search Console, sitemap submit, URL inspection of 10 key pages, Bing.
-      File: `TODO-OWNER.md`
+- [x] S5.1 UTM-tagged Google Business Profile website link documented in `TODO-OWNER.md`.
+- [x] S5.2 Vercel Analytics custom events: `quote_submitted` (path, `fromSuburb`, property size),
+      `contact_submitted`, and `phone_click` / `email_click` (page path) from one delegated listener
+      (`src/components/analytics/contact-link-tracker.tsx`, public pages only, not admin). Verified the
+      event is queued with the right path; needs a Vercel plan with custom events to show up.
+- [x] S5.3 Owner checklist in `TODO-OWNER.md`: Search Console property, verification, sitemap
+      submission, URL inspection for 10 key pages, Bing Webmaster Tools.
 
 ---
 
