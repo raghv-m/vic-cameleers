@@ -170,7 +170,7 @@ Current-state facts from the code map that shape the plan:
       2FA, quote and contact APIs (Zod, honeypot, Turnstile, Upstash, Resend `after()`).
 - [x] D0.2 mem-search attempted: the claude-mem worker isn't running, so no results. Earlier
       decisions are in CLAUDE.md, git history and this file instead.
-- [ ] D0.3 "Before" screenshots of every public page at 390px and 1440px (agent-browser),
+- [x] D0.3 "Before" screenshots of 16 public pages at 390px and 1440px (32 images, production build),
       saved under `docs/screens/before/`.
 
 ## DESIGN PHASE D1: Audit (design-is) (done 26 Sep 2026)
