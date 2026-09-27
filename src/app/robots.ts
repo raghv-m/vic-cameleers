@@ -1,17 +1,18 @@
 import type { MetadataRoute } from "next";
 
 import { business } from "@/config/business";
-import { serverEnv } from "@/env.server";
 
+/**
+ * The admin path is deliberately not listed here. robots.txt is public, so a Disallow line for it
+ * advertised the "hidden" admin URL to anyone who looked. The admin console is kept out of search
+ * by the X-Robots-Tag noindex header (src/middleware.ts) and by returning 404 when signed out.
+ */
 export default function robots(): MetadataRoute.Robots {
-  const disallow = ["/api/"];
-  if (serverEnv.ADMIN_PATH) disallow.push(`/${serverEnv.ADMIN_PATH}`);
-
   return {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow,
+      disallow: ["/api/"],
     },
     sitemap: `${business.siteUrl}/sitemap.xml`,
   };

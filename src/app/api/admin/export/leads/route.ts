@@ -6,6 +6,9 @@ import { requireRole } from "@/lib/rbac";
 import { toCsv } from "@/lib/csv";
 import { LEAD_SOURCE_LABEL, LEAD_STATUS_LABEL } from "@/lib/lead-status";
 
+// Runtime only: staff-authenticated, reads live bookings/leads. Never prerendered or cached.
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   await requireRole("DISPATCHER");
 

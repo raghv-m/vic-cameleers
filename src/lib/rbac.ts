@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import type { Role } from "@prisma/client";
 
 import { serverEnv } from "@/env.server";
-import { auth, type Session } from "@/lib/auth";
+import { getAuth, type Session } from "@/lib/auth";
 import { roleSatisfies } from "@/lib/role-hierarchy";
 
 export { roleSatisfies };
@@ -30,7 +30,10 @@ export function adminUrl(path: string): string {
  * enrollment or redirect; use `requireSession` / `requireRole` for that.
  */
 export async function getAdminSession(): Promise<Session | null> {
-  return auth.api.getSession({ headers: await headers() });
+  // Read the request first: headers() is what marks admin pages as per-request, so the build
+  // skips prerendering them before anything touches auth or the database.
+  const requestHeaders = await headers();
+  return getAuth().api.getSession({ headers: requestHeaders });
 }
 
 /**
