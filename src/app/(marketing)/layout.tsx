@@ -2,6 +2,7 @@ import { ContactLinkTracker } from "@/components/analytics/contact-link-tracker"
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { StickyMobileBar } from "@/components/layout/sticky-mobile-bar";
+import { RevealObserver } from "@/components/motion/reveal";
 import { MovingCompanyJsonLd } from "@/components/seo/moving-company-json-ld";
 
 // Marketing pages are prerendered and refreshed at most daily (ISR). The few that read the
@@ -21,6 +22,7 @@ export default function MarketingLayout({ children }: LayoutProps<"/">) {
       <Footer />
       <StickyMobileBar />
       <ContactLinkTracker />
+      <RevealObserver />
     </>
   );
 }

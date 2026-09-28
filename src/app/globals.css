@@ -482,6 +482,34 @@
   }
 }
 
+/* Scroll reveal (src/components/motion/reveal.tsx). Only elements the observer marked pending
+ * are hidden, so without JS or with reduced motion nothing ever is. Once shown, the transform is
+ * dropped entirely so sticky children (the story art) behave normally. */
+[data-reveal-state="pending"] {
+  opacity: 0;
+  transform: translateY(28px);
+}
+[data-reveal-state="shown"] {
+  animation: vc-reveal-in 560ms var(--ease-haul) both;
+}
+@keyframes vc-reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal-state] {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}
+
 /* Our search boxes have their own clear button; hide the browser's second one. */
 input[type="search"]::-webkit-search-cancel-button {
   appearance: none;
