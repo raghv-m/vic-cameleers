@@ -7,8 +7,8 @@ export const TITLE_MAX_LENGTH = 60;
 
 /**
  * Default social share image, 1200x630.
- * TODO(owner): replace public/og/default.jpg with a real photo of the 10 tonne truck once the
- * photo shoot is done (see docs/photo-shot-list.md). Same path, same size, no code change.
+ * The homepage hero photo cropped to 1200x630 (public/og/default.jpg). To change it, replace the
+ * file at the same path and size, no code change.
  */
 export const DEFAULT_OG_IMAGE = {
   url: "/og/default.jpg",

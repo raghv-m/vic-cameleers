@@ -46,3 +46,6 @@ next-env.d.ts
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# Original, full-size photos (optimised copies live in public/photos)
+/assets/
