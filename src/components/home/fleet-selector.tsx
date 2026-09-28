@@ -3,7 +3,7 @@
 import { useId, useState } from "react";
 import { cn } from "cn";
 
-import { Photo } from "@/components/brand/photo";
+import { Fleet360 } from "@/components/home/fleet-360";
 import type { ImageId } from "@/config/images";
 
 export interface FleetTier {
@@ -23,7 +23,8 @@ export interface FleetTier {
 }
 
 /** Item glyphs for the load diagram, positioned inside the cargo body. */
-function LoadDiagram({ tier }: { tier: FleetTier }) {
+/** `fill` (0 to 1) is how much of this tier's typical load is shown, driven by the slider. */
+function LoadDiagram({ tier, fill = 1 }: { tier: FleetTier; fill?: number }) {
   const bodyWidth = tier.truck === "ten" ? 300 : 220;
   const items: { key: string; x: number; y: number; w: number; h: number; label: string }[] = [];
   let x = 12;
@@ -73,7 +74,7 @@ function LoadDiagram({ tier }: { tier: FleetTier }) {
       <circle cx={bodyWidth + 58} cy="172" r="15" className="fill-sand-50" />
       {/* load, dropped in one by one */}
       <g transform="translate(2 4)">
-        {items.map((item, index) => (
+        {items.slice(0, Math.max(1, Math.ceil(items.length * fill))).map((item, index) => (
           <rect
             key={`${tier.id}-${item.key}`}
             x={item.x}
@@ -82,7 +83,7 @@ function LoadDiagram({ tier }: { tier: FleetTier }) {
             height={item.h}
             rx="1.5"
             className="fill-kraft-400/70 vc-drop"
-            style={{ animationDelay: `${Math.min(index, 14) * 40}ms` }}
+            style={{ animationDelay: `${Math.min(index, 14) * 25}ms` }}
           >
             <title>{item.label}</title>
           </rect>
@@ -99,7 +100,14 @@ function LoadDiagram({ tier }: { tier: FleetTier }) {
  */
 export function FleetSelector({ tiers }: { tiers: FleetTier[] }) {
   const baseId = useId();
-  const [activeIndex, setActiveIndex] = useState(1);
+  // The slider runs 0 to 100 across all tiers: which band it's in picks the tier, and how far
+  // into the band sets how full the truck is. Tabs jump to a fully loaded truck.
+  const band = 100 / tiers.length;
+  const bandEnd = (index: number) => Math.round((index + 1) * band) - 1;
+  const [position, setPosition] = useState(bandEnd(1));
+  const activeIndex = Math.min(tiers.length - 1, Math.floor(position / band));
+  const fill = Math.min(1, 0.35 + (0.65 * (position - activeIndex * band)) / (band - 1));
+  const setActiveIndex = (index: number) => setPosition(bandEnd(index));
   const active = tiers[activeIndex]!;
 
   function onKeyDown(event: React.KeyboardEvent<HTMLButtonElement>) {
@@ -158,7 +166,7 @@ export function FleetSelector({ tiers }: { tiers: FleetTier[] }) {
         className="border-navy-900 grid gap-6 border-x-2 border-b-2 p-4 sm:p-6 lg:grid-cols-12 lg:gap-10"
       >
         <div className="lg:col-span-7">
-          <LoadDiagram key={active.id} tier={active} />
+          <LoadDiagram key={active.id} tier={active} fill={fill} />
           <p className="text-muted-600 mt-2 text-xs">Typical load, illustrated. Not to scale.</p>
           <label htmlFor={`${baseId}-slider`} className="mt-5 block">
             <span className="manifest-index text-muted-600">Drag to size the job</span>
@@ -166,11 +174,11 @@ export function FleetSelector({ tiers }: { tiers: FleetTier[] }) {
               id={`${baseId}-slider`}
               type="range"
               min={0}
-              max={tiers.length - 1}
+              max={99}
               step={1}
-              value={activeIndex}
-              onChange={(event) => setActiveIndex(Number(event.target.value))}
-              aria-valuetext={active.title}
+              value={position}
+              onChange={(event) => setPosition(Number(event.target.value))}
+              aria-valuetext={`${active.title}, ${Math.round(fill * 100)}% of a typical load`}
               className="accent-terracotta-600 mt-2 h-11 w-full cursor-pointer"
             />
           </label>
@@ -203,12 +211,9 @@ export function FleetSelector({ tiers }: { tiers: FleetTier[] }) {
             ))}
           </dl>
           <p className="text-muted-600 mt-2 text-xs">{active.exampleNote}</p>
-          <Photo
-            id={active.image}
-            sizes="(min-width: 1024px) 30vw, 100vw"
-            ratio="3 / 2"
-            className="mt-4"
-          />
+          <div className="mt-4">
+            <Fleet360 key={active.truck} truck={active.truck} truckLabel={active.truckLabel} />
+          </div>
         </div>
       </div>
     </div>

@@ -114,3 +114,15 @@ export const images = {
 } satisfies Record<string, SiteImage>;
 
 export type ImageId = keyof typeof images;
+
+/**
+ * 360° spin sets for the fleet viewer (src/components/home/fleet-360.tsx): 24 photos per truck,
+ * shot every 15° walking clockwise around it from the front, same height and distance for every
+ * frame. Frame 0 faces the cab. Leave empty until the real set exists: the viewer then draws a
+ * labelled line-art placeholder instead (never a stock truck).
+ * e.g. six: Array.from({ length: 24 }, (_, i) => `/photos/fleet/6t-${String(i).padStart(2, "0")}.jpg`)
+ */
+export const fleetSpinFrames: Record<"six" | "ten", string[]> = {
+  six: [],
+  ten: [],
+};
