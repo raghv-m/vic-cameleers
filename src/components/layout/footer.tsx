@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CranbourneClock } from "@/components/layout/cranbourne-clock";
 import { ArrowRight, Phone } from "lucide-react";
 import { cn } from "cn";
 
@@ -202,6 +203,7 @@ export function Footer() {
             &copy; {year} {business.legalName ?? business.tradingName}. ABN {business.abn}. ACN{" "}
             {business.acn}.
           </p>
+          <CranbourneClock />
           <ul className="flex flex-wrap gap-x-5 gap-y-1">
             {footerLegalNav.map((link) => (
               <li key={link.href}>
