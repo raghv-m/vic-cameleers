@@ -2,10 +2,14 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Search, X } from "lucide-react";
+import { ArrowRight, Search, ThumbsDown, ThumbsUp, X } from "lucide-react";
 import { cn } from "cn";
 
+import { readStore, writeStore } from "@/lib/browser-store";
 import { useTextHighlight } from "@/lib/use-text-highlight";
+
+const HELPFUL_KEY = "vc:faq-inline-helpful:v1";
+type Vote = "up" | "down";
 
 export const TRUST_TOPICS = ["Reliability", "Pricing", "Care", "Changes", "Contact"] as const;
 export type TrustTopic = (typeof TRUST_TOPICS)[number];
@@ -36,6 +40,23 @@ export function TrustQuestions({ questions }: { questions: TrustQuestion[] }) {
     (needle === "" || `${item.q} ${item.text}`.toLowerCase().includes(needle));
   const shown = questions.filter(matches).length;
   const topics = TRUST_TOPICS.filter((t) => questions.some((item) => item.topic === t));
+
+  // "Was this helpful?" votes: kept in this browser only, keyed by question, no personal data.
+  const [votes, setVotes] = useState<Record<string, Vote>>({});
+  useEffect(() => {
+    const saved = readStore<Record<string, Vote>>(HELPFUL_KEY);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time read of localStorage, only available after hydration
+    if (saved) setVotes(saved);
+  }, []);
+  function vote(question: string, value: Vote) {
+    setVotes((current) => {
+      const next = { ...current };
+      if (next[question] === value) delete next[question];
+      else next[question] = value;
+      writeStore(HELPFUL_KEY, next);
+      return next;
+    });
+  }
 
   const listRef = useRef<HTMLDivElement>(null);
   useTextHighlight(listRef, query);
@@ -121,17 +142,43 @@ export function TrustQuestions({ questions }: { questions: TrustQuestion[] }) {
             </summary>
             <div className="text-ink-900 pb-5 text-base leading-relaxed sm:pl-[7.75rem]">
               {item.a}
-              {item.related && (
-                <p className="border-navy-900/15 mt-3 border-t pt-2 text-sm">
-                  <span className="text-muted-600 font-semibold">Related: </span>
-                  <Link
-                    href={item.related.href}
-                    className="text-navy-900 font-semibold underline decoration-2 underline-offset-4"
-                  >
-                    {item.related.label}
-                  </Link>
-                </p>
-              )}
+              <div className="border-navy-900/15 mt-3 flex flex-wrap items-center gap-x-6 gap-y-2 border-t pt-2 text-sm">
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-600 font-semibold">Was this helpful?</span>
+                  {(["up", "down"] as const).map((v) => {
+                    const Icon = v === "up" ? ThumbsUp : ThumbsDown;
+                    return (
+                      <button
+                        key={v}
+                        type="button"
+                        aria-pressed={votes[item.q] === v}
+                        onClick={() => vote(item.q, v)}
+                        className={cn(
+                          "border-navy-900/30 grid size-9 place-items-center rounded-sm border transition-colors",
+                          votes[item.q] === v
+                            ? "bg-navy-900 text-sand-50 border-navy-900"
+                            : "text-navy-900 hover:bg-sand-100",
+                        )}
+                      >
+                        <Icon className="size-4" aria-hidden="true" />
+                        <span className="sr-only">{v === "up" ? "Yes" : "No"}</span>
+                      </button>
+                    );
+                  })}
+                  {votes[item.q] && <span className="text-muted-600 text-xs">Thanks, noted.</span>}
+                </div>
+                {item.related && (
+                  <p>
+                    <span className="text-muted-600 font-semibold">Related: </span>
+                    <Link
+                      href={item.related.href}
+                      className="text-navy-900 font-semibold underline decoration-2 underline-offset-4"
+                    >
+                      {item.related.label}
+                    </Link>
+                  </p>
+                )}
+              </div>
             </div>
           </details>
         ))}
