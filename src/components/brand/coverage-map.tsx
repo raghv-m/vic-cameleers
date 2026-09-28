@@ -160,6 +160,7 @@ export function CoverageMap({ className, prefill }: { className?: string; prefil
             key={suburb.slug}
             href={`/removalists/${suburb.slug}`}
             data-prefill={prefill ? suburb.name : undefined}
+            data-drive={prefill ? suburb.driveTimeFromCranbourneMins : undefined}
             aria-label={prefill ? `${suburb.name}: start an estimate from here` : undefined}
             className="group cursor-pointer outline-none"
           >
