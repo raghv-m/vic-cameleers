@@ -45,7 +45,7 @@ function localToday(): string {
 }
 
 /* ------------------------------------------------------------------------------------------ */
-/* Step 1: your move                                                                          */
+/* Step 1: where from and to                                                                 */
 /* ------------------------------------------------------------------------------------------ */
 
 const FLEXIBILITY: { value: Values["dateFlexibility"]; label: string }[] = [
@@ -60,14 +60,10 @@ const START_TIMES: { value: Values["preferredTime"]; label: string }[] = [
   { value: "afternoon", label: "Afternoon" },
 ];
 
-export function StepMove({ suburbOptions }: { suburbOptions: string[] }) {
+export function StepRoute({ suburbOptions }: { suburbOptions: string[] }) {
   const reg = useRegister();
-  const setField = useSetField();
   const { control } = useFormContext<Values>();
-  const [dateFlexibility, preferredTime, extraStop] = useWatch({
-    control,
-    name: ["dateFlexibility", "preferredTime", "additionalStopAddress"],
-  });
+  const extraStop = useWatch({ control, name: "additionalStopAddress" });
   const [showStop, setShowStop] = useState(Boolean(extraStop));
 
   return (
@@ -129,8 +125,26 @@ export function StepMove({ suburbOptions }: { suburbOptions: string[] }) {
           </button>
         )}
       </StepBlock>
+    </div>
+  );
+}
 
-      <StepBlock index="B" title="When">
+/* ------------------------------------------------------------------------------------------ */
+/* Step 3: when                                                                               */
+/* ------------------------------------------------------------------------------------------ */
+
+export function StepWhen() {
+  const reg = useRegister();
+  const setField = useSetField();
+  const { control } = useFormContext<Values>();
+  const [dateFlexibility, preferredTime] = useWatch({
+    control,
+    name: ["dateFlexibility", "preferredTime"],
+  });
+
+  return (
+    <div className="space-y-2">
+      <StepBlock index="A" title="Moving date and start time">
         <QuoteField
           name="moveDate"
           label="Moving date"
@@ -421,6 +435,23 @@ export function StepDetails({
         <label htmlFor="website">Leave this field blank</label>
         <input id="website" tabIndex={-1} autoComplete="off" {...reg("website")} />
       </div>
+
+      <p className="text-muted-600 text-sm">
+        Questions before you book?{" "}
+        <Link
+          href="/faq"
+          target="_blank"
+          className="text-navy-900 font-semibold underline decoration-2 underline-offset-4"
+        >
+          Read the FAQ
+          <span className="sr-only"> (opens in a new tab)</span>
+        </Link>{" "}
+        or call{" "}
+        <a href={`tel:${business.phoneE164}`} className="text-navy-900 tabular font-semibold">
+          {business.phoneDisplay}
+        </a>
+        .
+      </p>
 
       <StepBlock
         index="A"

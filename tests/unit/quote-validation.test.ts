@@ -33,7 +33,24 @@ describe("addressProblem", () => {
 });
 
 describe("stepSchemas", () => {
-  it("has exactly three steps", () => {
-    expect(Object.keys(stepSchemas)).toEqual(["1", "2", "3"]);
+  it("has exactly four steps (route, load, when, details)", () => {
+    expect(Object.keys(stepSchemas)).toEqual(["1", "2", "3", "4"]);
+  });
+});
+
+describe("four-step split", () => {
+  it("checks addresses on step 1 and the date on step 3, not the other way round", () => {
+    const route = stepSchemas[1].safeParse({
+      pickupAddress: "12 Smith St, Cranbourne VIC 3977",
+      dropoffAddress: "4 High St, Berwick VIC 3806",
+    });
+    expect(route.success).toBe(true);
+
+    const when = stepSchemas[3].safeParse({
+      moveDate: "not a date",
+      dateFlexibility: "exact",
+      preferredTime: "morning",
+    });
+    expect(when.success).toBe(false);
   });
 });

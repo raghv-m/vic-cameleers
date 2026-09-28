@@ -2,10 +2,15 @@
 
 import { cn } from "cn";
 
-export const QUOTE_STEPS = ["Your move", "What's moving", "Your details"] as const;
+export const QUOTE_STEPS = ["From and to", "What's moving", "When", "Your details"] as const;
+
+// Each stop sits in the middle of its column, so the route runs from half a column in to half a
+// column from the end.
+const EDGE = `${50 / QUOTE_STEPS.length}%`;
+const SPAN = 100 - 100 / QUOTE_STEPS.length;
 
 /**
- * Progress as a short route: three stops joined by a line that fills in solid behind you.
+ * Progress as a short route: four stops joined by a line that fills in solid behind you.
  * Finished stops are buttons, so you can go back to them; the current stop is aria-current.
  */
 export function QuoteProgress({
@@ -19,16 +24,17 @@ export function QuoteProgress({
 }) {
   return (
     <nav aria-label="Quote progress">
-      <ol className="relative grid grid-cols-3">
+      <ol className="relative grid grid-cols-4">
         {/* The route: dashed ahead, solid behind. Sits behind the stop markers. */}
         <span
           aria-hidden="true"
-          className="border-kraft-400 absolute top-5 right-[16.66%] left-[16.66%] border-t-2 border-dashed"
+          className="border-kraft-400 absolute top-5 border-t-2 border-dashed"
+          style={{ left: EDGE, right: EDGE }}
         />
         <span
           aria-hidden="true"
-          className="bg-navy-900 absolute top-[19px] left-[16.66%] h-0.5 transition-[width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
-          style={{ width: `${((step - 1) / (QUOTE_STEPS.length - 1)) * 66.66}%` }}
+          className="bg-navy-900 absolute top-[19px] h-0.5 transition-[width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+          style={{ left: EDGE, width: `${((step - 1) / (QUOTE_STEPS.length - 1)) * SPAN}%` }}
         />
         {QUOTE_STEPS.map((label, index) => {
           const number = index + 1;

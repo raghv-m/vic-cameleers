@@ -305,7 +305,9 @@ Full flow at `/quote`, compact version embeddable on home, service and suburb pa
 
 ### Checklist
 
-- [x] Multi-step form with progress indicator, back/next, validation per step
+- [x] Multi-step form with progress indicator, back/next, validation per step (owner decision
+      28 Sep 2026: four steps, from/to, what's moving (size, access, items, extras), when (date and
+      start window), your details; sticky progress bar, resume-your-draft banner)
 - [x] State persisted in URL or local state so refresh doesn't lose progress (move details and step
       saved to localStorage with a "Pick up where you left off?" prompt; contact details, notes,
       consent and the Turnstile token are never stored; the hero estimator remembers its inputs too)

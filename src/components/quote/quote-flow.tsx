@@ -10,7 +10,7 @@ import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { LoadingConvoy } from "@/components/brand/status";
 import { Odometer } from "@/components/quote/odometer";
 import { QUOTE_STEPS, QuoteProgress } from "@/components/quote/quote-progress";
-import { StepDetails, StepLoad, StepMove } from "@/components/quote/quote-steps";
+import { StepDetails, StepLoad, StepRoute, StepWhen } from "@/components/quote/quote-steps";
 import { ResultScreen } from "@/components/quote/result-screen";
 import type { QuoteResult } from "@/components/quote/result-screen";
 import { Button } from "@/components/ui/button";
@@ -382,7 +382,10 @@ export function QuoteFlow({
                   </div>
                 </div>
               )}
-              <QuoteProgress step={step} onJump={goTo} disabled={sending} />
+              {/* Sticky under the header, so progress stays in view on long steps. */}
+              <div className="bg-sand-50/95 sticky top-16 z-20 -mx-1 px-1 py-3 backdrop-blur-sm">
+                <QuoteProgress step={step} onJump={goTo} disabled={sending} />
+              </div>
 
               <div className="mt-8">
                 <p className="manifest-index text-terracotta-600">
@@ -398,9 +401,10 @@ export function QuoteFlow({
               </div>
 
               <fieldset disabled={sending} className="mt-4 min-w-0">
-                {step === 1 && <StepMove suburbOptions={suburbOptions} />}
+                {step === 1 && <StepRoute suburbOptions={suburbOptions} />}
                 {step === 2 && <StepLoad />}
-                {step === 3 && (
+                {step === 3 && <StepWhen />}
+                {step === 4 && (
                   <StepDetails
                     turnstileKey={turnstileKey}
                     onTurnstileToken={(token) => {

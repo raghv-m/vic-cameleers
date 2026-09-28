@@ -8,7 +8,7 @@
 
 export const STORE_KEYS = {
   estimator: "vc:estimator:v1",
-  quoteDraft: "vc:quote-draft:v1",
+  quoteDraft: "vc:quote-draft:v2", // v2: four-step wizard (28 Sep 2026),
 } as const;
 
 /** Drafts older than this are ignored and cleared. */

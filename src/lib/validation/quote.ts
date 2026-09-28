@@ -96,7 +96,7 @@ export const extrasSchema = z.object({
   boxesAndMaterials: z.boolean().default(false),
 });
 
-export const stepLocationDateSchema = z.object({
+export const stepRouteSchema = z.object({
   pickupAddress: address("Pickup address"),
   dropoffAddress: address("Drop-off address"),
   additionalStopAddress: z
@@ -108,6 +108,9 @@ export const stepLocationDateSchema = z.object({
       const problem = addressProblem(value);
       if (problem) ctx.addIssue({ code: "custom", message: problem });
     }),
+});
+
+export const stepWhenSchema = z.object({
   moveDate: z.string().superRefine((value, ctx) => {
     const problem = moveDateProblem(value);
     if (problem) ctx.addIssue({ code: "custom", message: problem });
@@ -115,6 +118,9 @@ export const stepLocationDateSchema = z.object({
   dateFlexibility: dateFlexibilitySchema,
   preferredTime: preferredTimeSchema,
 });
+
+/** The move itself: where and when. Same shape as before the wizard split it over two steps. */
+export const stepLocationDateSchema = stepRouteSchema.merge(stepWhenSchema);
 
 export const stepPropertySchema = z.object({
   propertyType: propertyTypeSchema,
@@ -166,10 +172,12 @@ export type QuoteSubmission = z.output<typeof quoteSubmissionSchema>;
 // trigger(fieldNames): with a merged Zod object schema, trigger() doesn't
 // reliably scope resulting errors to just the requested fields, so it was
 // leaking validation errors for not-yet-visited steps onto the screen the
-// moment the user arrived there. Three steps (owner decision, 26 Sep 2026):
-// the move, what's moving (property, access, special items, extras), the person.
+// moment the user arrived there. Four steps (owner decision, 28 Sep 2026, replacing the
+// 26 Sep three-step flow): where from and to, what's moving (property, access, special
+// items, extras), when, and the person.
 export const stepSchemas = {
-  1: stepLocationDateSchema,
+  1: stepRouteSchema,
   2: stepPropertySchema.merge(stepInventorySchema).merge(stepExtrasSchema),
-  3: stepContactSchema,
+  3: stepWhenSchema,
+  4: stepContactSchema,
 } as const;
