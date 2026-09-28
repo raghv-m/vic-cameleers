@@ -6,6 +6,7 @@ import { useEffect, useRef } from "react";
 import { cn } from "cn";
 
 import { ReceivedStamp } from "@/components/brand/status";
+import { ConfettiLite, CopyReference } from "@/components/quote/copy-reference";
 import { Odometer } from "@/components/quote/odometer";
 import { Button } from "@/components/ui/button";
 import { business } from "@/config/business";
@@ -89,11 +90,15 @@ export function ResultScreen({ result }: { result: QuoteResult }) {
 
   return (
     <div className="border-navy-900 bg-sand-50 shadow-crate relative rounded-sm border-2">
+      {!result.duplicate && <ConfettiLite />}
       <div className="bg-navy-900 text-sand-50 flex items-center justify-between gap-3 px-5 py-2.5">
         <p className="text-[0.8125rem] font-bold tracking-[0.14em] uppercase">Consignment note</p>
-        <p className="tabular text-kraft-400 text-[0.8125rem] font-bold tracking-[0.08em]">
-          REF {result.referenceNumber}
-        </p>
+        <div className="flex items-center gap-2">
+          <p className="tabular text-kraft-400 text-[0.8125rem] font-bold tracking-[0.08em]">
+            REF {result.referenceNumber}
+          </p>
+          <CopyReference reference={result.referenceNumber} />
+        </div>
       </div>
 
       <div className="grid gap-8 p-5 sm:p-8 md:grid-cols-[1fr_auto] md:items-start">
