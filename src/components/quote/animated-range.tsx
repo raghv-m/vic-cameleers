@@ -84,12 +84,26 @@ export function AnimatedRange({
     return () => window.clearTimeout(timer);
   }, [direction, settled]);
 
+  // Between an input change and the new price settling (the debounce), show a skeleton shimmer.
+  const pending = format(lowCents, highCents) !== settled;
+
   return (
-    <span className={cn("tabular inline-flex items-baseline gap-2", className)}>
+    <span
+      className={cn("tabular inline-flex items-baseline gap-2", className)}
+      aria-busy={pending || undefined}
+    >
       <span className="sr-only" aria-live="polite">
-        {settled}
+        {pending ? "Updating estimate" : settled}
       </span>
-      <span aria-hidden="true">{format(shown.low, shown.high)}</span>
+      <span
+        aria-hidden="true"
+        className={cn(
+          "relative transition-opacity duration-150",
+          pending && "vc-skeleton opacity-55",
+        )}
+      >
+        {format(shown.low, shown.high)}
+      </span>
       <span
         aria-hidden="true"
         className={cn(

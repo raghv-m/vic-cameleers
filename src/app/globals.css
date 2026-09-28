@@ -576,6 +576,34 @@ input[type="search"]::-webkit-search-cancel-button {
   }
 }
 
+/* Skeleton shimmer while the estimate is recalculating (src/components/quote/animated-range.tsx).
+ * Reduced motion keeps only the dimming. */
+@keyframes vc-shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+.vc-skeleton {
+  overflow: hidden;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .vc-skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in srgb, var(--color-sand-50) 70%, transparent),
+      transparent
+    );
+    animation: vc-shimmer 700ms linear infinite;
+  }
+}
+
 /* Confetti-lite on the quote result (src/components/quote/copy-reference.tsx). Invisible unless
  * motion is allowed, so reduced motion never sees stray pieces. */
 .vc-confetti {
