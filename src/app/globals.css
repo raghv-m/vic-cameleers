@@ -576,6 +576,21 @@ input[type="search"]::-webkit-search-cancel-button {
   }
 }
 
+/* Quote result timeline: the line draws downward while the stops pop in. */
+@keyframes vc-line-down {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .vc-line-down {
+    animation: vc-line-down 1100ms var(--ease-route) 150ms both;
+  }
+}
+
 /* "How we got this number": bar segments grow in turn (the rows use .vc-tick). */
 @keyframes vc-bar-grow {
   from {

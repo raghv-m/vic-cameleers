@@ -3,6 +3,7 @@
 import { CalendarPlus, Phone } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
+import { cn } from "cn";
 
 import { ReceivedStamp } from "@/components/brand/status";
 import { Odometer } from "@/components/quote/odometer";
@@ -34,11 +35,41 @@ function dollars(cents: number): string {
   return `$${Math.round(cents / 100).toLocaleString("en-AU")}`;
 }
 
-const NEXT_STEPS = [
-  "We check your details against the job.",
-  "We call or text to confirm the price and a start time.",
-  "Your move is only booked once you say yes.",
-];
+function longDate(iso: string, offsetDays = 0): string | null {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+  if (!match) return null;
+  const date = new Date(
+    Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]) + offsetDays),
+  );
+  return new Intl.DateTimeFormat("en-AU", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    timeZone: "UTC",
+  }).format(date);
+}
+
+/** From here to moving day: what actually happens, and when (reminders only once booked). */
+function timeline(moveDate: string) {
+  return [
+    {
+      title: "Request received",
+      detail: "You're here. Your reference number is above.",
+      done: true,
+    },
+    {
+      title: "We confirm the details",
+      detail: "We call or text to check the job, the price and a start time.",
+    },
+    {
+      title: "You say yes, it's booked",
+      detail: "Booking confirmation by email, with your truck and crew.",
+    },
+    { title: "Reminder, 7 days out", detail: longDate(moveDate, -7) ?? "A week before your move." },
+    { title: "Reminder, 1 day out", detail: longDate(moveDate, -1) ?? "The day before your move." },
+    { title: "Moving day", detail: longDate(moveDate) ?? "Your chosen date." },
+  ];
+}
 
 /**
  * After a quote request goes through. The stamp says RECEIVED, never BOOKED, and the number is
@@ -98,11 +129,37 @@ export function ResultScreen({ result }: { result: QuoteResult }) {
           <h3 className="text-navy-900 mt-8 text-sm font-bold tracking-[0.12em] uppercase">
             What happens now
           </h3>
-          <ol className="mt-3 space-y-2">
-            {NEXT_STEPS.map((line, index) => (
-              <li key={line} className="text-ink-900 flex gap-3">
-                <span className="manifest-index text-terracotta-600 pt-0.5">0{index + 1}</span>
-                {line}
+          <ol className="relative mt-4">
+            {/* the route down the page, drawn as the stops appear */}
+            <span
+              aria-hidden="true"
+              className="bg-kraft-400 vc-line-down absolute top-2 bottom-2 left-[9px] w-0.5 origin-top"
+            />
+            {timeline(result.moveDate).map((stop, index) => (
+              <li
+                key={stop.title}
+                className="vc-tick relative grid grid-cols-[20px_1fr] gap-3 pb-4 last:pb-0"
+                style={{ animationDelay: `${200 + index * 160}ms` }}
+              >
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    "vc-pin-pop relative z-10 mt-0.5 size-5 rounded-full border-2",
+                    stop.done
+                      ? "border-navy-900 bg-navy-900"
+                      : index === 5
+                        ? "border-terracotta-600 bg-terracotta-600"
+                        : "border-navy-900 bg-sand-50",
+                  )}
+                  style={{ animationDelay: `${200 + index * 160}ms` }}
+                />
+                <div>
+                  <p className="text-navy-900 font-bold">
+                    {stop.title}
+                    {stop.done && <span className="sr-only"> (done)</span>}
+                  </p>
+                  <p className="text-muted-600 text-sm">{stop.detail}</p>
+                </div>
               </li>
             ))}
           </ol>
