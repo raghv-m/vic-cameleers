@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { toggleStaffActive } from "@/app/admin/(protected)/staff/actions";
+import { toggleStaffActiveById } from "@/app/admin/(protected)/staff/actions";
 import { CreateStaffForm } from "@/components/admin/create-staff-form";
 import { StaffRoleSelect } from "@/components/admin/staff-role-select";
 import { ToggleActiveButton } from "@/components/admin/toggle-active-button";
@@ -49,9 +49,7 @@ export default async function StaffPage() {
               <ToggleActiveButton
                 id={member.id}
                 isActive={member.isActive}
-                action={(input) =>
-                  toggleStaffActive({ userId: input.id, isActive: input.isActive })
-                }
+                action={toggleStaffActiveById}
               />
             </div>
           </li>

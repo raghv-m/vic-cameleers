@@ -124,3 +124,12 @@ export async function toggleStaffActive(
   revalidatePath("/admin/staff");
   return { success: true };
 }
+
+/**
+ * The same toggle in the { id, isActive } shape ToggleActiveButton sends. It has to be a server
+ * action of its own: the staff page is a server component, and an inline arrow function can't be
+ * passed to a client component (that crashed the page).
+ */
+export async function toggleStaffActiveById(input: { id: string; isActive: boolean }) {
+  return toggleStaffActive({ userId: input.id, isActive: input.isActive });
+}
