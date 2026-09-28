@@ -1,9 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Volume2, VolumeX } from "lucide-react";
 import { cn } from "cn";
 
 import { CAMEL_PATH } from "@/components/brand/camel-mark";
+import { playBell, playEngine } from "@/components/home/story-sound";
+import { readStore, writeStore } from "@/lib/browser-store";
+
+const SOUND_KEY = "vc:story-sound:v1";
 
 export interface StoryBeat {
   /** Timeline stop this beat belongs to (index into ERAS). */
@@ -246,11 +251,50 @@ export function StoryScroll({ beats }: { beats: StoryBeat[] }) {
 
   const era = beats[activeBeat]?.era ?? 0;
 
+  // Optional sound (off by default, remembered in this browser only): a bell for the 1860 beats,
+  // an engine for Today, played when the era changes while sound is on.
+  const [sound, setSound] = useState(false);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time read of localStorage, only available after hydration
+    setSound(readStore<boolean>(SOUND_KEY) === true);
+  }, []);
+  const lastEra = useRef(era);
+  useEffect(() => {
+    if (!sound || era === lastEra.current) return;
+    lastEra.current = era;
+    if (era >= 2) playEngine();
+    else playBell();
+  }, [era, sound]);
+  function toggleSound() {
+    const next = !sound;
+    setSound(next);
+    writeStore(SOUND_KEY, next);
+    lastEra.current = era;
+    if (next) {
+      if (era >= 2) playEngine();
+      else playBell();
+    }
+  }
+
   return (
     <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
       <div className="lg:col-span-6">
         <div className="lg:sticky lg:top-28">
           <LayeredArt era={era} />
+          <button
+            type="button"
+            aria-pressed={sound}
+            onClick={toggleSound}
+            className="text-sand-200 hover:text-sand-50 mt-4 inline-flex min-h-11 items-center gap-2 text-sm font-semibold"
+          >
+            {sound ? (
+              <Volume2 className="size-4" aria-hidden="true" />
+            ) : (
+              <VolumeX className="size-4" aria-hidden="true" />
+            )}
+            Sound {sound ? "on" : "off"}
+            <span className="text-sand-200/70 font-normal">(caravan bell, engine)</span>
+          </button>
           <ol aria-label="Timeline" className="relative mt-6 grid grid-cols-3">
             <span
               aria-hidden="true"
