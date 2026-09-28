@@ -1,8 +1,11 @@
 "use client";
 
-import { useId, useState } from "react";
-import { Search, X } from "lucide-react";
+import { useEffect, useId, useRef, useState } from "react";
+import Link from "next/link";
+import { ArrowRight, Search, X } from "lucide-react";
 import { cn } from "cn";
+
+import { useTextHighlight } from "@/lib/use-text-highlight";
 
 export const TRUST_TOPICS = ["Reliability", "Pricing", "Care", "Changes", "Contact"] as const;
 export type TrustTopic = (typeof TRUST_TOPICS)[number];
@@ -13,6 +16,8 @@ export interface TrustQuestion {
   topic: TrustTopic;
   /** Plain-text version of the answer, for search. */
   text: string;
+  /** Shown under the open answer as "Related: <label>". */
+  related?: { label: string; href: string };
 }
 
 /**
@@ -31,6 +36,15 @@ export function TrustQuestions({ questions }: { questions: TrustQuestion[] }) {
     (needle === "" || `${item.q} ${item.text}`.toLowerCase().includes(needle));
   const shown = questions.filter(matches).length;
   const topics = TRUST_TOPICS.filter((t) => questions.some((item) => item.topic === t));
+
+  const listRef = useRef<HTMLDivElement>(null);
+  useTextHighlight(listRef, query);
+  // While searching, open every matching answer so the highlighted words are visible.
+  useEffect(() => {
+    listRef.current
+      ?.querySelectorAll<HTMLDetailsElement>("details[data-match]")
+      .forEach((row) => (row.open = true));
+  }, [needle, topic]);
 
   return (
     <div>
@@ -82,12 +96,13 @@ export function TrustQuestions({ questions }: { questions: TrustQuestion[] }) {
         {shown} of {questions.length} questions shown
       </p>
 
-      <div className="divide-navy-900/20 border-navy-900 mt-5 divide-y border-t-2">
+      <div ref={listRef} className="divide-navy-900/20 border-navy-900 mt-5 divide-y border-t-2">
         {questions.map((item, index) => (
           <details
             key={item.q}
             open={index === 0}
             hidden={!matches(item)}
+            data-match={needle.length >= 2 && matches(item) ? "" : undefined}
             className="group vc-details py-1"
           >
             <summary className="text-navy-900 flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-3 text-lg font-bold">
@@ -106,6 +121,17 @@ export function TrustQuestions({ questions }: { questions: TrustQuestion[] }) {
             </summary>
             <div className="text-ink-900 pb-5 text-base leading-relaxed sm:pl-[7.75rem]">
               {item.a}
+              {item.related && (
+                <p className="border-navy-900/15 mt-3 border-t pt-2 text-sm">
+                  <span className="text-muted-600 font-semibold">Related: </span>
+                  <Link
+                    href={item.related.href}
+                    className="text-navy-900 font-semibold underline decoration-2 underline-offset-4"
+                  >
+                    {item.related.label}
+                  </Link>
+                </p>
+              )}
             </div>
           </details>
         ))}
@@ -115,6 +141,13 @@ export function TrustQuestions({ questions }: { questions: TrustQuestion[] }) {
           </p>
         )}
       </div>
+      <Link
+        href="/faq"
+        className="text-navy-900 mt-6 inline-flex min-h-11 items-center gap-2 font-semibold underline decoration-2 underline-offset-4"
+      >
+        See all questions
+        <ArrowRight className="size-4" aria-hidden="true" />
+      </Link>
     </div>
   );
 }

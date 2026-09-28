@@ -482,6 +482,17 @@
   }
 }
 
+/* Our search boxes have their own clear button; hide the browser's second one. */
+input[type="search"]::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+/* Search matches in FAQ lists (src/lib/use-text-highlight.ts). */
+::highlight(vc-search) {
+  background-color: color-mix(in srgb, var(--color-signal-400) 55%, transparent);
+  color: var(--color-navy-950);
+}
+
 /* How it works: countdown bar, panel swap, and deliverables ticking in. */
 @keyframes vc-countdown {
   from {

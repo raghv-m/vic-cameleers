@@ -21,6 +21,7 @@ export function TrustSection() {
     {
       q: "Are you a real business?",
       topic: "Reliability",
+      related: { label: "About Vic Cameleers", href: "/about" },
       text: `Registered in Australia ABN ${business.abn} ACN ${business.acn} ${business.baseSuburb} ABN Lookup`,
       a: (
         <>
@@ -42,12 +43,14 @@ export function TrustSection() {
     {
       q: "Will you actually turn up?",
       topic: "Reliability",
+      related: { label: "How a move works, step by step", href: "/how-it-works" },
       text: "reference number booking confirmation reminders 7 days 1 day truck crew assigned",
       a: "You get a reference number when you ask for a quote, a booking confirmation once we lock in the date, and reminders 7 days and 1 day before. A truck and crew are assigned to your booking.",
     },
     {
       q: "What will it really cost?",
       topic: "Pricing",
+      related: { label: "Pricing and worked examples", href: "/pricing" },
       text: `${business.hourlyRateDisplay} hourly rate price minimum hours call-out actual time maths estimate`,
       a: (
         <>
@@ -67,6 +70,7 @@ export function TrustSection() {
     {
       q: "Will my furniture be looked after?",
       topic: "Care",
+      related: { label: "Everything we move", href: "/services" },
       text: "furniture blankets straps beds flat-pack disassembly fragile awkward damage",
       a: "Furniture is wrapped in blankets and strapped in the truck on every job. Beds and flat-pack can be taken apart and rebuilt if you ask. Tell us about anything fragile or awkward before the day.",
     },
@@ -83,6 +87,7 @@ export function TrustSection() {
     {
       q: "What if plans change?",
       topic: "Changes",
+      related: { label: "Cancellation and rescheduling policy", href: "/cancellation-policy" },
       text: "reschedule new date cancel cancellation policy change plans",
       a: (
         <>
@@ -100,6 +105,7 @@ export function TrustSection() {
     {
       q: "Who do I talk to?",
       topic: "Contact",
+      related: { label: "Contact us", href: "/contact" },
       text: `phone call crew direct ${business.phoneDisplay} no call centre`,
       a: (
         <>
