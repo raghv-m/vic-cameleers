@@ -482,6 +482,31 @@
   }
 }
 
+/* Page transitions (src/app/(marketing)/template.tsx): 150ms out, then 200ms in. The root
+ * snapshot doesn't animate, so the header and footer never flicker. */
+@keyframes vc-page-fade {
+  from {
+    opacity: 0;
+  }
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+::view-transition-old(.vc-page) {
+  animation: 150ms ease-in both vc-page-fade reverse;
+}
+::view-transition-new(.vc-page) {
+  animation: 200ms ease-out 150ms both vc-page-fade;
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
 /* Scroll reveal (src/components/motion/reveal.tsx). Only elements the observer marked pending
  * are hidden, so without JS or with reduced motion nothing ever is. Once shown, the transform is
  * dropped entirely so sticky children (the story art) behave normally. */
