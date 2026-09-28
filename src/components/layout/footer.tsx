@@ -50,7 +50,7 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr] lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr] lg:px-8">
         <div className="space-y-4">
           <Link href="/" className="text-sand-50 inline-flex items-center gap-2.5">
             <CamelMark className="text-terracotta-400 h-7 w-auto" />
@@ -161,9 +161,30 @@ export function Footer() {
           <ul className="space-y-2 text-[0.9375rem]">
             {[
               ...primaryNav.filter(
-                (link) => link.href !== "/services" && link.href !== "/removalists",
+                (link) =>
+                  link.href !== "/services" && link.href !== "/removalists" && link.href !== "/faq",
               ),
               ...secondaryNav,
+            ].map((link) => (
+              <li key={link.href}>
+                <Link href={link.href} className="text-sand-50 underline-offset-4 hover:underline">
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <nav aria-labelledby="footer-help">
+          <h2 id="footer-help" className="text-kraft-400 manifest-index mb-4">
+            Help
+          </h2>
+          <ul className="space-y-2 text-[0.9375rem]">
+            {[
+              { href: "/faq", label: "FAQ" },
+              { href: "/quote", label: "Get a quote" },
+              { href: "/contact", label: "Contact us" },
+              { href: "/cancellation-policy", label: "Changes and cancellations" },
             ].map((link) => (
               <li key={link.href}>
                 <Link href={link.href} className="text-sand-50 underline-offset-4 hover:underline">

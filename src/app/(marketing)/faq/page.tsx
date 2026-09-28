@@ -1,23 +1,21 @@
 import type { Metadata } from "next";
-import { Phone } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, Mail, MessageSquare, Phone } from "lucide-react";
+import { cn } from "cn";
 
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { FaqExplorer } from "@/components/faq/faq-explorer";
 import { JsonLd } from "@/components/seo/json-ld";
 import { Container } from "@/components/site/layout-primitives";
 import { PageHeader } from "@/components/site/page-header";
+import { buttonVariants } from "@/components/ui/button";
 import { business } from "@/config/business";
 import { faqs } from "@/config/faq";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Removalist FAQs",
+  title: "Removalist FAQs: price, booking, trucks and moving day",
   path: "/faq",
-  description: `Straight answers on minimum charges, the call-out fee, stairs, parking, cancellations and payment. ${business.hourlyRateShort}, ${business.minimumHours} hour minimum. Call ${business.phoneDisplay}.`,
+  description: `Straight answers before you book a Melbourne removalist: ${business.hourlyRateShort}, ${business.minimumHours} hour minimum, the call-out, trucks and crew, moving day, changes and cancellations. Victoria only.`,
 });
 
 export default function FaqPage() {
@@ -37,40 +35,52 @@ export default function FaqPage() {
       <PageHeader
         breadcrumbs={[{ name: "FAQ", path: "/faq" }]}
         label="Questions"
-        title="Straight answers before you book."
-        lede={<p>Minimum charge, call-out, stairs, parking, cancellations and payment.</p>}
+        title="Removalist questions, answered."
+        lede={<p>Everything you&apos;d ask a removalist before booking. Answered straight.</p>}
       />
-      <Container className="grid gap-10 py-12 sm:py-16 lg:grid-cols-12 lg:gap-12">
+      <Container className="grid gap-12 pt-4 pb-16 sm:pb-24 lg:grid-cols-12">
         <div className="lg:col-span-8">
-          <Accordion className="border-navy-900 border-t-2">
-            {faqs.map((faq, index) => (
-              <AccordionItem key={faq.question} value={`faq-${index}`}>
-                <AccordionTrigger className="text-lg">
-                  <span className="flex items-baseline gap-4">
-                    <span className="manifest-index text-terracotta-600 w-6 shrink-0">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    {faq.question}
-                  </span>
-                </AccordionTrigger>
-                <AccordionContent className="pl-10">{faq.answer}</AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
+          <FaqExplorer faqs={faqs} />
         </div>
+
         <aside className="lg:col-span-4">
-          <div className="border-navy-900 bg-navy-900 text-sand-50 on-navy rounded-sm border-2 p-5 lg:sticky lg:top-24">
-            <p className="font-headline text-2xl">Question not here?</p>
-            <p className="text-sand-100 mt-2">
-              Call and ask. We&apos;ll give you a straight answer.
-            </p>
-            <a
-              href={`tel:${business.phoneE164}`}
-              className="text-signal-400 tabular mt-4 inline-flex min-h-11 items-center gap-2 text-xl font-bold"
+          <div className="on-navy bg-navy-900 text-sand-100 rounded-sm p-6 lg:sticky lg:top-24">
+            <h2 className="font-headline text-sand-50 text-3xl">Still have questions?</h2>
+            <p className="mt-2">Ask us. You&apos;ll get a straight answer from the crew.</p>
+            <ul className="mt-5 space-y-2">
+              <li>
+                <a
+                  href={`tel:${business.phoneE164}`}
+                  className="text-signal-400 tabular inline-flex min-h-11 items-center gap-2.5 text-lg font-bold"
+                >
+                  <Phone className="size-5" aria-hidden="true" />
+                  Call {business.phoneDisplay}
+                </a>
+              </li>
+              <li>
+                <a
+                  href={`sms:${business.phoneE164}`}
+                  className="text-sand-50 inline-flex min-h-11 items-center gap-2.5 font-semibold underline decoration-2 underline-offset-4"
+                >
+                  <MessageSquare className="size-5" aria-hidden="true" />
+                  Send a text
+                </a>
+              </li>
+              <li className="text-sand-200 inline-flex min-h-11 items-center gap-2.5">
+                {/* PLACEHOLDER: no public email address yet (business.ts TODO_PUBLIC_EMAIL). */}
+                <Mail className="size-5" aria-hidden="true" />
+                <span>
+                  Email <span className="text-xs">(address coming soon)</span>
+                </span>
+              </li>
+            </ul>
+            <Link
+              href="/contact"
+              className={cn(buttonVariants({ variant: "onNavy", size: "lg" }), "mt-5 w-full")}
             >
-              <Phone className="size-5" aria-hidden="true" />
-              {business.phoneDisplay}
-            </a>
+              Book a callback
+              <ArrowRight data-icon="inline-end" />
+            </Link>
           </div>
         </aside>
       </Container>
