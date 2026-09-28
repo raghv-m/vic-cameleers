@@ -311,7 +311,7 @@ Full flow at `/quote`, compact version embeddable on home, service and suburb pa
 - [x] State persisted in URL or local state so refresh doesn't lose progress (move details and step
       saved to localStorage with a "Pick up where you left off?" prompt; contact details, notes,
       consent and the Turnstile token are never stored; the hero estimator remembers its inputs too)
-- [!] Places autocomplete AU-only for all addresses (plain text inputs for now) **OWNER for Google Maps API key**
+- [~] Places autocomplete AU-only for all addresses (built with the new Places API, session tokens, bias ~80 km around Cranbourne, plain-input fallback; live once the key is set) **OWNER for Google Maps API key**
 - [!] Travel time lookup server-side (key never exposed), cached (every estimate assumes a fixed 20 minute trip until this exists) **OWNER for Google Maps API key**
 - [ ] Service-area check with friendly message if outside Melbourne
 - [ ] Inventory picker with counts (special items checkboxes exist; itemised bed/fridge/washer-style counts do not yet)

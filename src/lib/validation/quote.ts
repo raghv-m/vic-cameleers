@@ -96,9 +96,20 @@ export const extrasSchema = z.object({
   boxesAndMaterials: z.boolean().default(false),
 });
 
+/** What Google Places returned for a picked address. Optional: typed addresses work without it. */
+export const pickedPlaceSchema = z.object({
+  suburb: z.string().max(80).nullable(),
+  postcode: z.string().max(8).nullable(),
+  lat: z.number().min(-90).max(90),
+  lng: z.number().min(-180).max(180),
+  placeId: z.string().max(300),
+});
+
 export const stepRouteSchema = z.object({
   pickupAddress: address("Pickup address"),
   dropoffAddress: address("Drop-off address"),
+  pickupPlace: pickedPlaceSchema.nullish(),
+  dropoffPlace: pickedPlaceSchema.nullish(),
   additionalStopAddress: z
     .string()
     .max(200)

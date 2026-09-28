@@ -150,3 +150,23 @@ Events after the first real clicks.
 1. Go to bing.com/webmasters and choose "Import from Google Search Console" (fastest), or add the
    site manually and verify with the meta tag (send me the code).
 2. Submit the same sitemap URL.
+
+## Google Places address autocomplete (code shipped 28 Sep 2026)
+
+Address fields (hero estimator from/to, quote wizard pickup, drop-off and extra stop) use Google
+Places when `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` is set, and fall back to plain inputs with the
+suburb list when it isn't. To switch it on:
+
+1. Google Cloud Console → a project owned by the business Google account → enable
+   **Maps JavaScript API** and **Places API (New)**. Set a budget alert.
+2. Create an API key, then restrict it:
+   - Application restrictions → Websites: `https://vic-cameleers.vercel.app/*`,
+     `http://localhost:3000/*` (add the custom domain later).
+   - API restrictions → Maps JavaScript API and Places API (New) only.
+3. Vercel → Environment Variables → `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` (Production and Preview),
+   then redeploy (it's baked in at build time).
+
+Cost: suggestions use one session token per typing session, closed by a single details lookup
+with only formatted address, location and address components.
+The estimate still assumes a 20 minute drive: real drive times need the server-side Routes API
+(`GOOGLE_MAPS_SERVER_KEY`, CLAUDE.md section 6), not built yet.

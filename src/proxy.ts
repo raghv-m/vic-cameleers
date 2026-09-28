@@ -24,7 +24,10 @@ const isProduction = process.env.NODE_ENV === "production";
 /** Pages that must keep the nonce CSP. Keep this list short: each one renders per request. */
 const NONCE_PAGE_PATHS = ["/quote", "/contact"];
 
-const STATIC_SCRIPT_SRC = "script-src 'self' 'unsafe-inline'";
+// Google Maps JS (Places autocomplete) loads from these hosts. Nonce pages don't need them listed:
+// 'strict-dynamic' trusts scripts added by our own nonced bundle.
+const MAPS_SCRIPT_HOSTS = "https://maps.googleapis.com https://maps.gstatic.com";
+const STATIC_SCRIPT_SRC = `script-src 'self' 'unsafe-inline' ${MAPS_SCRIPT_HOSTS}`;
 
 function buildCsp(scriptSrc: string): string {
   return [
@@ -33,7 +36,7 @@ function buildCsp(scriptSrc: string): string {
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: https:",
     "font-src 'self' data:",
-    "connect-src 'self' https://api.resend.com https://maps.googleapis.com https://challenges.cloudflare.com https://*.upstash.io",
+    "connect-src 'self' https://api.resend.com https://maps.googleapis.com https://places.googleapis.com https://challenges.cloudflare.com https://*.upstash.io",
     "frame-src https://challenges.cloudflare.com",
     "object-src 'none'",
     "base-uri 'self'",

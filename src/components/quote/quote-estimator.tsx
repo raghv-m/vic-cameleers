@@ -10,7 +10,9 @@ import { MeasureRule } from "@/components/brand/signage";
 import { ChipGroup } from "@/components/quote/chip-group";
 import { AnimatedRange } from "@/components/quote/animated-range";
 import { EstimateMiniMap, type MapPlace } from "@/components/quote/estimate-mini-map";
-import { findKnownPlace } from "@/lib/geo";
+import { AddressAutocomplete } from "@/components/forms/address-autocomplete";
+import { findKnownPlace, projectLatLng } from "@/lib/geo";
+import type { PickedPlace } from "@/lib/places";
 import { business } from "@/config/business";
 import {
   PREFILL_EVENT,
@@ -153,6 +155,8 @@ export function QuoteEstimator({
   const [to, setTo] = useState("");
   const [date, setDate] = useState("");
   const [stairsTouched, setStairsTouched] = useState(false);
+  const [fromPick, setFromPick] = useState<PickedPlace | null>(null);
+  const [toPick, setToPick] = useState<PickedPlace | null>(null);
   const [flash, setFlash] = useState(false);
   const restored = useRef(false);
   const detailsRef = useRef<HTMLDetailsElement>(null);
@@ -228,8 +232,13 @@ export function QuoteEstimator({
   );
 
   const known = completeness({ stairsTouched, from, to, date });
-  const fromPlace = findKnownPlace(from, mapPlaces);
-  const toPlace = findKnownPlace(to, mapPlaces);
+  // A Google pick gives exact coordinates; otherwise match a place we already have on the map.
+  const fromPlace = fromPick
+    ? { name: fromPick.suburb ?? from, point: projectLatLng(fromPick.lat, fromPick.lng) }
+    : findKnownPlace(from, mapPlaces);
+  const toPlace = toPick
+    ? { name: toPick.suburb ?? to, point: projectLatLng(toPick.lat, toPick.lng) }
+    : findKnownPlace(to, mapPlaces);
   const a = estimate.assumptions;
   const extraMovers = Math.max(0, estimate.recommendedCrewCount - 2);
   const breakdown: { label: string; value: string }[] = [
@@ -324,11 +333,13 @@ export function QuoteEstimator({
           >
             <label className="text-sm font-semibold" htmlFor={`${id}-from`}>
               Moving from
-              <input
+              <AddressAutocomplete
+                mode="suburb"
                 id={`${id}-from`}
                 list={`${id}-suburbs`}
                 value={from}
                 onChange={(event) => setFrom(event.target.value)}
+                onPlace={setFromPick}
                 autoComplete="address-level2"
                 placeholder="Suburb"
                 className="border-input bg-card mt-1.5 h-11 w-full rounded-sm border px-3 text-base font-normal"
@@ -336,11 +347,13 @@ export function QuoteEstimator({
             </label>
             <label className="text-sm font-semibold" htmlFor={`${id}-to`}>
               Moving to
-              <input
+              <AddressAutocomplete
+                mode="suburb"
                 id={`${id}-to`}
                 list={`${id}-suburbs`}
                 value={to}
                 onChange={(event) => setTo(event.target.value)}
+                onPlace={setToPick}
                 autoComplete="off"
                 placeholder="Suburb"
                 className="border-input bg-card mt-1.5 h-11 w-full rounded-sm border px-3 text-base font-normal"

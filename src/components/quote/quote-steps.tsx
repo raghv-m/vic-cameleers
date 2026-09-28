@@ -14,7 +14,9 @@ import {
   useFieldError,
   type QuoteFieldName,
 } from "@/components/quote/quote-fields";
-import { Input } from "@/components/ui/input";
+import { AddressAutocomplete } from "@/components/forms/address-autocomplete";
+import { Input, inputClassName } from "@/components/ui/input";
+import type { PickedPlace } from "@/lib/places";
 import { Textarea } from "@/components/ui/textarea";
 import { business } from "@/config/business";
 import { floorToFlights } from "@/lib/quote-pricing";
@@ -37,6 +39,11 @@ function useSetField() {
 function useRegister() {
   const { register, clearErrors } = useFormContext<Values>();
   return (name: QuoteFieldName) => register(name, { onChange: () => clearErrors(name) });
+}
+
+/** The picked place as stored on the form: no formatted address, that's the field itself. */
+function placeFields({ suburb, postcode, lat, lng, placeId }: PickedPlace) {
+  return { suburb, postcode, lat, lng, placeId };
 }
 
 function localToday(): string {
@@ -62,7 +69,7 @@ const START_TIMES: { value: Values["preferredTime"]; label: string }[] = [
 
 export function StepRoute({ suburbOptions }: { suburbOptions: string[] }) {
   const reg = useRegister();
-  const { control } = useFormContext<Values>();
+  const { control, setValue } = useFormContext<Values>();
   const extraStop = useWatch({ control, name: "additionalStopAddress" });
   const [showStop, setShowStop] = useState(Boolean(extraStop));
 
@@ -81,9 +88,11 @@ export function StepRoute({ suburbOptions }: { suburbOptions: string[] }) {
       >
         <QuoteField name="pickupAddress" label="Pickup address">
           {(control) => (
-            <Input
+            <AddressAutocomplete
               {...control}
               {...reg("pickupAddress")}
+              onPlace={(place) => setValue("pickupPlace", place ? placeFields(place) : null)}
+              className={inputClassName}
               list="quote-suburbs"
               autoComplete="street-address"
               placeholder="12 Smith St, Cranbourne VIC 3977"
@@ -92,9 +101,11 @@ export function StepRoute({ suburbOptions }: { suburbOptions: string[] }) {
         </QuoteField>
         <QuoteField name="dropoffAddress" label="Drop-off address">
           {(control) => (
-            <Input
+            <AddressAutocomplete
               {...control}
               {...reg("dropoffAddress")}
+              onPlace={(place) => setValue("dropoffPlace", place ? placeFields(place) : null)}
+              className={inputClassName}
               list="quote-suburbs"
               autoComplete="off"
               placeholder="4 High St, Berwick VIC 3806"
@@ -104,9 +115,10 @@ export function StepRoute({ suburbOptions }: { suburbOptions: string[] }) {
         {showStop ? (
           <QuoteField name="additionalStopAddress" label="Extra stop" optional>
             {(control) => (
-              <Input
+              <AddressAutocomplete
                 {...control}
                 {...reg("additionalStopAddress")}
+                className={inputClassName}
                 list="quote-suburbs"
                 autoComplete="off"
               />
