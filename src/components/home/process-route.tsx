@@ -192,12 +192,46 @@ function RouteStepper() {
             of the right edge. */}
         <div
           aria-hidden="true"
-          className="bg-kraft-400/40 absolute top-[21px] right-[calc((100%-4.5rem)/4-22px)] left-[22px] h-[3px]"
+          className="absolute top-[14px] right-[calc((100%-4.5rem)/4-22px)] left-[22px] h-4"
         >
-          <div
-            className="bg-terracotta-600 h-full origin-left transition-transform duration-700 ease-[cubic-bezier(0.65,0,0.35,1)] motion-reduce:transition-none"
-            style={{ transform: `scaleX(${active / (STOPS.length - 1)})` }}
-          />
+          {/* SVG route: dashed road ahead, solid line drawn up to the active stop (stroke offset). */}
+          <svg
+            className="absolute inset-0 h-full w-full overflow-visible"
+            viewBox="0 0 100 16"
+            preserveAspectRatio="none"
+          >
+            <line
+              x1="0"
+              y1="8"
+              x2="100"
+              y2="8"
+              stroke="var(--color-kraft-400)"
+              strokeWidth="3"
+              strokeDasharray="2 6"
+              vectorEffect="non-scaling-stroke"
+            />
+            <line
+              x1="0"
+              y1="8"
+              x2="100"
+              y2="8"
+              pathLength={1}
+              stroke="var(--color-terracotta-600)"
+              strokeWidth="3"
+              strokeDasharray="1 1"
+              strokeDashoffset={1 - active / (STOPS.length - 1)}
+              // No non-scaling-stroke here: it would measure the dash in screen pixels instead of
+              // pathLength. A horizontal line's width isn't stretched by the x-only scaling anyway.
+              className="transition-[stroke-dashoffset] duration-700 ease-[cubic-bezier(0.65,0,0.35,1)] motion-reduce:transition-none"
+            />
+          </svg>
+          {/* a small truck driving to the active stop */}
+          <span
+            className="absolute -top-[34px] transition-[left] duration-700 ease-[cubic-bezier(0.65,0,0.35,1)] motion-reduce:transition-none"
+            style={{ left: `calc(${(active / (STOPS.length - 1)) * 100}% - 10px)` }}
+          >
+            <Truck className="text-navy-900 size-5" strokeWidth={2.25} />
+          </span>
         </div>
         {STOPS.map((item, index) => {
           const selected = index === active;
