@@ -54,8 +54,9 @@ function cspFor(nonce: string | null): string {
 
 function withSecurityHeaders(
   response: NextResponse,
-  { nonce, isAdmin }: { nonce: string | null; isAdmin: boolean },
+  { nonce, isAdmin, requestId }: { nonce: string | null; isAdmin: boolean; requestId: string },
 ): NextResponse {
+  response.headers.set("X-Request-Id", requestId);
   response.headers.set("Content-Security-Policy", cspFor(nonce));
   response.headers.set("X-Frame-Options", "DENY");
   response.headers.set("X-Content-Type-Options", "nosniff");
@@ -99,6 +100,10 @@ export function proxy(request: NextRequest) {
   // btoa/crypto are Web-standard globals, available in every runtime proxy can execute in.
   const nonce = needsNonce ? btoa(crypto.randomUUID()) : null;
   const requestHeaders = new Headers(request.headers);
+  // One id per request for structured logs (src/lib/log.ts): Vercel's own when present, so our
+  // log lines line up with the platform's, otherwise a fresh one.
+  const requestId = request.headers.get("x-vercel-id") ?? crypto.randomUUID();
+  requestHeaders.set("x-request-id", requestId);
   if (nonce) {
     // Next reads the nonce from the request's CSP header and stamps it on its own scripts.
     requestHeaders.set("x-nonce", nonce);
@@ -115,18 +120,18 @@ export function proxy(request: NextRequest) {
     const rewritten = request.nextUrl.clone();
     rewritten.pathname = `/admin${pathname.slice(`/${adminPath}`.length)}`;
     const response = NextResponse.rewrite(rewritten, { request: { headers: requestHeaders } });
-    return withSecurityHeaders(response, { nonce, isAdmin: true });
+    return withSecurityHeaders(response, { nonce, isAdmin: true, requestId });
   }
 
   if (isDirectAdminGuess) {
     const notFound = request.nextUrl.clone();
     notFound.pathname = "/admin/__not_found__";
     const response = NextResponse.rewrite(notFound, { request: { headers: requestHeaders } });
-    return withSecurityHeaders(response, { nonce, isAdmin: true });
+    return withSecurityHeaders(response, { nonce, isAdmin: true, requestId });
   }
 
   const response = NextResponse.next({ request: { headers: requestHeaders } });
-  return withSecurityHeaders(response, { nonce, isAdmin: false });
+  return withSecurityHeaders(response, { nonce, isAdmin: false, requestId });
 }
 
 export const config = {

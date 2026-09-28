@@ -1,4 +1,5 @@
 import "server-only";
+import { log } from "@/lib/log";
 
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
@@ -35,7 +36,7 @@ export async function checkPublicFormRateLimit(identifier: string): Promise<{ su
     publicFormLimiter = createLimiter("10 m", "ratelimit:public-form");
   }
   if (!publicFormLimiter) {
-    console.warn("Upstash not configured, skipping rate limiting (dev only).");
+    log.warn("RATE_LIMIT_UNCONFIGURED", { scope: "public" });
     return { success: true };
   }
 
@@ -54,7 +55,7 @@ export async function checkAdminLoginRateLimit(identifier: string): Promise<{ su
     adminLoginLimiter = createLimiter("15 m", "ratelimit:admin-login");
   }
   if (!adminLoginLimiter) {
-    console.warn("Upstash not configured, skipping admin login rate limiting (dev only).");
+    log.warn("RATE_LIMIT_UNCONFIGURED", { scope: "admin-login" });
     return { success: true };
   }
 

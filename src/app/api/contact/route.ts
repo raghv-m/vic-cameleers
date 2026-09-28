@@ -1,4 +1,5 @@
 import { after, NextResponse } from "next/server";
+import { log } from "@/lib/log";
 import type { NextRequest } from "next/server";
 
 import { serverEnv } from "@/env.server";
@@ -19,6 +20,7 @@ function getClientIp(request: NextRequest): string | undefined {
 }
 
 async function handlePost(request: NextRequest) {
+  const requestId = request.headers.get("x-request-id");
   const ip = getClientIp(request);
 
   const rateLimit = await checkPublicFormRateLimit(ip ?? "unknown");
@@ -112,13 +114,13 @@ async function handlePost(request: NextRequest) {
           relatedLeadId: lead.id,
         });
       } else {
-        console.warn("LEAD_NOTIFY_EMAIL not set, skipping staff alert email (dev only).");
+        log.warn("LEAD_NOTIFY_EMAIL_UNSET", { requestId });
       }
     });
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Failed to save contact submission", error);
+    log.error("CONTACT_SAVE_FAILED", error, { requestId });
     return NextResponse.json(
       { error: "Something went wrong sending your message. Please call us instead." },
       { status: 500 },
@@ -132,10 +134,11 @@ async function handlePost(request: NextRequest) {
  * JSON 500 the form can show, instead of an empty error response.
  */
 export async function POST(request: NextRequest) {
+  const requestId = request.headers.get("x-request-id");
   try {
     return await handlePost(request);
   } catch (error) {
-    console.error("Unhandled error in contact submission", error);
+    log.error("CONTACT_UNHANDLED", error, { requestId });
     return NextResponse.json(
       { error: "Something went wrong sending your message. Please call us instead." },
       { status: 500 },

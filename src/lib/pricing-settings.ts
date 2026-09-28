@@ -1,4 +1,5 @@
 import "server-only";
+import { errorFields, log } from "@/lib/log";
 
 import { defaultPricingSettings } from "@/config/pricing-defaults";
 import { db } from "@/lib/db";
@@ -29,7 +30,7 @@ export async function getPricingSettings(): Promise<PricingSettings> {
       disassemblyHourPerItem: settings.disassemblyHourPerItem,
     };
   } catch (error) {
-    console.warn("Could not load PricingSettings from the database, using defaults.", error);
+    log.warn("PRICING_SETTINGS_FALLBACK", errorFields(error));
     return defaultPricingSettings;
   }
 }

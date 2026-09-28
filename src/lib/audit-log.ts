@@ -1,4 +1,5 @@
 import "server-only";
+import { log } from "@/lib/log";
 
 import type { Prisma } from "@prisma/client";
 
@@ -32,6 +33,6 @@ export async function recordAuditLog(entry: {
       },
     });
   } catch (error) {
-    console.error("Failed to write audit log entry", entry.action, entry.entityType, error);
+    log.error("AUDIT_LOG_FAILED", error, { action: entry.action, entityType: entry.entityType });
   }
 }

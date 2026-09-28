@@ -1,33 +1,25 @@
 import "server-only";
 
+import { log } from "@/lib/log";
+
 /**
- * Structured, greppable cron logging (console.log/error, captured by
- * Vercel's own log pipeline - no separate logging service needed for this
- * scale). Named events rather than free-text so CRON_FAILED is easy to
- * alert on later.
+ * Cron lifecycle logging, as structured events (src/lib/log.ts): CRON_STARTED, CRON_COMPLETED
+ * (with the job's result counts) and CRON_FAILED, so a failed job is easy to alert on.
  */
 export function logCronStarted(job: string): void {
-  console.log(JSON.stringify({ event: "CRON_STARTED", job, timestamp: new Date().toISOString() }));
+  log.info("CRON_STARTED", { job });
 }
 
 export function logCronCompleted(job: string, result: Record<string, unknown>): void {
-  console.log(
-    JSON.stringify({
-      event: "CRON_COMPLETED",
-      job,
-      timestamp: new Date().toISOString(),
-      ...result,
-    }),
-  );
+  const fields: Record<string, string | number | boolean | null> = { job };
+  for (const [key, value] of Object.entries(result)) {
+    if (["string", "number", "boolean"].includes(typeof value) || value === null) {
+      fields[key] = value as string | number | boolean | null;
+    }
+  }
+  log.info("CRON_COMPLETED", fields);
 }
 
 export function logCronFailed(job: string, error: unknown): void {
-  console.error(
-    JSON.stringify({
-      event: "CRON_FAILED",
-      job,
-      timestamp: new Date().toISOString(),
-      error: error instanceof Error ? error.message : String(error),
-    }),
-  );
+  log.error("CRON_FAILED", error, { job });
 }

@@ -1,4 +1,5 @@
 import type { Prisma } from "@prisma/client";
+import { log } from "@/lib/log";
 import { after, NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
@@ -50,6 +51,7 @@ function propertySizeToBedroomCount(size: PropertySize): number | null {
 }
 
 async function handlePost(request: NextRequest) {
+  const requestId = request.headers.get("x-request-id");
   const ip = getClientIp(request);
 
   const rateLimit = await checkPublicFormRateLimit(ip ?? "unknown");
@@ -117,7 +119,7 @@ async function handlePost(request: NextRequest) {
     }
   } catch (error) {
     // The check is a nicety. If it fails, save the lead anyway: never lose a lead.
-    console.error("Duplicate quote check failed", error);
+    log.error("QUOTE_DUPLICATE_CHECK_FAILED", error, { requestId });
   }
 
   const referenceNumber = generateReferenceNumber();
@@ -237,8 +239,14 @@ async function handlePost(request: NextRequest) {
           relatedLeadId: lead.id,
         });
       } else {
-        console.warn("LEAD_NOTIFY_EMAIL not set, skipping staff alert email (dev only).");
+        log.warn("LEAD_NOTIFY_EMAIL_UNSET", { requestId });
       }
+    });
+
+    log.info("QUOTE_CREATED", {
+      requestId,
+      referenceNumber: lead.referenceNumber,
+      leadId: lead.id,
     });
 
     return NextResponse.json({
@@ -253,7 +261,7 @@ async function handlePost(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Failed to save quote submission", error);
+    log.error("QUOTE_SAVE_FAILED", error, { requestId });
     return NextResponse.json(
       { error: "Something went wrong saving your quote. Please call us instead." },
       { status: 500 },
@@ -267,10 +275,11 @@ async function handlePost(request: NextRequest) {
  * JSON 500 the form can show, instead of an empty error response.
  */
 export async function POST(request: NextRequest) {
+  const requestId = request.headers.get("x-request-id");
   try {
     return await handlePost(request);
   } catch (error) {
-    console.error("Unhandled error in quote submission", error);
+    log.error("QUOTE_UNHANDLED", error, { requestId });
     return NextResponse.json(
       { error: "Something went wrong sending your quote. Please call us instead." },
       { status: 500 },

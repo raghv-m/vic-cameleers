@@ -1,4 +1,5 @@
 import "server-only";
+import { log } from "@/lib/log";
 
 import type { Prisma } from "@prisma/client";
 
@@ -25,6 +26,6 @@ export async function logAnalyticsEvent(
       },
     });
   } catch (error) {
-    console.error(`Failed to log analytics event "${eventName}"`, error);
+    log.error("ANALYTICS_EVENT_FAILED", error, { eventName });
   }
 }

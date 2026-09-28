@@ -1,4 +1,5 @@
 import "server-only";
+import { log } from "@/lib/log";
 
 import { serverEnv } from "@/env.server";
 
@@ -16,7 +17,7 @@ export async function verifyTurnstileToken(
   remoteIp?: string,
 ): Promise<boolean> {
   if (!serverEnv.TURNSTILE_SECRET_KEY) {
-    console.warn("TURNSTILE_SECRET_KEY not set, skipping Turnstile verification (dev only).");
+    log.warn("TURNSTILE_UNCONFIGURED");
     return true;
   }
 
