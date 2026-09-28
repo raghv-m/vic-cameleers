@@ -6,7 +6,7 @@ import { Mail, Phone } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { db } from "@/lib/db";
-import { requireRole } from "@/lib/rbac";
+import { adminUrl, requireRole } from "@/lib/rbac";
 import { LEAD_STATUS_BADGE_VARIANT, LEAD_STATUS_LABEL } from "@/lib/lead-status";
 
 export const metadata: Metadata = {
@@ -32,7 +32,7 @@ export default async function CustomerDetailPage({ params }: PageProps<"/admin/c
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
-      <Link href="/admin/customers" className="text-muted-foreground text-sm hover:underline">
+      <Link href={adminUrl("/customers")} className="text-muted-foreground text-sm hover:underline">
         &larr; All customers
       </Link>
 
@@ -55,7 +55,7 @@ export default async function CustomerDetailPage({ params }: PageProps<"/admin/c
         {customer.leads.map((lead) => (
           <li key={lead.id} className="rounded-md border p-3 text-sm">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <Link href={`/admin/leads/${lead.id}`} className="font-medium hover:underline">
+              <Link href={adminUrl(`/leads/${lead.id}`)} className="font-medium hover:underline">
                 {lead.referenceNumber}
               </Link>
               <Badge variant={LEAD_STATUS_BADGE_VARIANT[lead.status]}>

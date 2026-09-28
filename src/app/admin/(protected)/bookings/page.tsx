@@ -4,7 +4,7 @@ import { format, startOfDay } from "date-fns";
 
 import { Badge } from "@/components/ui/badge";
 import { db } from "@/lib/db";
-import { requireRole } from "@/lib/rbac";
+import { adminUrl, requireRole } from "@/lib/rbac";
 import { JOB_STATUS_LABEL } from "@/lib/job-status";
 
 export const metadata: Metadata = {
@@ -30,7 +30,7 @@ export default async function BookingsPage() {
           <a href="/api/admin/export/bookings" className="text-primary text-sm hover:underline">
             Export CSV
           </a>
-          <Link href="/admin/bookings/today" className="text-primary text-sm hover:underline">
+          <Link href={adminUrl("/bookings/today")} className="text-primary text-sm hover:underline">
             Today&apos;s moves
           </Link>
         </div>
@@ -56,7 +56,7 @@ export default async function BookingsPage() {
                   {booking.preferredTime ? `, ${booking.preferredTime}` : ""}
                 </td>
                 <td className="py-2 pr-4">
-                  <Link href={`/admin/leads/${booking.leadId}`} className="hover:underline">
+                  <Link href={adminUrl(`/leads/${booking.leadId}`)} className="hover:underline">
                     {booking.lead.customer?.name ?? "Unknown"}
                   </Link>
                 </td>

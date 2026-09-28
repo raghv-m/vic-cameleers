@@ -11,7 +11,7 @@ import { SendBookingConfirmationButton } from "@/components/admin/send-booking-c
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { db } from "@/lib/db";
-import { requireRole } from "@/lib/rbac";
+import { adminUrl, requireRole } from "@/lib/rbac";
 import { LEAD_SOURCE_LABEL } from "@/lib/lead-status";
 
 export const metadata: Metadata = {
@@ -96,7 +96,7 @@ export default async function LeadDetailPage({ params }: PageProps<"/admin/leads
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
-      <Link href="/admin/leads" className="text-muted-foreground text-sm hover:underline">
+      <Link href={adminUrl("/leads")} className="text-muted-foreground text-sm hover:underline">
         &larr; All leads
       </Link>
 
@@ -139,7 +139,7 @@ export default async function LeadDetailPage({ params }: PageProps<"/admin/leads
             )}
             {lead.customer && (
               <Link
-                href={`/admin/customers/${lead.customer.id}`}
+                href={adminUrl(`/customers/${lead.customer.id}`)}
                 className="text-primary block text-sm hover:underline"
               >
                 View customer history

@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { db } from "@/lib/db";
-import { requireRole } from "@/lib/rbac";
+import { adminUrl, requireRole } from "@/lib/rbac";
 import {
   LEAD_SOURCE_LABEL,
   LEAD_STATUS_BADGE_VARIANT,
@@ -79,7 +79,7 @@ export default async function LeadsPage({ searchParams }: PageProps<"/admin/lead
 
       <div className="mt-4 flex flex-wrap gap-2">
         <Link
-          href="/admin/leads"
+          href={adminUrl("/leads")}
           className={`text-sm ${!status ? "text-foreground font-medium underline" : "text-muted-foreground hover:underline"}`}
         >
           All
@@ -87,7 +87,7 @@ export default async function LeadsPage({ searchParams }: PageProps<"/admin/lead
         {LEAD_STATUS_ORDER.map((option) => (
           <Link
             key={option}
-            href={`/admin/leads?status=${option}`}
+            href={adminUrl(`/leads?status=${option}`)}
             className={`text-sm ${status === option ? "text-foreground font-medium underline" : "text-muted-foreground hover:underline"}`}
           >
             {LEAD_STATUS_LABEL[option]}
@@ -113,7 +113,10 @@ export default async function LeadsPage({ searchParams }: PageProps<"/admin/lead
               return (
                 <tr key={lead.id} className="hover:bg-muted/50 border-b last:border-0">
                   <td className="py-2 pr-4">
-                    <Link href={`/admin/leads/${lead.id}`} className="font-medium hover:underline">
+                    <Link
+                      href={adminUrl(`/leads/${lead.id}`)}
+                      className="font-medium hover:underline"
+                    >
                       {lead.referenceNumber}
                     </Link>
                   </td>

@@ -5,7 +5,7 @@ import { format } from "date-fns";
 
 import { Input } from "@/components/ui/input";
 import { db } from "@/lib/db";
-import { requireRole } from "@/lib/rbac";
+import { adminUrl, requireRole } from "@/lib/rbac";
 
 export const metadata: Metadata = {
   title: "Customers",
@@ -63,7 +63,7 @@ export default async function CustomersPage({ searchParams }: PageProps<"/admin/
               <tr key={customer.id} className="hover:bg-muted/50 border-b last:border-0">
                 <td className="py-2 pr-4">
                   <Link
-                    href={`/admin/customers/${customer.id}`}
+                    href={adminUrl(`/customers/${customer.id}`)}
                     className="font-medium hover:underline"
                   >
                     {customer.name}

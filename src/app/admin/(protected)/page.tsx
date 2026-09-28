@@ -5,7 +5,7 @@ import { startOfDay, startOfWeek } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { db } from "@/lib/db";
-import { requireSession } from "@/lib/rbac";
+import { adminUrl, requireSession } from "@/lib/rbac";
 import { LEAD_STATUS_BADGE_VARIANT, LEAD_STATUS_LABEL, LEAD_STATUS_ORDER } from "@/lib/lead-status";
 
 export const metadata: Metadata = {
@@ -129,14 +129,14 @@ export default async function AdminDashboardPage() {
 
       <div className="mt-8 flex items-center justify-between">
         <h2 className="text-sm font-medium">Recent leads</h2>
-        <Link href="/admin/leads" className="text-primary text-sm hover:underline">
+        <Link href={adminUrl("/leads")} className="text-primary text-sm hover:underline">
           View all
         </Link>
       </div>
       <ul className="mt-2 divide-y">
         {recentLeads.map((lead) => (
           <li key={lead.id} className="flex items-center justify-between py-2 text-sm">
-            <Link href={`/admin/leads/${lead.id}`} className="hover:underline">
+            <Link href={adminUrl(`/leads/${lead.id}`)} className="hover:underline">
               {lead.referenceNumber} &middot; {lead.customer?.name ?? "Unknown"}
             </Link>
             <Badge variant={LEAD_STATUS_BADGE_VARIANT[lead.status]}>
