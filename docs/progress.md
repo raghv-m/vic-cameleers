@@ -1,7 +1,7 @@
 # SEO + Design Build: Progress
 
-Source of truth: `Vic Cameleers SEO & Design Report to Rank #1 in Melbourne.pdf` ("SEO report")
-and `Design and Motion Playbook.pdf` ("playbook"), both in the repo root. SEO "Prompt 1" runs
+Source of truth: `docs/reference/seo-and-design-report.pdf` ("SEO report")
+and `docs/reference/design-and-motion-playbook.pdf` ("playbook"). SEO "Prompt 1" runs
 first; the playbook's "Master Claude Code prompt" runs second and replaces the SEO report's
 "Prompt 2". CLAUDE.md remains the project brief; its checkboxes get updated as items land.
 
@@ -171,11 +171,11 @@ Current-state facts from the code map that shape the plan:
 - [x] D0.2 mem-search attempted: the claude-mem worker isn't running, so no results. Earlier
       decisions are in CLAUDE.md, git history and this file instead.
 - [x] D0.3 "Before" screenshots of 16 public pages at 390px and 1440px (32 images, production build),
-      saved under `docs/screens/before/`.
+      saved under `docs/screens/before/` (removed 28 Sep 2026; in git history).
 
 ## DESIGN PHASE D1: Audit (design-is) (done 26 Sep 2026)
 
-- [x] D1.1 Dieter Rams audit in `DESIGN-IS-2026-09-26/`: 15/30, verdict REDESIGN. Worst: aesthetic,
+- [x] D1.1 Dieter Rams audit in `docs/reference/design-audit-2026-09-26/`: 15/30, verdict REDESIGN. Worst: aesthetic,
       long-lasting, thorough, as-little-design (1/3 each). New finding: the CTA terracotta #c1502e
       fails AA (4.41:1), and the why-us and fleet sections render blank until scrolled (opacity 0).
 
@@ -187,7 +187,7 @@ route line, SE Melbourne map, stamps, 1860 archival illustration. Skip: minimali
 gpt-taste, stitch-design-taste, imagegen-frontend-mobile, image-to-code, wowerpoint, dataviz.)
 
 - [~] D2.1 Design brief published for approval (https://claude.ai/artifact/Uy93DrYgAxyAwG7SHWnjtQ,
-  copy in `docs/design-brief.html`): recommends Big Shoulders Stencil + Barlow, CTA terracotta
+  copy in `docs/reference/design-brief.html`): recommends Big Shoulders Stencil + Barlow, CTA terracotta
   deepened to #b34628 for AA, headline "Same job as the 1860 cameleers. Better suspension.",
   services as a freight manifest. Skills used: redesign-existing-projects, high-end-visual-design,
   design-taste-frontend, industrial-brutalist-ui (accents). brandkit and imagegen-frontend-web
