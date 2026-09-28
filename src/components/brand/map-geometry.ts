@@ -13,7 +13,7 @@ export const POSITIONS: Record<
   berwick: { x: 354.4, y: 255.0, anchor: "start", dy: -6 },
   "narre-warren": { x: 317.4, y: 247.0, anchor: "end", dy: -8 },
   officer: { x: 400.8, y: 281.0, anchor: "start", dy: -10 },
-  pakenham: { x: 462.2, y: 291.0, anchor: "end", dy: -12 },
+  pakenham: { x: 462.2, y: 291.0, anchor: "end", dy: 20 },
 };
 
 export const REFERENCE_TOWNS = [

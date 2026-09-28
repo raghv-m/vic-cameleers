@@ -5,6 +5,7 @@ import { cn } from "cn";
 import { CamelMark } from "@/components/brand/camel-mark";
 import { CoverageMap } from "@/components/brand/coverage-map";
 import { RouteArrow, SignPlate } from "@/components/brand/signage";
+import { MapPrefill } from "@/components/home/map-prefill";
 import { ResumeEstimate } from "@/components/home/resume-estimate";
 import { StoryScroll } from "@/components/home/story-scroll";
 import { UseSuburbButton } from "@/components/home/use-suburb-button";
@@ -66,7 +67,9 @@ export function CoverageSection() {
         </div>
         <div className="lg:col-span-7">
           <div className="border-navy-900 bg-sand-50 rounded-sm border-2 p-3 sm:p-5">
-            <CoverageMap />
+            <MapPrefill>
+              <CoverageMap prefill />
+            </MapPrefill>
           </div>
         </div>
       </Container>

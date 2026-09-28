@@ -63,6 +63,9 @@ export function requestEstimatePrefill(detail: PrefillDetail): void {
   window.dispatchEvent(new CustomEvent<PrefillDetail>(PREFILL_EVENT, { detail }));
   const target = document.getElementById("estimate");
   if (!target) return;
-  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // Smooth scrolls never run in a hidden tab, so jump instead of stalling.
+  const reduce =
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+    document.visibilityState === "hidden";
   target.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
 }

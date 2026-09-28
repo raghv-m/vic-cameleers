@@ -20,7 +20,8 @@ export { DEPOT, POSITIONS, REFERENCE_TOWNS, PORT_PHILLIP, WESTERN_PORT };
  * in on scroll (CSS only, see .vc-route-draw).
  */
 
-export function CoverageMap({ className }: { className?: string }) {
+/** `prefill`: pins start an estimate on this page (wrap in <MapPrefill>) instead of only linking. */
+export function CoverageMap({ className, prefill }: { className?: string; prefill?: boolean }) {
   const pins = publishedSuburbs
     .map((suburb) => ({ suburb, pos: POSITIONS[suburb.slug] }))
     .filter(
@@ -158,7 +159,9 @@ export function CoverageMap({ className }: { className?: string }) {
           <Link
             key={suburb.slug}
             href={`/removalists/${suburb.slug}`}
-            className="group outline-none"
+            data-prefill={prefill ? suburb.name : undefined}
+            aria-label={prefill ? `${suburb.name}: start an estimate from here` : undefined}
+            className="group cursor-pointer outline-none"
           >
             <circle
               cx={pos.x}
@@ -182,20 +185,28 @@ export function CoverageMap({ className }: { className?: string }) {
                 className="pointer-events-none opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100"
               >
                 <rect
-                  x={pos.x - 38}
-                  y={pos.y - 34}
-                  width="76"
-                  height="20"
+                  x={pos.x - 56}
+                  y={pos.y - 46}
+                  width="112"
+                  height="32"
                   rx="2"
                   fill="var(--color-navy-900)"
                 />
                 <text
                   x={pos.x}
-                  y={pos.y - 20}
+                  y={pos.y - 32}
                   textAnchor="middle"
                   className="fill-sand-50 text-[10.5px] font-bold"
                 >
-                  ~{suburb.driveTimeFromCranbourneMins} min drive
+                  {suburb.driveTimeFromCranbourneMins} min from depot
+                </text>
+                <text
+                  x={pos.x}
+                  y={pos.y - 20}
+                  textAnchor="middle"
+                  className="fill-signal-400 text-[9px] font-semibold"
+                >
+                  {prefill ? "Click to estimate from here" : "Open local page"}
                 </text>
               </g>
             ) : null}
