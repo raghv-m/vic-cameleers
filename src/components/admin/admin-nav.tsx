@@ -12,6 +12,7 @@ const links = [
   { href: "/leads", label: "Leads" },
   { href: "/customers", label: "Customers" },
   { href: "/bookings", label: "Bookings" },
+  { href: "/calendar", label: "Calendar" },
   { href: "/trucks", label: "Trucks" },
   { href: "/crew", label: "Crew" },
   { href: "/reviews", label: "Reviews" },

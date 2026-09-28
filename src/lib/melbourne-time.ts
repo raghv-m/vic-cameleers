@@ -48,10 +48,21 @@ export function melbourneDayRange(
   now: Date = new Date(),
 ): { start: Date; end: Date } {
   const { year, month, day } = melbourneParts(now);
-  const startFor = (d: number) => {
-    const guess = new Date(Date.UTC(year, month - 1, d));
-    // Midnight Melbourne = midnight UTC minus the offset in force at that moment.
-    return new Date(guess.getTime() - melbourneOffsetMinutes(guess) * 60_000);
+  return {
+    start: melbourneMidnight(year, month, day + offsetDays),
+    end: melbourneMidnight(year, month, day + offsetDays + 1),
   };
-  return { start: startFor(day + offsetDays), end: startFor(day + offsetDays + 1) };
+}
+
+/** The UTC instant of midnight at the start of a Melbourne calendar date (day may overflow). */
+export function melbourneMidnight(year: number, month: number, day: number): Date {
+  const guess = new Date(Date.UTC(year, month - 1, day));
+  // Midnight Melbourne = midnight UTC minus the offset in force at that moment.
+  return new Date(guess.getTime() - melbourneOffsetMinutes(guess) * 60_000);
+}
+
+/** "YYYY-MM-DD" of the Melbourne calendar date an instant falls on. */
+export function melbourneDateKey(at: Date): string {
+  const { year, month, day } = melbourneParts(at);
+  return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 }
