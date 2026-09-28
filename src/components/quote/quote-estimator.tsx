@@ -12,6 +12,13 @@ import { AnimatedRange } from "@/components/quote/animated-range";
 import { EstimateMiniMap, type MapPlace } from "@/components/quote/estimate-mini-map";
 import { AddressAutocomplete } from "@/components/forms/address-autocomplete";
 import { findKnownPlace, projectLatLng } from "@/lib/geo";
+import {
+  JOB_SIZE_EVENT,
+  announceJobSize,
+  bandFor,
+  choiceForBand,
+  type JobSizeDetail,
+} from "@/lib/job-size-sync";
 import type { PickedPlace } from "@/lib/places";
 import { business } from "@/config/business";
 import {
@@ -177,6 +184,7 @@ export function QuoteEstimator({
       setTo(saved.to);
       setDate(saved.date);
       if (saved.from || saved.to || saved.date) detailsRef.current?.setAttribute("open", "");
+      announceJobSize({ source: "estimator", band: bandFor(saved.kind, saved.homeSize) });
     }
     restored.current = true;
   }, []);
@@ -194,6 +202,23 @@ export function QuoteEstimator({
       date,
     });
   }, [kind, homeSize, stairs, stairsTouched, packing, from, to, date]);
+
+  // The fleet slider moves the job size here too (and hears ours, see onChange above).
+  const choice = useRef({ kind, homeSize });
+  useEffect(() => {
+    choice.current = { kind, homeSize };
+  }, [kind, homeSize]);
+  useEffect(() => {
+    function onJobSize(event: Event) {
+      const detail = (event as CustomEvent<JobSizeDetail>).detail;
+      if (detail.source !== "fleet") return;
+      const next = choiceForBand(detail.band, choice.current);
+      setKind(next.kind);
+      setHomeSize(next.homeSize);
+    }
+    window.addEventListener(JOB_SIZE_EVENT, onJobSize);
+    return () => window.removeEventListener(JOB_SIZE_EVENT, onJobSize);
+  }, []);
 
   // "Use as pickup" buttons elsewhere on the page fill the suburb fields.
   useEffect(() => {
@@ -308,7 +333,10 @@ export function QuoteEstimator({
           name={`${id}-kind`}
           value={kind}
           options={KIND_OPTIONS}
-          onChange={setKind}
+          onChange={(value) => {
+            setKind(value);
+            announceJobSize({ source: "estimator", band: bandFor(value, homeSize) });
+          }}
         />
         {kind === "home" && (
           <ChipGroup
@@ -316,7 +344,10 @@ export function QuoteEstimator({
             name={`${id}-size`}
             value={homeSize}
             options={HOME_SIZES}
-            onChange={setHomeSize}
+            onChange={(value) => {
+              setHomeSize(value);
+              announceJobSize({ source: "estimator", band: bandFor(kind, value) });
+            }}
           />
         )}
         <ChipGroup

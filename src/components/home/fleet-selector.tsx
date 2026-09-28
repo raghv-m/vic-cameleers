@@ -1,9 +1,15 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { cn } from "cn";
 
 import { Fleet360 } from "@/components/home/fleet-360";
+import {
+  JOB_SIZE_EVENT,
+  announceJobSize,
+  type FleetBand,
+  type JobSizeDetail,
+} from "@/lib/job-size-sync";
 import type { ImageId } from "@/config/images";
 
 export interface FleetTier {
@@ -102,12 +108,31 @@ export function FleetSelector({ tiers }: { tiers: FleetTier[] }) {
   const baseId = useId();
   // The slider runs 0 to 100 across all tiers: which band it's in picks the tier, and how far
   // into the band sets how full the truck is. Tabs jump to a fully loaded truck.
-  const band = 100 / tiers.length;
-  const bandEnd = (index: number) => Math.round((index + 1) * band) - 1;
+  const band_ = 100 / tiers.length;
+  const bandEnd = (index: number) => Math.round((index + 1) * band_) - 1;
   const [position, setPosition] = useState(bandEnd(1));
-  const activeIndex = Math.min(tiers.length - 1, Math.floor(position / band));
-  const fill = Math.min(1, 0.35 + (0.65 * (position - activeIndex * band)) / (band - 1));
-  const setActiveIndex = (index: number) => setPosition(bandEnd(index));
+  const activeIndex = Math.min(tiers.length - 1, Math.floor(position / band_));
+  const fill = Math.min(1, 0.35 + (0.65 * (position - activeIndex * band_)) / (band_ - 1));
+  // User changes here tell the hero estimator; its changes move this slider (job-size-sync).
+  function moveTo(nextPosition: number) {
+    setPosition(nextPosition);
+    const band = Math.min(tiers.length - 1, Math.floor(nextPosition / band_)) as FleetBand;
+    announceJobSize({ source: "fleet", band });
+  }
+  const setActiveIndex = (index: number) => moveTo(bandEnd(index));
+  useEffect(() => {
+    function onJobSize(event: Event) {
+      const detail = (event as CustomEvent<JobSizeDetail>).detail;
+      if (detail.source !== "estimator") return;
+      setPosition((current) =>
+        Math.floor(current / band_) === detail.band ? current : bandEnd(detail.band),
+      );
+    }
+    window.addEventListener(JOB_SIZE_EVENT, onJobSize);
+    return () => window.removeEventListener(JOB_SIZE_EVENT, onJobSize);
+    // bandEnd and band_ only depend on the tier count, which never changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const active = tiers[activeIndex]!;
 
   function onKeyDown(event: React.KeyboardEvent<HTMLButtonElement>) {
@@ -177,7 +202,7 @@ export function FleetSelector({ tiers }: { tiers: FleetTier[] }) {
               max={99}
               step={1}
               value={position}
-              onChange={(event) => setPosition(Number(event.target.value))}
+              onChange={(event) => moveTo(Number(event.target.value))}
               aria-valuetext={`${active.title}, ${Math.round(fill * 100)}% of a typical load`}
               className="accent-terracotta-600 mt-2 h-11 w-full cursor-pointer"
             />
@@ -191,7 +216,7 @@ export function FleetSelector({ tiers }: { tiers: FleetTier[] }) {
                 key={tier.id}
                 className={cn(index === activeIndex && "text-navy-900 font-bold")}
               >
-                {tier.typical.split(",")[0]}
+                {["Single items", "Studio to 2 bed", "3 bed+ and offices"][index] ?? tier.title}
               </span>
             ))}
           </div>
