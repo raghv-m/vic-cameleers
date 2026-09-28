@@ -58,7 +58,7 @@ export function Header() {
             </span>
           </Link>
 
-          <nav aria-label="Main" className="hidden lg:block">
+          <nav aria-label="Main" className="hidden xl:block">
             <ul className="flex items-center gap-1">
               {primaryNav.map((link) => (
                 <li key={link.href}>
@@ -98,7 +98,7 @@ export function Header() {
                 <Button
                   variant="ghost"
                   size="icon-lg"
-                  className="text-navy-900 -mr-2 lg:hidden"
+                  className="text-navy-900 -mr-2 xl:hidden"
                   aria-label="Open menu"
                 />
               }

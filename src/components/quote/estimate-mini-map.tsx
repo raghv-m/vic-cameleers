@@ -32,7 +32,8 @@ export function EstimateMiniMap({ from, to }: { from: MapPlace; to: MapPlace }) 
     y: Math.min(from.point.y, to.point.y) - 24 * scale,
   };
   const route = `M${from.point.x} ${from.point.y} Q${mid.x} ${mid.y} ${to.point.x} ${to.point.y}`;
-  const bubble = { x: mid.x, y: (from.point.y + to.point.y) / 2 - 12 * scale };
+  // Above both pins, so it never covers one when the two ends sit side by side.
+  const bubble = { x: mid.x, y: Math.min(from.point.y, to.point.y) - 30 * scale };
   const kmText = km < 1 ? "Under 1 km apart" : `About ${Math.round(km)} km apart`;
   const samePlace = km < 0.2;
 
@@ -134,9 +135,9 @@ export function EstimateMiniMap({ from, to }: { from: MapPlace; to: MapPlace }) 
             style={{ transformOrigin: `${bubble.x}px ${bubble.y}px` }}
           >
             <rect
-              x={bubble.x - 62 * scale}
+              x={bubble.x - 80 * scale}
               y={bubble.y - 22 * scale}
-              width={124 * scale}
+              width={160 * scale}
               height={30 * scale}
               rx={3 * scale}
               fill="var(--color-navy-900)"
