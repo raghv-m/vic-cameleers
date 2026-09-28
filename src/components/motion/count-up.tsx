@@ -29,7 +29,8 @@ export function CountUp({ value, durationMs = 900 }: { value: string; durationMs
         observer.disconnect();
         const start = performance.now();
         const tick = (now: number) => {
-          const t = Math.min(1, (now - start) / durationMs);
+          // rAF timestamps can be a touch earlier than performance.now(), so clamp at 0 too.
+          const t = Math.min(1, Math.max(0, (now - start) / durationMs));
           const eased = 1 - Math.pow(1 - t, 3);
           setDisplay(`${prefix}${Math.round(target * eased)}${suffix}`);
           if (t < 1) frame = requestAnimationFrame(tick);

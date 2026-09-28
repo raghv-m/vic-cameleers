@@ -55,7 +55,7 @@ export function AnimatedRange({
       const start = performance.now();
       cancelAnimationFrame(frame.current);
       const tick = (now: number) => {
-        const t = Math.min(1, (now - start) / TWEEN_MS);
+        const t = Math.min(1, Math.max(0, (now - start) / TWEEN_MS));
         const eased = 1 - Math.pow(1 - t, 3);
         // Tween in whole $10 steps, like the real rounding, so it never shows odd cents.
         const step = (a: number, b: number) => Math.round((a + (b - a) * eased) / 1000) * 1000;

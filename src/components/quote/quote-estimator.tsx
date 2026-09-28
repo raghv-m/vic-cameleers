@@ -158,6 +158,7 @@ export function QuoteEstimator({
   const [fromPick, setFromPick] = useState<PickedPlace | null>(null);
   const [toPick, setToPick] = useState<PickedPlace | null>(null);
   const [flash, setFlash] = useState(false);
+  const [mathsRun, setMathsRun] = useState(0);
   const restored = useRef(false);
   const detailsRef = useRef<HTMLDetailsElement>(null);
 
@@ -241,17 +242,42 @@ export function QuoteEstimator({
     : findKnownPlace(to, mapPlaces);
   const a = estimate.assumptions;
   const extraMovers = Math.max(0, estimate.recommendedCrewCount - 2);
-  const breakdown: { label: string; value: string }[] = [
+  // `hours` (upper end) sizes each segment of the breakdown bar; `tone` colours it.
+  const breakdown: { label: string; value: string; hours: number; tone: string }[] = [
     {
       label: `Loading and unloading, ${SIZE_LABEL[size]}`,
       value: `${formatHours(a.baseHoursRange[0])} to ${formatHours(a.baseHoursRange[1])}`,
+      hours: a.baseHoursRange[1],
+      tone: "bg-navy-900",
     },
     ...(a.accessPenaltyHours > 0
-      ? [{ label: "Stairs at the pickup", value: `+${formatHours(a.accessPenaltyHours)}` }]
+      ? [
+          {
+            label: "Stairs at the pickup",
+            value: `+${formatHours(a.accessPenaltyHours)}`,
+            hours: a.accessPenaltyHours,
+            tone: "bg-terracotta-600",
+          },
+        ]
       : []),
-    ...(a.extrasHours > 0 ? [{ label: "Packing", value: `+${formatHours(a.extrasHours)}` }] : []),
-    { label: "Drive between addresses (assumed)", value: `+${formatHours(a.travelHours)}` },
+    ...(a.extrasHours > 0
+      ? [
+          {
+            label: "Packing",
+            value: `+${formatHours(a.extrasHours)}`,
+            hours: a.extrasHours,
+            tone: "bg-signal-400",
+          },
+        ]
+      : []),
+    {
+      label: "Drive between addresses (assumed)",
+      value: `+${formatHours(a.travelHours)}`,
+      hours: a.travelHours,
+      tone: "bg-kraft-400",
+    },
   ];
+  const barTotal = breakdown.reduce((sum, row) => sum + row.hours, 0);
 
   const quoteHref = useMemo(() => {
     const params = new URLSearchParams({ type: kind, size, stairs });
@@ -435,7 +461,13 @@ export function QuoteEstimator({
           </p>
         </div>
 
-        <details className="group vc-details border-navy-900/20 mt-4 border-t pt-2">
+        <details
+          className="group vc-details border-navy-900/20 mt-4 border-t pt-2"
+          onToggle={(event) => {
+            // Replays the build-up each time it opens.
+            if (event.currentTarget.open) setMathsRun((n) => n + 1);
+          }}
+        >
           <summary className="text-navy-900 flex min-h-11 cursor-pointer list-none items-center justify-between text-[0.9375rem] font-semibold">
             How we got this number
             <span
@@ -445,14 +477,44 @@ export function QuoteEstimator({
               +
             </span>
           </summary>
-          <dl className="text-ink-900 tabular mt-1 space-y-1.5 text-sm">
-            {breakdown.map((row) => (
-              <div key={row.label} className="flex justify-between gap-4">
-                <dt className="text-muted-600">{row.label}</dt>
+          {/* Stacked bar: each part of the time grows in turn, then they read as one total. */}
+          <div
+            key={`bar-${mathsRun}`}
+            aria-hidden="true"
+            className="bg-navy-900/10 mt-1 flex h-2.5 overflow-hidden rounded-full"
+          >
+            {breakdown.map((row, index) => (
+              <span
+                key={row.label}
+                className={cn("vc-bar-grow h-full origin-left", row.tone)}
+                style={{
+                  width: `${(row.hours / barTotal) * 100}%`,
+                  animationDelay: `${index * 100}ms`,
+                }}
+              />
+            ))}
+          </div>
+          <dl key={`rows-${mathsRun}`} className="text-ink-900 tabular mt-3 space-y-1.5 text-sm">
+            {breakdown.map((row, index) => (
+              <div
+                key={row.label}
+                className="vc-tick flex justify-between gap-4"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <dt className="text-muted-600 flex items-center gap-2">
+                  <span
+                    aria-hidden="true"
+                    className={cn("size-2 shrink-0 rounded-full", row.tone)}
+                  />
+                  {row.label}
+                </dt>
                 <dd className="shrink-0 font-semibold">{row.value}</dd>
               </div>
             ))}
-            <div className="border-navy-900/30 flex justify-between gap-4 border-t pt-1.5">
+            <div
+              className="vc-tick border-navy-900/30 flex justify-between gap-4 border-t pt-1.5"
+              style={{ animationDelay: `${breakdown.length * 100 + 100}ms` }}
+            >
               <dt className="text-navy-900 font-bold">Time on the job</dt>
               <dd className="text-navy-900 shrink-0 font-bold">
                 {formatHours(estimate.lowHours)} to {formatHours(estimate.highHours)}
