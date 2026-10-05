@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+import { tracking } from "@/config/tracking";
+
 /**
  * Security headers on every response (CLAUDE.md section 11), plus the ADMIN_PATH rewrite.
  *
@@ -27,7 +29,15 @@ const NONCE_PAGE_PATHS = ["/quote", "/contact"];
 // Google Maps JS (Places autocomplete) loads from these hosts. Nonce pages don't need them listed:
 // 'strict-dynamic' trusts scripts added by our own nonced bundle.
 const MAPS_SCRIPT_HOSTS = "https://maps.googleapis.com https://maps.gstatic.com";
-const STATIC_SCRIPT_SRC = `script-src 'self' 'unsafe-inline' ${MAPS_SCRIPT_HOSTS}`;
+// Google Analytics 4 and the consentmanager.net cookie banner, only when switched on in
+// src/config/tracking.ts. Like the Maps hosts, nonce pages trust these through 'strict-dynamic'
+// (the CMP <Script> gets Next's nonce, and it loads the rest).
+const GA_SCRIPT_HOSTS = tracking.ga4MeasurementId ? " https://www.googletagmanager.com" : "";
+const GA_CONNECT_HOSTS = tracking.ga4MeasurementId
+  ? " https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com"
+  : "";
+const CMP_HOSTS = tracking.consentManager ? " https://*.consentmanager.net" : "";
+const STATIC_SCRIPT_SRC = `script-src 'self' 'unsafe-inline' ${MAPS_SCRIPT_HOSTS}${GA_SCRIPT_HOSTS}${CMP_HOSTS}`;
 
 function buildCsp(scriptSrc: string): string {
   return [
@@ -36,8 +46,9 @@ function buildCsp(scriptSrc: string): string {
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: https:",
     "font-src 'self' data:",
-    "connect-src 'self' https://api.resend.com https://maps.googleapis.com https://places.googleapis.com https://challenges.cloudflare.com https://*.upstash.io",
-    "frame-src https://challenges.cloudflare.com",
+    `connect-src 'self' https://api.resend.com https://maps.googleapis.com https://places.googleapis.com https://challenges.cloudflare.com https://*.upstash.io${GA_CONNECT_HOSTS}${CMP_HOSTS}`,
+    // www.google.com: the Google Maps embed on /contact and /removalists.
+    `frame-src https://challenges.cloudflare.com https://www.google.com${CMP_HOSTS}`,
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",

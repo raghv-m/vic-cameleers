@@ -12,7 +12,7 @@ export const metadata: Metadata = pageMetadata({
 
 export default function PrivacyPage() {
   return (
-    <LegalPage title="Privacy Policy" path="/privacy" updated="2026">
+    <LegalPage title="Privacy Policy" path="/privacy" updated="October 2026">
       <p className="text-lg">
         {business.tradingName} (ABN {business.abn}) respects your privacy. This policy explains what
         personal information we collect, why we collect it, and what we do with it, in line with the
@@ -55,8 +55,18 @@ export default function PrivacyPage() {
           Resend, to deliver transactional emails (like your quote or a reply to your message)
         </li>
         <li>Cloudflare Turnstile, to tell real visitors apart from bots on our forms</li>
-        <li>Google Maps Platform, for address lookup, once that feature is live</li>
+        <li>Google Maps Platform, for address lookup and the maps shown on this site</li>
+        <li>
+          Google Analytics, to measure how visitors use the site, only if you agree to analytics
+          cookies
+        </li>
+        <li>consentmanager, to record your cookie choices</li>
       </ul>
+      <p>
+        Some of these providers, including Google, may store or process information outside
+        Australia, for example in the United States. We choose providers with strong security and
+        privacy commitments.
+      </p>
 
       <h2>Storage and security</h2>
       <p>
@@ -73,8 +83,21 @@ export default function PrivacyPage() {
 
       <h2>Cookies and analytics</h2>
       <p>
-        We use privacy-friendly analytics to understand how the site is used. This doesn&apos;t
-        involve tracking you across other websites.
+        We use Vercel Web Analytics, which counts visits without cookies and without tracking you
+        across other websites.
+      </p>
+      <p>
+        With your permission, we also use Google Analytics. It sets cookies to tell us things like
+        which pages people visit, how they found us, and whether they asked for a quote or called.
+        We use this to improve the site, not to build a profile of you, and we don&apos;t use it for
+        advertising. When you first visit, a banner asks whether you agree. If you say no, Google
+        Analytics doesn&apos;t set its cookies. You can change your choice at any time with the
+        &ldquo;Cookie settings&rdquo; link at the bottom of every page.
+      </p>
+      <p>
+        The maps on our contact and service-area pages are provided by Google, which may set its own
+        cookies when the map loads. Google&apos;s privacy policy explains how it uses that
+        information.
       </p>
 
       <h2>Complaints</h2>

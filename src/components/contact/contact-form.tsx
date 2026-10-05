@@ -1,10 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { track } from "@vercel/analytics";
 import { ArrowRight } from "lucide-react";
 import { useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 
 import { LoadingConvoy } from "@/components/brand/status";
@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { business } from "@/config/business";
+import { track } from "@/lib/track";
 import { contactSubmissionSchema } from "@/lib/validation/contact";
 import type { ContactSubmission } from "@/lib/validation/contact";
 
@@ -41,6 +42,7 @@ function ErrorLine({ name, message }: { name: FieldName; message?: string }) {
 export function ContactForm() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const router = useRouter();
   const [submitted, setSubmitted] = useState(false);
   const [turnstileKey, setTurnstileKey] = useState(0);
   const inFlight = useRef(false);
@@ -92,6 +94,9 @@ export function ContactForm() {
 
       track("contact_submitted", { path: window.location.pathname });
       setSubmitted(true);
+      // The thank-you page has next steps and somewhere to go; the inline message below covers
+      // the moment before it loads.
+      router.push("/thank-you");
     } catch (error) {
       setSubmitError(
         error instanceof TypeError

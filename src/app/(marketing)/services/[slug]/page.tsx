@@ -7,6 +7,7 @@ import { cn } from "cn";
 import { Photo } from "@/components/brand/photo";
 import { RouteArrow, SignPlate } from "@/components/brand/signage";
 import { ProcessRoute } from "@/components/home/process-route";
+import { ShareButtons } from "@/components/marketing/share-buttons";
 import { WorkedPriceExample } from "@/components/marketing/worked-price-example";
 import { JsonLd } from "@/components/seo/json-ld";
 import { Container, SectionHeader } from "@/components/site/layout-primitives";
@@ -276,6 +277,11 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
             )}
           </section>
         ))}
+        <ShareButtons
+          path={`/services/${service.slug}`}
+          title={`${service.name} | ${business.tradingName}`}
+          className="border-navy-900/20 mt-10 border-t pt-6"
+        />
       </Container>
 
       <section

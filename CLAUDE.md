@@ -275,7 +275,7 @@ Services are config-driven so they can be switched on or off without code change
 - [x] Privacy, Terms, Cancellation policy
 - [~] Custom 404 and error pages with quote CTA (`src/app/not-found.tsx` has the quote CTA; no
   custom `error.tsx` for runtime errors yet)
-- [ ] Cookie / analytics consent notice if any non-essential tracking is added
+- [x] Cookie / analytics consent notice (consentmanager.net autoblocking banner, `src/config/tracking.ts`; GA4 loads behind it with Consent Mode v2 defaults denied; "Cookie settings" link in the footer)
 
 ---
 

@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { CoverageMap } from "@/components/brand/coverage-map";
 import { RouteArrow, SignPlate } from "@/components/brand/signage";
+import { GoogleMapEmbed } from "@/components/marketing/google-map-embed";
 import { InlineCta } from "@/components/site/inline-cta";
 import { Container, SectionHeader } from "@/components/site/layout-primitives";
 import { PageHeader } from "@/components/site/page-header";
@@ -112,6 +113,20 @@ export default function ServiceAreasPage() {
           </Container>
         </section>
       )}
+
+      <Container className="pt-16 sm:pt-24">
+        <SectionHeader
+          size="md"
+          title={`Based in ${business.baseSuburb.replace(" VIC", "")}, moving all of Melbourne`}
+          lede={
+            <p>
+              Our trucks leave from {business.baseSuburb} and cover{" "}
+              {business.serviceAreaDescription}.
+            </p>
+          }
+        />
+        <GoogleMapEmbed className="mt-6" />
+      </Container>
 
       <Container className="py-16 sm:py-24">
         <InlineCta title="Moving in or out of one of these suburbs?" />

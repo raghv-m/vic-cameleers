@@ -18,18 +18,18 @@ const PAGES: { path: string; updated: string }[] = [
   { path: "/services", updated: "2026-09-26" },
   { path: "/pricing", updated: "2026-09-26" },
   { path: "/quote", updated: "2026-09-26" },
-  { path: "/removalists", updated: "2026-09-26" },
+  { path: "/removalists", updated: "2026-10-05" },
   { path: "/reviews", updated: "2026-09-26" },
   { path: "/faq", updated: "2026-09-26" },
   { path: "/guides", updated: "2026-09-26" },
-  { path: "/contact", updated: "2026-09-26" },
-  { path: "/privacy", updated: "2026-09-26" },
+  { path: "/contact", updated: "2026-10-05" },
+  { path: "/privacy", updated: "2026-10-05" },
   { path: "/terms", updated: "2026-09-26" },
   { path: "/cancellation-policy", updated: "2026-09-26" },
 ];
 
 /** Service and suburb page copy last changed on these dates. Unpublished suburbs are left out. */
-const SERVICES_UPDATED = "2026-09-26";
+const SERVICES_UPDATED = "2026-10-05";
 const SUBURBS_UPDATED = "2026-09-26";
 const CREW_UPDATED = "2026-09-26";
 

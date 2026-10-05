@@ -24,6 +24,20 @@ export const business = {
   baseGeo: { latitude: -38.0996, longitude: 145.2834 },
   serviceAreaDescription: "Greater Melbourne, Victoria",
 
+  /**
+   * Street address for the Google Maps embed. Null keeps the map at suburb level (Cranbourne),
+   * which is the right default for a service-area business; set it only to an address the owner
+   * is happy to publish.
+   */
+  // TODO(owner): depot address, if it should be public.
+  depotAddress: null as string | null,
+
+  /**
+   * Reply-time promise, shown in the USP bar and on the thank-you page. Owner chose softer
+   * wording over a fixed "within 2 hours" (5 Oct 2026). Set to null to hide it everywhere.
+   */
+  responsePromise: "We reply the same day" as string | null,
+
   phoneDisplay: "0481 950 085",
   phoneE164: "+61481950085",
 

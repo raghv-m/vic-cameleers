@@ -1,11 +1,14 @@
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Barlow, Barlow_Condensed, Big_Shoulders_Stencil } from "next/font/google";
 
 import { Toaster } from "@/components/ui/sonner";
 import { business } from "@/config/business";
 import { SITE_URL } from "@/config/site-url";
+import { tracking } from "@/config/tracking";
+import { palette } from "@/config/design-tokens";
 import { DEFAULT_OG_IMAGE, seoTitle } from "@/lib/seo";
 
 import "./globals.css";
@@ -61,6 +64,13 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", images: [DEFAULT_OG_IMAGE.url] },
 };
 
+// Browser chrome colour on mobile: the page ground, so the address bar blends into the header.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: palette["sand-50"],
+};
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
@@ -74,6 +84,19 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           Skip to content
         </a>
+        {/* Cookie banner first, so its autoblocking runs before any tracker can load. Next puts
+            beforeInteractive scripts in <head> and stamps the CSP nonce on them. */}
+        {tracking.consentManager && (
+          <Script
+            id="consentmanager"
+            strategy="beforeInteractive"
+            src={tracking.consentManager.scriptUrl}
+            data-cmp-ab="1"
+            data-cmp-host={tracking.consentManager.host}
+            data-cmp-cdn={tracking.consentManager.cdn}
+            data-cmp-codesrc={tracking.consentManager.codeSrc}
+          />
+        )}
         {children}
         <div aria-hidden="true" className="grain-overlay" />
         <Toaster />

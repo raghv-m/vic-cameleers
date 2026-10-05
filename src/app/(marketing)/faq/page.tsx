@@ -15,7 +15,7 @@ import { pageMetadata } from "@/lib/seo";
 export const metadata: Metadata = pageMetadata({
   title: "Removalist FAQs: price, booking, trucks and moving day",
   path: "/faq",
-  description: `Straight answers before you book a Melbourne removalist: ${business.hourlyRateShort}, ${business.minimumHours} hour minimum, the call-out, trucks and crew, moving day, changes and cancellations. Victoria only.`,
+  description: `Straight answers before you book a Melbourne removalist: ${business.hourlyRateShort}, ${business.minimumHours} hour minimum, call-out, trucks, crew, moving day and cancellations. Victoria only.`,
 });
 
 export default function FaqPage() {

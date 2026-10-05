@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { track } from "@vercel/analytics";
+import { track } from "@/lib/track";
 import { ArrowLeft, ArrowRight, Phone } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { FieldPath } from "react-hook-form";
@@ -317,6 +317,9 @@ export function QuoteFlow({
         fromSuburb: new URLSearchParams(window.location.search).get("suburb"),
         propertySize: data.propertySize,
         duplicate: Boolean(body.duplicate),
+        // GA4 reads value + currency on generate_lead; the low end of the estimate, in dollars.
+        value: Math.round(body.estimate.priceLowCents / 100),
+        currency: "AUD",
       });
       setResult({
         referenceNumber: body.referenceNumber,

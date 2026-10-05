@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CookieSettingsButton } from "@/components/analytics/cookie-settings-button";
 import { CranbourneClock } from "@/components/layout/cranbourne-clock";
 import { ArrowRight, Phone } from "lucide-react";
 import { cn } from "cn";
@@ -212,6 +213,9 @@ export function Footer() {
                 </Link>
               </li>
             ))}
+            <li>
+              <CookieSettingsButton className="text-sand-50 cursor-pointer underline-offset-4 hover:underline" />
+            </li>
           </ul>
         </div>
       </div>

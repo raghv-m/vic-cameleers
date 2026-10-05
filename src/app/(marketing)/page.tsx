@@ -27,7 +27,7 @@ export const metadata: Metadata = pageMetadata({
   title: "Removalists Melbourne",
   price: true,
   path: "/",
-  description: `Removalists based in Cranbourne, moving homes and businesses across Melbourne. ${business.hourlyRateShort}, ${business.minimumHours} hour minimum, 6 and 10 tonne trucks. Get your estimate in a couple of minutes.`,
+  description: `Removalists based in Cranbourne, moving homes and businesses across Melbourne. ${business.hourlyRateShort}, ${business.minimumHours} hour minimum, 6 and 10 tonne trucks. Get a free estimate in minutes.`,
 });
 
 function exampleFor(size: PropertySize, settings: PricingSettings): string {

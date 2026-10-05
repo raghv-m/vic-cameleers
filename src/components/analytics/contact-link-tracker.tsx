@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { track } from "@vercel/analytics";
+import { track } from "@/lib/track";
 
 /**
  * Records a Vercel Analytics custom event for every phone and email link click on the public

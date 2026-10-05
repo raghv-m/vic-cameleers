@@ -1,7 +1,9 @@
+import { GoogleAnalytics } from "@/components/analytics/google-analytics";
 import { ContactLinkTracker } from "@/components/analytics/contact-link-tracker";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { StickyMobileBar } from "@/components/layout/sticky-mobile-bar";
+import { UspBar } from "@/components/layout/usp-bar";
 import { RevealObserver } from "@/components/motion/reveal";
 import { MovingCompanyJsonLd } from "@/components/seo/moving-company-json-ld";
 
@@ -15,6 +17,7 @@ export default function MarketingLayout({ children }: LayoutProps<"/">) {
   return (
     <>
       <MovingCompanyJsonLd />
+      <UspBar />
       <Header />
       <main id="main-content" className="flex-1 pb-20 lg:pb-0">
         {children}
@@ -23,6 +26,8 @@ export default function MarketingLayout({ children }: LayoutProps<"/">) {
       <StickyMobileBar />
       <ContactLinkTracker />
       <RevealObserver />
+      {/* Marketing pages only: staff use of the admin console shouldn't count as site traffic. */}
+      <GoogleAnalytics />
     </>
   );
 }

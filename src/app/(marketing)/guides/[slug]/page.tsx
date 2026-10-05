@@ -7,6 +7,7 @@ import { format, parseISO } from "date-fns";
 
 import { RouteArrow } from "@/components/brand/signage";
 import { GuideToc } from "@/components/guides/guide-toc";
+import { ShareButtons } from "@/components/marketing/share-buttons";
 import { JsonLd } from "@/components/seo/json-ld";
 import { InlineCta } from "@/components/site/inline-cta";
 import { Container } from "@/components/site/layout-primitives";
@@ -107,6 +108,11 @@ export default async function GuidePage({ params }: PageProps<"/guides/[slug]">)
           <article id={articleId} className="prose-vc">
             <guide.Body />
           </article>
+          <ShareButtons
+            path={`/guides/${guide.slug}`}
+            title={guide.title}
+            className="border-navy-900/20 mt-10 max-w-[68ch] border-t pt-6"
+          />
           <InlineCta className="mt-12 max-w-[68ch]" />
         </div>
       </Container>

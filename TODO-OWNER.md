@@ -170,3 +170,17 @@ Cost: suggestions use one session token per typing session, closed by a single d
 with only formatted address, location and address components.
 The estimate still assumes a 20 minute drive: real drive times need the server-side Routes API
 (`GOOGLE_MAPS_SERVER_KEY`, CLAUDE.md section 6), not built yet.
+
+## Analytics, cookie banner and map (code shipped 5 Oct 2026)
+
+GA4 (`G-X31VERYW4Z`) and the consentmanager.net banner are set in `src/config/tracking.ts`.
+
+1. consentmanager.net dashboard → turn on **Google Consent Mode v2**, and make sure the banner's
+   allowed domains include `vic-cameleers.vercel.app` (and the custom domain later).
+2. GA4 → Admin → Events → mark **generate_lead** as a key event (fires on quote and contact
+   submissions; `phone_click` and `email_click` are worth marking too).
+3. Depot address for the Google map: set `business.depotAddress` in `src/config/business.ts`.
+   Until then the map shows the suburb of Cranbourne. Only publish an address you're happy for
+   anyone to see.
+4. The site now says "We reply the same day" (`business.responsePromise`). Change or clear it
+   if that stops being true.

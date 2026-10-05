@@ -4,6 +4,7 @@ import { connection } from "next/server";
 
 import { SignPlate } from "@/components/brand/signage";
 import { ContactForm } from "@/components/contact/contact-form";
+import { directionsUrl, GoogleMapEmbed } from "@/components/marketing/google-map-embed";
 import { Container } from "@/components/site/layout-primitives";
 import { PageHeader } from "@/components/site/page-header";
 import { business } from "@/config/business";
@@ -92,6 +93,16 @@ export default async function ContactPage() {
           <SignPlate tone="amber" className="mt-2">
             Victoria only
           </SignPlate>
+          <GoogleMapEmbed className="mt-8" />
+          <a
+            href={directionsUrl()}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-navy-900 mt-3 inline-flex min-h-11 items-center text-sm font-bold underline underline-offset-4"
+          >
+            Get directions in Google Maps
+            <span className="sr-only"> (opens in a new tab)</span>
+          </a>
         </div>
         <div className="lg:col-span-7">
           <ContactForm />
