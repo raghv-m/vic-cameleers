@@ -399,22 +399,22 @@ Sender: `Vic Cameleers <quotes@DOMAIN>`, reply-to the public inbox. React Email 
       link to the lead detail page once `ADMIN_PATH` is set)
 - [x] Customer: contact form received
 - [x] Staff: contact form alert
-- [ ] Customer: quote reminder (if quoted but not booked after X days, setting)
+- [x] Customer: quote reminder (`/api/cron/quote-follow-ups`, daily; one email per unbooked quote-form lead, `quoteFollowUpDays` and on/off in Settings → Business; skips unsubscribed customers)
 - [x] Customer: booking confirmed (triggered from admin) ("Send confirmation email" button on the
       lead detail page's Booking card, calls `sendBookingConfirmation`)
 - [x] Customer: 7-day reminder (`/api/cron/reminders`, checks bookings exactly 7 days out; see
       `vercel.json` for the schedule) **OWNER to verify Vercel Cron Jobs are enabled on the project**
 - [x] Customer: 24-hour reminder (same cron, checks bookings exactly 1 day out; both reminder types
       share one `MoveReminderEmail` template and skip any booking that already has that reminder logged)
-- [ ] Customer: moving-day "crew on the way" (manual trigger from admin in Phase 1)
-- [ ] Customer: move completed / thank you
+- [x] Customer: moving-day "crew on the way" (sent automatically, once, when a dispatcher sets the job to En route)
+- [x] Customer: move completed / thank you (sent once when the job is set to Completed; the review request still follows a day later)
 - [x] Customer: review request 1 day after Completed, links to `GOOGLE_REVIEW_URL` and on-site review
       form (`/api/cron/review-requests`; the on-site review form itself doesn't exist yet, see Section 8's
       "Review submission API with signed tokens", so this only links to the Google review URL, and only
       once one is set in Settings)
 - [ ] Payment receipt (Phase 2)
 - [ ] SMS versions of key notifications (Phase 2)
-- [ ] Unsubscribe / preference handling for non-transactional emails
+- [x] Unsubscribe / preference handling for non-transactional emails (`Customer.emailOptOutAt`; signed links in `src/lib/email/unsubscribe.ts`, confirm page `/unsubscribe`, RFC 8058 one-click `POST /api/unsubscribe`; covers follow-up, thank-you and review emails)
 
 ---
 
