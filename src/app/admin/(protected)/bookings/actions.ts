@@ -7,7 +7,10 @@ import { format } from "date-fns";
 import { recordAuditLog } from "@/lib/audit-log";
 import { db } from "@/lib/db";
 import { BookingConfirmedEmail } from "@/lib/email/templates/booking-confirmed";
+import { CrewOnTheWayEmail } from "@/lib/email/templates/crew-on-the-way";
+import { MoveCompletedEmail } from "@/lib/email/templates/move-completed";
 import { sendEmail } from "@/lib/email/client";
+import { marketingEnvelope } from "@/lib/email/unsubscribe";
 import { requireRole } from "@/lib/rbac";
 import { jobStatusUpdateSchema, sendBookingConfirmationSchema } from "@/lib/validation/booking";
 
@@ -28,7 +31,18 @@ export async function updateJobStatus(input: unknown): Promise<ActionResult> {
 
   const job = await db.job.findUnique({
     where: { id: parsed.data.jobId },
-    include: { booking: true },
+    include: {
+      booking: {
+        include: {
+          lead: {
+            include: {
+              customer: true,
+              emailLogs: { where: { type: { in: ["CREW_ON_THE_WAY", "MOVE_COMPLETED"] } } },
+            },
+          },
+        },
+      },
+    },
   });
   if (!job) return { success: false, error: "Job not found" };
 
@@ -48,6 +62,8 @@ export async function updateJobStatus(input: unknown): Promise<ActionResult> {
     await db.lead.update({ where: { id: job.booking.leadId }, data: { status: "COMPLETED" } });
   }
 
+  await sendJobStatusEmail(job.booking, parsed.data.status);
+
   await recordAuditLog({
     userId: session.user.id,
     action: "job.status_change",
@@ -62,6 +78,66 @@ export async function updateJobStatus(input: unknown): Promise<ActionResult> {
   revalidatePath("/admin/bookings");
   revalidatePath(`/admin/leads/${job.booking.leadId}`);
   return { success: true };
+}
+
+/**
+ * Customer emails tied to job status, each sent once per lead: "crew on the way" when the job
+ * goes En route, and a thank-you when it's Completed (skipped if the customer unsubscribed; the
+ * review request follows a day later from its own cron). sendEmail never throws, so a failed
+ * email can't block the status change.
+ */
+async function sendJobStatusEmail(
+  booking: {
+    id: string;
+    leadId: string;
+    lead: {
+      referenceNumber: string;
+      customer: {
+        id: string;
+        name: string;
+        email: string | null;
+        emailOptOutAt: Date | null;
+      } | null;
+      emailLogs: { type: string }[];
+    };
+  },
+  status: string,
+): Promise<void> {
+  const { lead } = booking;
+  const customer = lead.customer;
+  if (!customer?.email) return;
+  const alreadySent = (type: string) => lead.emailLogs.some((log) => log.type === type);
+  const related = { relatedLeadId: booking.leadId, relatedBookingId: booking.id };
+
+  if (status === "EN_ROUTE" && !alreadySent("CREW_ON_THE_WAY")) {
+    await sendEmail({
+      type: "CREW_ON_THE_WAY",
+      to: customer.email,
+      subject: `Your crew is on the way (${lead.referenceNumber})`,
+      react: CrewOnTheWayEmail({
+        customerName: customer.name,
+        referenceNumber: lead.referenceNumber,
+      }),
+      ...related,
+    });
+  }
+
+  if (status === "COMPLETED" && !alreadySent("MOVE_COMPLETED")) {
+    const envelope = marketingEnvelope(customer);
+    if (!envelope) return;
+    await sendEmail({
+      type: "MOVE_COMPLETED",
+      to: customer.email,
+      subject: "Thanks for moving with Vic Cameleers",
+      react: MoveCompletedEmail({
+        customerName: customer.name,
+        referenceNumber: lead.referenceNumber,
+        unsubscribeUrl: envelope.unsubscribeUrl,
+      }),
+      headers: envelope.headers,
+      ...related,
+    });
+  }
 }
 
 export async function sendBookingConfirmation(input: unknown): Promise<ActionResult> {

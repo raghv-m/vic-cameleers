@@ -19,6 +19,9 @@ import { publishedSuburbs } from "@/content/suburbs";
  */
 export function Footer() {
   const year = new Date().getFullYear();
+  // Read straight from the environment like src/proxy.ts does; unset means no link.
+  const adminPath = process.env.ADMIN_PATH?.trim();
+  const staffLoginHref = adminPath ? `/${adminPath}/login` : null;
   const services = getEnabledServices();
   const socials = [
     { label: "Facebook", href: business.social.facebook },
@@ -213,6 +216,19 @@ export function Footer() {
                 </Link>
               </li>
             ))}
+            {staffLoginHref && (
+              <li>
+                {/* Owner asked for this link (5 Oct 2026). It does publish the admin path, so
+                    login security rests on passwords, 2FA and rate limits, as it always should. */}
+                <a
+                  href={staffLoginHref}
+                  rel="nofollow"
+                  className="text-sand-50 underline-offset-4 hover:underline"
+                >
+                  Staff
+                </a>
+              </li>
+            )}
             <li>
               <CookieSettingsButton className="text-sand-50 cursor-pointer underline-offset-4 hover:underline" />
             </li>

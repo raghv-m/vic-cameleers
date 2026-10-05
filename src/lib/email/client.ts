@@ -24,6 +24,8 @@ interface SendEmailOptions {
   react: ReactElement;
   relatedLeadId?: string;
   relatedBookingId?: string;
+  /** Extra headers, e.g. List-Unsubscribe from marketingEnvelope(). */
+  headers?: Record<string, string>;
 }
 
 /**
@@ -50,6 +52,7 @@ export async function sendEmail(options: SendEmailOptions): Promise<void> {
       subject: options.subject,
       react: options.react,
       replyTo: serverEnv.EMAIL_REPLY_TO,
+      headers: options.headers,
     });
 
     if (result.error) {

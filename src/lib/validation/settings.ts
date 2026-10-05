@@ -19,6 +19,12 @@ export const businessSettingsSchema = z.object({
   estimateMode: z.enum(["SHOW_PRICE", "CALLBACK_ONLY"]),
   cancellationPolicySummary: z.string().trim().max(2000).optional(),
   paymentMethodsDescription: z.string().trim().max(500).optional(),
+  quoteFollowUpEnabled: z.boolean(),
+  quoteFollowUpDays: z.coerce
+    .number()
+    .int()
+    .min(1, "At least 1 day")
+    .max(14, "No more than 14 days"),
 });
 
 export type BusinessSettingsInput = z.infer<typeof businessSettingsSchema>;

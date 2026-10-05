@@ -264,14 +264,18 @@ model TeamMember {
 // ---------------------------------------------------------------------------
 
 model Customer {
-  id        String   @id @default(cuid())
-  name      String
+  id            String    @id @default(cuid())
+  name          String
   // Nullable: a contact-form-only lead may give an email but no phone.
-  phone     String?
-  email     String?
-  leads     Lead[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  phone         String?
+  email         String?
+  /// Set when the customer unsubscribes from non-essential emails (quote follow-ups, thank-you
+  /// and review requests). Transactional emails (quote received, booking confirmed, reminders,
+  /// crew on the way) still go out.
+  emailOptOutAt DateTime?
+  leads         Lead[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   @@index([phone])
   @@index([email])
@@ -526,6 +530,9 @@ model BusinessSettings {
   estimateMode              EstimateMode @default(SHOW_PRICE)
   cancellationPolicySummary String?
   paymentMethodsDescription String?
+  /// Quote follow-up email: on/off, and how many days after the quote it goes out.
+  quoteFollowUpEnabled      Boolean      @default(true)
+  quoteFollowUpDays         Int          @default(3)
   updatedAt                 DateTime     @updatedAt
 
   @@map("business_settings")

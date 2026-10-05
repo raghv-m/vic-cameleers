@@ -5,13 +5,19 @@ import { EmailLayout, emailColors } from "./layout";
 export interface ReviewRequestEmailProps {
   customerName: string;
   googleReviewUrl: string;
+  unsubscribeUrl: string;
 }
 
-export function ReviewRequestEmail({ customerName, googleReviewUrl }: ReviewRequestEmailProps) {
+export function ReviewRequestEmail({
+  customerName,
+  googleReviewUrl,
+  unsubscribeUrl,
+}: ReviewRequestEmailProps) {
   return (
     <EmailLayout
       previewText="How did we do?"
       heading={`Thanks for moving with us, ${customerName}`}
+      unsubscribeUrl={unsubscribeUrl}
     >
       <Text style={{ color: emailColors.text, fontSize: 14 }}>
         We hope the move went smoothly. If you&apos;ve got a minute, a quick review helps other

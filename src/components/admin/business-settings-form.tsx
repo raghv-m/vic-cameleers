@@ -44,6 +44,8 @@ export function BusinessSettingsForm({ settings }: { settings: BusinessSettings 
     estimateMode: settings.estimateMode,
     cancellationPolicySummary: settings.cancellationPolicySummary ?? "",
     paymentMethodsDescription: settings.paymentMethodsDescription ?? "",
+    quoteFollowUpEnabled: settings.quoteFollowUpEnabled,
+    quoteFollowUpDays: settings.quoteFollowUpDays.toString(),
   });
 
   function set<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
@@ -127,6 +129,25 @@ export function BusinessSettingsForm({ settings }: { settings: BusinessSettings 
             value={form.googleReviewUrl}
             onChange={(e) => set("googleReviewUrl", e.target.value)}
           />
+        </Field>
+        <Field>
+          <FieldLabel htmlFor="quoteFollowUpDays">Quote follow-up email after (days)</FieldLabel>
+          <Input
+            id="quoteFollowUpDays"
+            type="number"
+            min={1}
+            max={14}
+            value={form.quoteFollowUpDays}
+            disabled={!form.quoteFollowUpEnabled}
+            onChange={(e) => set("quoteFollowUpDays", e.target.value)}
+          />
+          <label className="mt-2 flex items-center gap-2 text-sm">
+            <Checkbox
+              checked={form.quoteFollowUpEnabled}
+              onCheckedChange={(checked) => set("quoteFollowUpEnabled", checked === true)}
+            />
+            Send one follow-up email to quotes that haven&apos;t booked
+          </label>
         </Field>
         <Field>
           <FieldLabel htmlFor="estimateMode">Quote result mode</FieldLabel>

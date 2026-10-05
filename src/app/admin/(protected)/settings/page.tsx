@@ -56,6 +56,8 @@ export default async function SettingsPage() {
                 estimateMode: "SHOW_PRICE",
                 cancellationPolicySummary: null,
                 paymentMethodsDescription: null,
+                quoteFollowUpEnabled: true,
+                quoteFollowUpDays: 3,
                 updatedAt: new Date(),
               }
             }

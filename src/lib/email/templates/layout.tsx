@@ -5,6 +5,7 @@ import {
   Heading,
   Hr,
   Html,
+  Link,
   Preview,
   Section,
   Text,
@@ -25,10 +26,13 @@ export function EmailLayout({
   previewText,
   heading,
   children,
+  unsubscribeUrl,
 }: {
   previewText: string;
   heading: string;
   children: React.ReactNode;
+  /** Set on non-essential emails only; transactional ones don't carry it. */
+  unsubscribeUrl?: string;
 }) {
   return (
     <Html>
@@ -68,6 +72,15 @@ export function EmailLayout({
             <Text style={{ fontSize: 12, color: colors.muted, margin: "4px 0 0" }}>
               Call {business.phoneDisplay} if you have any questions.
             </Text>
+            {unsubscribeUrl && (
+              <Text style={{ fontSize: 12, color: colors.muted, margin: "8px 0 0" }}>
+                Don&apos;t want emails like this?{" "}
+                <Link href={unsubscribeUrl} style={{ color: colors.muted }}>
+                  Unsubscribe
+                </Link>
+                . We&apos;ll still send anything about a booking you&apos;ve made.
+              </Text>
+            )}
           </Section>
         </Container>
       </Body>

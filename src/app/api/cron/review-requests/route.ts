@@ -7,6 +7,7 @@ import { isAuthorizedCronRequest } from "@/lib/cron-auth";
 import { logCronCompleted, logCronFailed, logCronStarted } from "@/lib/cron-log";
 import { sendEmail } from "@/lib/email/client";
 import { ReviewRequestEmail } from "@/lib/email/templates/review-request";
+import { marketingEnvelope } from "@/lib/email/unsubscribe";
 
 const JOB_NAME = "review-requests";
 
@@ -46,6 +47,9 @@ export async function GET(request: NextRequest) {
     for (const lead of leads) {
       if (lead.emailLogs.length > 0) continue;
       if (!lead.customer?.email) continue;
+      // Skips customers who unsubscribed (a review request isn't transactional).
+      const envelope = marketingEnvelope(lead.customer);
+      if (!envelope) continue;
 
       await sendEmail({
         type: "REVIEW_REQUEST",
@@ -54,7 +58,9 @@ export async function GET(request: NextRequest) {
         react: ReviewRequestEmail({
           customerName: lead.customer.name,
           googleReviewUrl: businessSettings.googleReviewUrl,
+          unsubscribeUrl: envelope.unsubscribeUrl,
         }),
+        headers: envelope.headers,
         relatedLeadId: lead.id,
       });
       sent += 1;
