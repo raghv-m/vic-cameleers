@@ -97,6 +97,24 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             data-cmp-codesrc={tracking.consentManager.codeSrc}
           />
         )}
+        {/* Google tag (gtag.js), server-rendered into <head> so Google's tag tester can find it.
+            Consent Mode v2 defaults to denied before config runs; the banner above flips it to
+            granted when the visitor agrees, and its autoblocking holds gtag.js back until then. */}
+        {tracking.ga4MeasurementId && (
+          <>
+            <Script id="gtag-init" strategy="beforeInteractive">
+              {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',wait_for_update:500});
+gtag('js',new Date());
+gtag('config','${tracking.ga4MeasurementId}');`}
+            </Script>
+            <Script
+              id="gtag-js"
+              strategy="beforeInteractive"
+              src={`https://www.googletagmanager.com/gtag/js?id=${tracking.ga4MeasurementId}`}
+            />
+          </>
+        )}
         {children}
         <div aria-hidden="true" className="grain-overlay" />
         <Toaster />

@@ -1,4 +1,3 @@
-import { GoogleAnalytics } from "@/components/analytics/google-analytics";
 import { ContactLinkTracker } from "@/components/analytics/contact-link-tracker";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
@@ -26,8 +25,6 @@ export default function MarketingLayout({ children }: LayoutProps<"/">) {
       <StickyMobileBar />
       <ContactLinkTracker />
       <RevealObserver />
-      {/* Marketing pages only: staff use of the admin console shouldn't count as site traffic. */}
-      <GoogleAnalytics />
     </>
   );
 }

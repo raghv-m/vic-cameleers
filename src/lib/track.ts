@@ -1,5 +1,13 @@
 import { track as vercelTrack } from "@vercel/analytics";
 
+declare global {
+  interface Window {
+    dataLayer?: unknown[];
+    /** Defined by the Google tag snippet in the root layout. */
+    gtag?: (...args: unknown[]) => void;
+  }
+}
+
 type EventProps = Record<string, string | number | boolean | null>;
 
 /**
