@@ -47,7 +47,7 @@
     "qrcode": "^1.5.4",
     "react": "19.3.0",
     "react-dom": "19.3.0",
-    "react-hook-form": "^7.88.0",
+    "react-hook-form": "^7.89.0",
     "resend": "^6.28.1",
     "server-only": "^0.0.1",
     "shadcn": "^4.21.0",
